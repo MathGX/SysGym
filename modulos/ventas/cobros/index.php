@@ -120,18 +120,10 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-md-2" style="display: none;">
-                                    <div class="form-group form-float">
-                                        <div class="form-line focused">
-                                            <input type="text" id="apcier_cod" class="form-control" value= "<?php echo $apertura['apcier_cod']?>" disabled>
-                                            <label class="form-label">Apertura Nro.</label>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
+                                            <input type="text" id="apcier_cod" class="form-control" value= "<?php echo $apertura['apcier_cod']?>" disabled>
                                             <input type="hidden" id="caj_cod" value= "<?php echo $apertura['caj_cod']?>">
                                             <input type="text" class="form-control" id="caj_descri" value= "<?php echo $apertura['caj_descri']?>" disabled>
                                             <label class="form-label">Caja</label>
