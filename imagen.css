@@ -1,0 +1,14 @@
+.wallpaper {
+    background-image: url("images/wallpaper.jpg");
+    background-size: cover; /* Ajusta la imagen para cubrir todo el área */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    height: 100vh; /* Altura del contenedor igual a la altura de la ventana */
+}
+
+@media only screen and (max-width: 768px) {
+    .wallpaper {
+        background-attachment: scroll; /* Cambia a scroll en dispositivos móviles */
+    }
+}
+
