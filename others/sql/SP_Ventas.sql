@@ -617,7 +617,8 @@ begin
     if operacion_cab = 2 then
         -- aqui hacemos un update
 		update pedido_venta_cab 
-			SET pedven_estado = 'ANULADO'
+			SET pedven_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE pedven_cod = pedvencod;
         raise notice 'EL PEDIDO FUE ANULADO';
     end if;
@@ -715,36 +716,37 @@ begin
 	    elseif operacion = 1 then
         -- aqui hacemos un insert
 			INSERT INTO apertura_cierre 
-	        (caj_cod,
-	        suc_cod, 
-	        emp_cod,
-	        usu_cod,
-	        apcier_cod,
-	        apcier_fechahora_aper,
-	        apcier_fechahora_cierre,
-	        apcier_monto_aper,
-	        apcier_monto_cierre,
-	        apcier_estado)
+				(caj_cod,
+				suc_cod, 
+				emp_cod,
+				usu_cod,
+				apcier_cod,
+				apcier_fechahora_aper,
+				apcier_fechahora_cierre,
+				apcier_monto_aper,
+				apcier_monto_cierre,
+				apcier_estado)
 	        VALUES(
-	        cajcod,
-	        succod,
-	        empcod,
-	      	usucod,
-	      	apciercod,
-	      	apcierfechahoraaper,
-	        apcierfechahoraaper,
-	      	apciermontoaper,
-	    	0,
-	    	'ABIERTA');
+				cajcod,
+				succod,
+				empcod,
+				usucod,
+				apciercod,
+				apcierfechahoraaper,
+				apcierfechahoraaper,
+				apciermontoaper,
+				0,
+				'ABIERTA');
 	    	raise notice 'CAJA ABIERTA EXITOSAMENTE';
 	  	end if;
     end if;
     if operacion = 2 then
         -- aqui hacemos un update
 		update apertura_cierre 
-		SET apcier_fechahora_cierre = apcierfechahoracierre,
-		apcier_monto_cierre = apciermontocierre,
-		apcier_estado = 'CERRADA'
+			SET apcier_fechahora_cierre = apcierfechahoracierre,
+			apcier_monto_cierre = apciermontocierre,
+			apcier_estado = 'CERRADA',
+			usu_cod = usucod
         WHERE apcier_cod = apciercod;
         raise notice 'CAJA CERRADA EXITOSAMENTE';
     end if;

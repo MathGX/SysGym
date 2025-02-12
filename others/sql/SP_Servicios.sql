@@ -962,7 +962,8 @@ begin
     if operacion = 2 then
         -- aqui hacemos un update
 		update inscripciones_cab 
-		SET ins_estado = 'ANULADO'
+			SET ins_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE ins_cod = inscod;
         raise notice 'LA INSCRIPCION FUE ANULADA';
     end if;
@@ -1095,7 +1096,8 @@ begin
     if operacion = 2 then
         -- aqui hacemos un update
 		update presupuesto_prep_cab 
-			SET prpr_estado = 'ANULADO'
+			SET prpr_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE prpr_cod = prprcod;
         raise notice 'EL PRESUPUESTO FUE ANULADO';
     end if;
@@ -1226,7 +1228,8 @@ begin
     if operacion = 2 then
         -- aqui hacemos un update
 		update mediciones_cab 
-			SET med_estado = 'ANULADO'
+			SET med_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE med_cod = medcod;
         raise notice 'LA MEDICION FUE ANULADA';
     end if;
@@ -1357,7 +1360,8 @@ begin
     if operacion = 2 then
         -- aqui hacemos un update
 		update plan_alimenticio_cab 
-			SET alim_estado = 'ANULADO'
+			SET alim_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE alim_cod = alimcod;
         raise notice 'EL PLAN FUE ANULADO';
     end if;
@@ -1510,7 +1514,8 @@ begin
     if operacion = 2 then
         -- aqui hacemos un update
 		update rutinas_cab 
-			SET rut_estado = 'ANULADO'
+			SET rut_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE rut_cod = rutcod;
         raise notice 'LA RUTINA FUE ANULADA';
     end if;
@@ -1661,7 +1666,8 @@ begin
     if operacion = 2 then
     -- aqui hacemos un update
 		update evolucion_cab 
-			SET evo_estado = 'ANULADO'
+			SET evo_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE evo_cod = evocod;
 	--se actualiza mediciones detalle
 		for det in cu_evolucion_det loop
@@ -1892,7 +1898,8 @@ begin
 		      	empcod);
 		--se actualiza la inscripcion
 			update inscripciones_cab
-				set ins_estado = 'ANULADO'
+				set ins_estado = 'ANULADO',
+				usu_cod = usucod
 			where ins_cod = inscod;
 	        raise notice 'LA SALIDA FUE REGISTADA CON EXITO';
 	    end if;
@@ -1900,11 +1907,13 @@ begin
     if operacion = 2 then
         -- aqui hacemos un update
 		update salidas 
-			SET sal_estado = 'ANULADO'
+			SET sal_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE sal_cod = salcod;
 		--se actualiza la inscripcion
 		update inscripciones_cab
-			set ins_estado = 'ACTIVO'
+			set ins_estado = 'ACTIVO',
+			usu_cod = usucod
 		where ins_cod = inscod;
         raise notice 'LA SALIDA FUE ANULADA';
     end if;

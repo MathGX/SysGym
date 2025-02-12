@@ -751,7 +751,8 @@ begin
     if operacion_cab = 2 then
         -- aqui hacemos un update
 		update pedido_compra_cab 
-		SET pedcom_estado = 'ANULADO'
+			SET pedcom_estado = 'ANULADO'
+			usu_cod = usucod
         WHERE pedcom_cod = pedcomcod;
         raise notice 'EL PEDIDO FUE ANULADO';
     end if;
@@ -798,17 +799,17 @@ begin
 	    elseif operacion = 1 then
 	        -- aqui hacemos un insert
 	        INSERT INTO pedido_compra_det 
-	        (itm_cod,
-	        tipitem_cod, 
-	        pedcom_cod, 
-	        pedcomdet_cantidad,
-	        pedcomdet_precio)
+				(itm_cod,
+				tipitem_cod, 
+				pedcom_cod, 
+				pedcomdet_cantidad,
+				pedcomdet_precio)
 	        VALUES(
-	        itmcod,
-	        tipitemcod,
-	        pedcomcod,
-	        pedcomdetcantidad,
-	        pedcomdetprecio);
+				itmcod,
+				tipitemcod,
+				pedcomcod,
+				pedcomdetcantidad,
+				pedcomdetprecio);
 	        raise notice 'EL DETALLE FUE REGISTADO CON EXITO';
 	    end if;
 	end if;
@@ -867,43 +868,43 @@ begin
 	    elseif operacion = 1 then
         -- aqui hacemos un insert
 	        INSERT INTO presupuesto_prov_cab 
-	        (presprov_cod,
-	        presprov_fecha, 
-	        presprov_fechavenci,
-	        presprov_estado,
-	        pro_cod,
-	        tiprov_cod,
-	        suc_cod,
-	        emp_cod,
-	        usu_cod)
-	        VALUES(
-	        presprovcod,
-	        presprovfecha,
-	        presprovfechavenci,
-	      	'ACTIVO',
-	      	procod,
-	      	tiprovcod,
-	        succod,
-	      	empcod,
-	    	usucod);
+				(presprov_cod,
+				presprov_fecha, 
+				presprov_fechavenci,
+				presprov_estado,
+				pro_cod,
+				tiprov_cod,
+				suc_cod,
+				emp_cod,
+				usu_cod)
+			VALUES(
+				presprovcod,
+				presprovfecha,
+				presprovfechavenci,
+				'ACTIVO',
+				procod,
+				tiprovcod,
+				succod,
+				empcod,
+				usucod);
 		    INSERT INTO pedido_presupuesto
-		    (pedpre_cod,
-		    pedcom_cod,
-		    presprov_cod)
-		    values(
-		    pedprecod,
-		    pedcomcod,
-		    presprovcod);
+				(pedpre_cod,
+				pedcom_cod,
+				presprov_cod)
+				values(
+				pedprecod,
+				pedcomcod,
+				presprovcod);
 			--se actualiza la auditoria
 			update pedido_presupuesto
-		    set pedpre_audit = json_build_object(
-		        'usu_cod', usucod,
-				'usu_login', usulogin,
-		        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
-		        'transaccion', upper(transaccion),
-		        'pedcom_cod', pedcomcod,
-		        'presprov_cod', presprovcod
-		    )
+				set pedpre_audit = json_build_object(
+					'usu_cod', usucod,
+					'usu_login', usulogin,
+					'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+					'transaccion', upper(transaccion),
+					'pedcom_cod', pedcomcod,
+					'presprov_cod', presprovcod
+				)
 		    WHERE pedpre_cod = pedprecod;
 	    	raise notice 'EL PRESUPUESTO FUE REGISTADO CON EXITO';
 	  	end if;
@@ -911,7 +912,8 @@ begin
     if operacion = 2 then
         -- aqui hacemos un update
 		update presupuesto_prov_cab 
-		SET presprov_estado = 'ANULADO'
+			SET presprov_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE presprov_cod = presprovcod;
         raise notice 'EL PRESUPUESTO FUE ANULADO';
     end if;
@@ -1020,91 +1022,96 @@ declare
 	preorcod integer := (select coalesce (max(preor_cod),0)+1 from presupuesto_orden);
 	cu_presupuesto cursor is
 		select 
-		p.pro_ruc as proruc,
-		coalesce(ppc.presprov_audit,'') as presprovaudit,
-		to_char(ppc.presprov_fecha,'dd-mm-yyyy') as presprovfecha,
-		to_char(ppc.presprov_fechavenci,'dd-mm-yyyy') as presprovfechavenci,
-		ppc.presprov_estado as presprovestado
+			p.pro_ruc as proruc,
+			coalesce(ppc.presprov_audit,'') as presprovaudit,
+			to_char(ppc.presprov_fecha,'dd-mm-yyyy') as presprovfecha,
+			to_char(ppc.presprov_fechavenci,'dd-mm-yyyy') as presprovfechavenci,
+			ppc.presprov_estado as presprovestado
 		from presupuesto_prov_cab ppc
-		join proveedor p on p.pro_cod = ppc.pro_cod
+			join proveedor p on p.pro_cod = ppc.pro_cod
 		where ppc.presprov_cod = presprovcod;
 	cu_pedido cursor is
 		select 
-		coalesce(pedcom_audit,'') as pedcomaudit,
-		pedcom_estado as pedcomestado
+			coalesce(pedcom_audit,'') as pedcomaudit,
+			pedcom_estado as pedcomestado
 		from pedido_compra_cab
 		where pedcom_cod = pedcomcod;
 begin 
     if operacion = 1 then
         -- aqui hacemos un insert
 	        INSERT INTO orden_compra_cab 
-	        (ordcom_cod,
-	        ordcom_fecha, 
-	        ordcom_condicionpago,
-	        ordcom_cuota,
-	        ordcom_intefecha,
-	        ordcom_estado,
-	        pro_cod,
-	        tiprov_cod,
-	        suc_cod,
-	        emp_cod,
-	        usu_cod,
-			ordcom_montocuota)
+		        (ordcom_cod,
+		        ordcom_fecha, 
+		        ordcom_condicionpago,
+		        ordcom_cuota,
+		        ordcom_intefecha,
+		        ordcom_estado,
+		        pro_cod,
+		        tiprov_cod,
+		        suc_cod,
+		        emp_cod,
+		        usu_cod,
+				ordcom_montocuota)
 	        VALUES(
-	        ordcomcod,
-	        ordcomfecha,
-	        ordcomcondicionpago,
-	        ordcomcuota,
-	        upper(ordcomintefecha),
-	      	'ACTIVO',
-	      	procod,
-	      	tiprovcod,
-	        succod,
-	      	empcod,
-	    	usucod,
-			ordcommontocuota);
+		        ordcomcod,
+		        ordcomfecha,
+		        ordcomcondicionpago,
+		        ordcomcuota,
+		        upper(ordcomintefecha),
+		      	'ACTIVO',
+		      	procod,
+		      	tiprovcod,
+		        succod,
+		      	empcod,
+		    	usucod,
+				ordcommontocuota);
 	    --INSERTA DATOS EN presupuesto_orden
 		    INSERT INTO presupuesto_orden
-		    (preor_cod,
-		    presprov_cod,
-		    ordcom_cod)
+			    (preor_cod,
+			    presprov_cod,
+			    ordcom_cod)
 		    values(
-		    preorcod,
-		    presprovcod,
-		    ordcomcod);
+			    preorcod,
+			    presprovcod,
+			    ordcomcod);
 			--se actualiza la auditoria
 			update presupuesto_orden
-		    set preor_audit = json_build_object(
-		        'usu_cod', usucod,
-				'usu_login', usulogin,
-		        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
-		        'transaccion', upper(transaccion),
-		        'presprov_cod', presprovcod,
-		        'ordcom_cod', ordcomcod
-		    )
+			    set preor_audit = json_build_object(
+			        'usu_cod', usucod,
+					'usu_login', usulogin,
+			        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+			        'transaccion', upper(transaccion),
+			        'presprov_cod', presprovcod,
+			        'ordcom_cod', ordcomcod
+			    )
 		    WHERE preor_cod = preorcod;
 		  --SE MODIFICA EL ESTADO DE pedido_compra_cab
 		   	UPDATE pedido_compra_cab 
-			SET pedcom_estado = 'APROBADO'
+				SET pedcom_estado = 'APROBADO',
+				usu_cod = usucod
 	        WHERE pedcom_cod = pedcomcod;
 	        --SE MODIFICA EL ESTADO DE presupuesto_prov_cab
 	        UPDATE presupuesto_prov_cab 
-			SET presprov_estado = 'APROBADO'
+				SET presprov_estado = 'APROBADO',
+				usu_cod = usucod
 	        WHERE presprov_cod = presprovcod;
 	    	raise notice 'LA ORDEN FUE REGISTADA CON EXITO';
     end if;
     if operacion = 2 then
         -- aqui hacemos un update
 		update orden_compra_cab 
-		SET ordcom_estado = 'ANULADO'
+			SET ordcom_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE ordcom_cod = ordcomcod;
        --SE MODIFICA EL ESTADO DE presupuesto_prov_cab
 	    UPDATE presupuesto_prov_cab 
-		SET presprov_estado = 'ACTIVO'
+			SET presprov_estado = 'ACTIVO',
+			usu_cod = usucod
         WHERE presprov_cod = presprovcod;
 		--SE MODIFICA EL ESTADO DE pedido_compra_cab
 	   	UPDATE pedido_compra_cab 
-		SET pedcom_estado = 'ACTIVO'	
+			SET pedcom_estado = 'ACTIVO',
+			usu_cod = usucod	
 		WHERE pedcom_cod = pedcomcod;
         raise notice 'LA ORDEN FUE ANULADA CON EXITO';
     end if;
@@ -1254,10 +1261,10 @@ declare
 	libcomcod integer:= (select coalesce (max(libcom_cod),0)+1 from libro_compras);
 	cu_orden cursor is
 		select 
-		coalesce(occ.ordcom_audit,'') as ordcomaudit,
-		to_char(occ.ordcom_fecha,'dd-mm-yyyy') as ordcomfecha,
-		occ.ordcom_condicionpago as ordcomcondicionpago,
-		occ.ordcom_estado as ordcomestado
+			coalesce(occ.ordcom_audit,'') as ordcomaudit,
+			to_char(occ.ordcom_fecha,'dd-mm-yyyy') as ordcomfecha,
+			occ.ordcom_condicionpago as ordcomcondicionpago,
+			occ.ordcom_estado as ordcomestado
 		from orden_compra_cab occ
 		where occ.ordcom_cod = ordcomcod;
 	cu_libcom cursor is
@@ -1328,7 +1335,8 @@ begin
     		WHERE com_cod = comcod;
 		  --SE MODIFICA EL ESTADO DE ORDEN_compra_cab
 		   	UPDATE orden_compra_cab 
-				SET ordcom_estado = 'RECIBIDO'
+				SET ordcom_estado = 'RECIBIDO',
+				usu_cod = usucod
 	        WHERE ordcom_cod = ordcomcod;
 	      --SE indertan datos en libro_compras
 	        insert into libro_compras
@@ -1370,11 +1378,13 @@ begin
     if operacion = 2 then
         -- aqui hacemos un update
 		update compra_cab 
-			SET com_estado = 'ANULADO'
+			SET com_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE com_cod = comcod;
        --SE MODIFICA EL ESTADO DE ORDEN_compra_cab
 		UPDATE orden_compra_cab 
-			SET ordcom_estado = 'ACTIVO'
+			SET ordcom_estado = 'ACTIVO',
+			usu_cod = usucod
         WHERE ordcom_cod = ordcomcod;
        --ANULAMOS LIBRO COMPRAS
         update libro_compras 
@@ -1680,8 +1690,8 @@ end
 $$
 language plpgsql;
 
---sp_ajuste_invenario_cab (AJUSTE INVENTARIO CABECERA)
-CREATE OR REPLACE FUNCTION sp_ajuste_invenario_cab
+--sp_ajuste_inventario_cab (AJUSTE INVENTARIO CABECERA)
+CREATE OR REPLACE FUNCTION sp_ajuste_inventario_cab
 (ajinvcod integer,
 ajinvfecha date,
 ajinvtipoajuste tipajus,
@@ -1702,34 +1712,35 @@ declare
 begin 
     if operacion_cab = 1 then
         -- aqui hacemos un insert
-        INSERT INTO ajuste_invenario_cab 
-        (ajinv_cod,
-        ajinv_fecha,
-        ajinv_tipoajuste,
-        ajinv_estado,
-        suc_cod,
-        emp_cod,
-        usu_cod)
+        INSERT INTO ajuste_inventario_cab 
+	        (ajinv_cod,
+	        ajinv_fecha,
+	        ajinv_tipoajuste,
+	        ajinv_estado,
+	        suc_cod,
+	        emp_cod,
+	        usu_cod)
         VALUES(
-        ajinvcod,
-        ajinvfecha,
-        ajinvtipoajuste,
-      	'ACTIVO',
-        succod,
-      	empcod,
-        usucod);
+	        ajinvcod,
+	        ajinvfecha,
+	        ajinvtipoajuste,
+	      	'ACTIVO',
+	        succod,
+	      	empcod,
+	        usucod);
         raise notice 'EL AJUSTE FUE REGISTADO CON EXITO';
     end if;
     if operacion_cab = 2 then
         -- aqui hacemos un update
-		update ajuste_invenario_cab 
-		SET ajinv_estado = 'ANULADO'
+		update ajuste_inventario_cab 
+			SET ajinv_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE ajinv_cod = ajinvcod;
        	-- SE ACTUALIZA EL STOCK
        	if ajinvtipoajuste = 'POSITIVO' then
-	        for ajuste_det in select * from ajuste_invenario_det where ajinv_cod = ajinvcod loop
+	        for ajuste_det in select * from ajuste_inventario_det where ajinv_cod = ajinvcod loop
 				UPDATE stock
-				set sto_cantidad = sto_cantidad - ajuste_det.ajinvdet_cantidad
+					set sto_cantidad = sto_cantidad - ajuste_det.ajinvdet_cantidad
 				where itm_cod = ajuste_det.itm_cod
 					and tipitem_cod = ajuste_det.tipitem_cod
 					and dep_cod = ajuste_det.dep_cod
@@ -1737,9 +1748,9 @@ begin
 					and emp_cod = ajuste_det.emp_cod;
 			end loop;
 		elseif ajinvtipoajuste = 'NEGATIVO' then
-			for ajuste_det in select * from ajuste_invenario_det where ajinv_cod = ajinvcod loop
+			for ajuste_det in select * from ajuste_inventario_det where ajinv_cod = ajinvcod loop
 				UPDATE stock s
-				set sto_cantidad = sto_cantidad + ajuste_det.ajinvdet_cantidad
+					set sto_cantidad = sto_cantidad + ajuste_det.ajinvdet_cantidad
 				where itm_cod = ajuste_det.itm_cod
 					and tipitem_cod = ajuste_det.tipitem_cod
 					and dep_cod = ajuste_det.dep_cod
@@ -1751,11 +1762,11 @@ begin
     end if;
 	--se selecciona la ultima auditoria
 	select coalesce(ajinv_audit,'') into ajinvaudit
-	from ajuste_invenario_cab
+	from ajuste_inventario_cab
 	where ajinv_cod = ajinvcod;
 
 	--se actualiza la auditoria
-	update ajuste_invenario_cab
+	update ajuste_inventario_cab
     set ajinv_audit = ajinvaudit||' '||json_build_object(
         'usu_cod', usucod,
 		'usu_login', usulogin,
@@ -1774,8 +1785,8 @@ end
 $$
 language plpgsql;
 
---sp_ajuste_invenario_det (AJUSTE INVENTARIO DETALLE)
-CREATE OR REPLACE FUNCTION sp_ajuste_invenario_det
+--sp_ajuste_inventario_det (AJUSTE INVENTARIO DETALLE)
+CREATE OR REPLACE FUNCTION sp_ajuste_inventario_det
 (itmcod integer, 
 tipitemcod integer, 
 depcod integer,
@@ -1992,7 +2003,8 @@ begin
     if operacion = 2 then
         -- aqui hacemos un update
 		update nota_compra_cab 
-			SET notacom_estado = 'ANULADO'
+			SET notacom_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE notacom_cod = notacomcod;
 	    --ANULAMOS LIBRO COMPRAS DE LA NOTA
 		if tipcompcod in (1,2) then
@@ -2029,7 +2041,8 @@ begin
 				/**************SE ACTUALIZA COMPRAS CABECERA**************/
 				--actualiza estado a 'ACTIVO'
 				update compra_cab
-					set com_estado = 'ACTIVO'
+					set com_estado = 'ACTIVO',
+					usu_cod = usucod
 				where com_cod = comcod;
 				for com in cu_compra_cab loop
 					--actualiza auditoria
@@ -2220,7 +2233,8 @@ begin
 					/**************SE ACTUALIZA COMPRAS CABECERA**************/
 					--actualiza estado a 'ANULADO'
 					update compra_cab
-						set com_estado = 'ANULADO'
+						set com_estado = 'ANULADO',
+						usu_cod = usucod
 					where com_cod = comcod;
 					--actualiza auditoria
 					for com in cu_compra_cab loop
@@ -2276,7 +2290,8 @@ begin
 					/**************SE ACTUALIZA COMPRAS CABECERA**************/
 					--actualiza estado a 'ACTIVO'
 					update compra_cab
-						set com_estado = 'ACTIVO'
+						set com_estado = 'ACTIVO',
+						usu_cod = usucod
 					where com_cod = comcod;
 					--actualiza auditoria
 					for com in cu_compra_cab loop
@@ -2346,7 +2361,8 @@ begin
 				/**************SE ACTUALIZA COMPRAS CABECERA**************/
 				--actualiza estado a 'ACTIVO'
 				update compra_cab
-					set com_estado = 'ACTIVO'
+					set com_estado = 'ACTIVO',
+					usu_cod = usucod
 				where com_cod = comcod;
 				--actualiza auditoria
 				for com in cu_compra_cab loop
