@@ -7,6 +7,13 @@ class Conexion
    private $user = "postgres";
    private $password = "Pokemon29";
    private $conexion;
+   
+   // private $host = "localhost";
+   // private $port = "5433";
+   // private $dbname = "SysGym";
+   // private $user = "postgres";
+   // private $password = "123";
+   // private $conexion;
 
    function getConexion()
    {

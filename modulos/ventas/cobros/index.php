@@ -59,6 +59,13 @@ $u = $_SESSION['usuarios'];
         <div class="container-fluid">
             <div class="row clearfix">
             <?php if (($apertura['apcier_estado'] == 'ABIERTA') || ($u['perf_descri'] == 'ADMINISTRADOR')) { ?>
+                <?php if (($apertura['apcier_estado'] != 'ABIERTA') ) { ?>
+                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                        <div class="card bg-pink" style="border-radius:40px;"> 
+                            <div style="text-align:center; font-weight:bold; font-size:22px; padding:20px;">LA CAJA SE ENCUNETRA CERRADA, POR TANTO NO SE PODRÁ REALIZAR EL COBRO</div>
+                        </div>
+                    </div>
+                <?php }?>
 
                 <div class="col-lg-12">
                     <!-- formulario de COBROS cabecera -->
@@ -111,7 +118,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-2">
+                                <div class="col-sm-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="cobr_fecha" class="form-control" disabled>
@@ -123,7 +130,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="text" id="apcier_cod" class="form-control" value= "<?php echo $apertura['apcier_cod']?>" disabled>
+                                            <input type="hidden" id="apcier_cod" class="form-control" value= "<?php echo $apertura['apcier_cod']?>" disabled>
                                             <input type="hidden" id="caj_cod" value= "<?php echo $apertura['caj_cod']?>">
                                             <input type="text" class="form-control" id="caj_descri" value= "<?php echo $apertura['caj_descri']?>" disabled>
                                             <label class="form-label">Caja</label>
@@ -176,7 +183,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-12 tbldet" style="display: none;">
+                <div class="col-lg-12 tbldet" style="display: ;">
                     <div class="card">
                     <!-- formulario de detalles de COBROS -->
                         <div class="header bg-indigo">
@@ -184,11 +191,13 @@ $u = $_SESSION['usuarios'];
                                 DETALLE DEL COBRO
                             </h2>
                         </div>
-                        
-                        <div class="header">
-                            <div class="row clearfix">
+                        <div class="body">
 
-                                <div class="col-sm-4">
+                            <input type="hidden" id="operacion_det" value="0">
+                            <input type="hidden" id="cuencob_montotal" value="0">
+
+                            <div class="row clearfix" >
+                                <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getVentas()">
@@ -217,17 +226,13 @@ $u = $_SESSION['usuarios'];
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-sm-12 bg-indigo"></div>
                                 
                             </div>
-                        </div>
-
-                        <div class="body">
-
-                            <input type="hidden" id="operacion_det" value="0">
-                            <input type="hidden" id="cuencob_montotal" value="0">
                             <div class="row clearfix">
 
-                                <div class="col-sm-2" style= "display: none">
+                                <div class="col-sm-2" style= "display: ">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" id="cobrdet_cod" class="form-control" disabled>
@@ -245,7 +250,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-4">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" id="ven_nrofac" class="form-control" disabled>
@@ -254,7 +259,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-4">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" class="form-control" id="cliente" disabled>
@@ -266,7 +271,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="cobrdet_nrocuota" class="form-control">
+                                            <input type="text" id="cobrdet_nrocuota" class="form-control" disabled>
                                             <label class="form-label">Cuota nro.</label>
                                         </div>
                                     </div>
@@ -281,7 +286,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" id="ven_intefecha" class="form-control" disabled>
@@ -361,7 +366,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-6 tbltarj" style="display: none;">
+                <div class="col-lg-6 tbltarj" style="display: ;">
                     <div class="card">
                     <!-- formulario de COBRO TARJETA -->
                         <div class="header bg-indigo">
@@ -373,29 +378,21 @@ $u = $_SESSION['usuarios'];
                             <input type="hidden" id="operacion_det" value="0">
                             <div class="row clearfix">
 
-                            <div class="col-sm-2" style="display: none">
+                                <div class="col-sm-5">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="cobrtarj_cod" class="form-control" disabled>
-                                            <label class="form-label">Cobro Tarjeta Nro.</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc">
+                                            <input type="hidden" id="cobrtarj_cod" class="form-control">
                                             <input type="text" class="form-control disabledno" id="cobrtarj_num" disabled>
                                             <label class="form-label">Tarjeta Nro.</label>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-3">
+                                <div class="col-sm-4">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="number" id="cobrtarj_monto" class="form-control disabledno" disabled>
-                                            <label class="form-label">Monto Tarjeta</label>
+                                            <label class="form-label">Monto</label>
                                         </div>
                                     </div>
                                 </div>
@@ -404,7 +401,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" class="form-control disabledno" id="cobrtarj_tiptarj" disabled onclick="getTipTarj()">
-                                            <label class="form-label">Tipo Tarj.</label>
+                                            <label class="form-label">Tipo de Tarjeta</label>
                                             <div id="listaTipTarj" style="display: none;">
                                                 <ul class="list-group" id="ulTipTarj" style="height:60px; overflow:auto"></ul>
                                             </div>
@@ -412,13 +409,13 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-5">
+                                <div class="col-sm-7">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="entahd_cod" value="0">
                                             <input type="hidden" id="ent_cod_tarj" value="0">
                                             <input type="text" class="form-control disabledno" id="ent_razonsocial_tarj" disabled onkeyup="getEntAd()">
-                                            <label class="form-label">Entidad Tarj</label>
+                                            <label class="form-label">Entidad Financiera</label>
                                             <div id="listaEntAd" style="display: none;">
                                                 <ul class="list-group" id="ulEntAd" style="height:60px; overflow:auto"></ul>
                                             </div>
@@ -426,12 +423,12 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-md-5">
+                                <div class="col-sm-5">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">                                            
                                             <input type="hidden" id="martarj_cod" value="0">
                                             <input type="text" id="martarj_descri" class="form-control disabledno" disabled>
-                                            <label class="form-label">Marca de tarj.</label>
+                                            <label class="form-label">Marca de la Tarjeta</label>
                                         </div>
                                     </div>
                                 </div>
@@ -442,7 +439,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-6 tblcheq" style="display: none;">
+                <div class="col-lg-6 tblcheq" style="display: ;">
                     <div class="card">
                     <!-- formulario de COBRO CHEQUE-->
                         <div class="header bg-indigo">
@@ -453,35 +450,27 @@ $u = $_SESSION['usuarios'];
                         <div class="body">
                             <input type="hidden" id="operacion_det" value="0">
                             <div class="row clearfix">
-
-                                <div class="col-sm-2" style="display: none">
+                                
+                                <div class="col-sm-5">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="cobrcheq_cod" class="form-control" disabled>
-                                            <label class="form-label">Cobro Cheque Nro.</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc">
+                                            <input type="hidden" id="cobrcheq_cod" class="form-control">
                                             <input type="text" class="form-control disabledno" id="cobrcheq_num" disabled>
                                             <label class="form-label">Cheque Nro.</label>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-3">
+                                <div class="col-sm-4">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="number" id="cobrcheq_monto" class="form-control disabledno" disabled>
-                                            <label class="form-label">Monto Cheque</label>
+                                            <label class="form-label">Monto</label>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" class="form-control disabledno" id="cobrcheq_tipcheq" disabled onclick="getTipCheq()">
@@ -493,12 +482,12 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-5">
+                                <div class="col-sm-7">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="ent_cod" value="0">
                                             <input type="text" class="form-control disabledno" id="ent_razonsocial" disabled onkeyup="getEntidad()">
-                                            <label class="form-label">Entidad</label>
+                                            <label class="form-label">Entidad Financiera</label>
                                             <div id="listaEntidad" style="display: none;">
                                                 <ul class="list-group" id="ulEntidad" style="height:60px; overflow:auto"></ul>
                                             </div>
@@ -506,11 +495,11 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-sm-5">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
                                             <input type="date" id="cobrcheq_fechaven" class="form-control disabledno" disabled>
-                                            <label class="form-label">Vencimiento</label>
+                                            <label class="form-label">Fecha de Vencimiento</label>
                                         </div>
                                     </div>
                                 </div>
