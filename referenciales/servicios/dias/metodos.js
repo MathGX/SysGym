@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getDiaCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#dia_descri").val("");
     $("#dia_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getDiaCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

@@ -249,7 +249,7 @@ let habilitarBotones2 = (operacion_det) => {
     }
 };
 
-const cobrdetCod = () => {
+const getCod = () => {
     $.ajax({
         method: "GET",
         url: "controlaCheqTarj.php"
@@ -301,7 +301,7 @@ let agregar = () => {
     $(".foc").attr("class", "form-line foc focused");
     $(".grilla_det1").attr("style", "display:none");
     habilitarBotones2(true);
-    cobrdetCod();
+    getCod();
     window.scroll(0, -100);
 };
 

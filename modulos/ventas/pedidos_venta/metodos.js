@@ -28,7 +28,7 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
-let getPedvenCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -47,7 +47,7 @@ let nuevo = () => {
     $("#per_cod, #per_nrodoc, #cli_cod, #cliente").val("");
     $("#pedven_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
-    getPedvenCod();
+    getCod();
     habilitarBotones(true);
     datosUsuarios();
     window.scroll(0, -100);

@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getForCobCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#forcob_descri").val("");
     $("#forcob_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getForCobCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

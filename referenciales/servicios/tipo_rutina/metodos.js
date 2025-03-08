@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getTipRutCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#tiprut_descri").val("");
     $("#tiprut_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getTipRutCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

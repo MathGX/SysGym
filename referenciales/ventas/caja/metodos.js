@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getCajCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#caj_descri").val("");
     $("#caj_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getCajCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

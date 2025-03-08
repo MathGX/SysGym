@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getHrComCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#hrcom_descri").val("");
     $("#hrcom_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getHrComCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

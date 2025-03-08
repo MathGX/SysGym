@@ -55,7 +55,7 @@ let limpiarCab = () =>{
     });
 }
 
-let getSalCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -74,7 +74,7 @@ let nuevo = () => {
     $(".focus").attr("class", "form-line focus focused");
     $("#sal_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");    
-    getSalCod();
+    getCod();
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);

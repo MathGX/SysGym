@@ -16,7 +16,7 @@ let getCod = () => {
         url: "controlador.php",
         data: {consulCod: 1}
     }).done(function (respuesta){
-        $("#ent_cod").val(respuesta.codigo);
+        $("#redpag_cod").val(respuesta.codigo);
     });
 }
 
@@ -26,8 +26,8 @@ let agregar = () => {
     $("#transaccion").val('INSERCION');
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
-    $("#ent_razonsocial, #ent_ruc, #ent_telf, #ent_email").val("");
-    $("#ent_estado").val('ACTIVO');
+    $("#redpag_descri").val("");
+    $("#redpag_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
     getCod();
     habilitarBotones(true);
@@ -37,7 +37,7 @@ let agregar = () => {
 //funcion modificar
 let modificar = () => {
     $("#operacion").val(2);
-    $("#ent_estado").val('ACTIVO');
+    $("#redpag_estado").val('ACTIVO');
     $("#transaccion").val('MODIFICACION');
     $(".disabledno").removeAttr("disabled");
     habilitarBotones(true);
@@ -48,7 +48,7 @@ let modificar = () => {
 let eliminar = () => {
     $("#operacion").val(3);
     $("#transaccion").val('BORRADO');
-    $("#ent_estado").val('INACTIVO');
+    $("#redpag_estado").val('INACTIVO');
     habilitarBotones(true);
     window.scroll(0, -100);
 };
@@ -70,12 +70,9 @@ let grabar = () => {
         method: "POST",
         url: "controlador.php",
         data: {
-            ent_cod: $("#ent_cod").val(),
-            ent_razonsocial: $("#ent_razonsocial").val(),
-            ent_ruc: $("#ent_ruc").val(),
-            ent_telf: $("#ent_telf").val(),
-            ent_email: $("#ent_email").val(),
-            ent_estado: $("#ent_estado").val(),
+            redpag_cod: $("#redpag_cod").val(),
+            redpag_descri: $("#redpag_descri").val(),
+            redpag_estado: $("#redpag_estado").val(),
             operacion: $("#operacion").val(),
             usu_cod: $("#usu_cod").val(),
             usu_login: $("#usu_login").val(),
@@ -158,17 +155,11 @@ let confirmar = () => {
 let controlVacio = () => {
     let condicion = "c";
 
-    if ($("#ent_cod").val() == "") {
+    if ($("#redpag_cod").val() == "") {
         condicion = "i";
-    } else if ($("#ent_razonsocial").val() == "") {
+    } else if ($("#redpag_descri").val() == "") {
         condicion = "i";
-    } else if ($("#ent_ruc").val() == "") {
-        condicion = "i";
-    } else if ($("#ent_telf").val() == "") {
-        condicion = "i";
-    } else if ($("#ent_email").val() == "") {
-        condicion = "i";
-    } else if ($("#ent_estado").val() == "") {
+    } else if ($("#redpag_estado").val() == "") {
         condicion = "i";
     }
 
@@ -208,7 +199,6 @@ function formatoTabla() {
     });
 }
 
-
 //funcion listar
 let listar = () => {
     $.ajax({
@@ -218,24 +208,9 @@ let listar = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>";
-                        tabla += objeto.ent_cod;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.ent_razonsocial;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.ent_ruc;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.ent_telf;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.ent_email;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.ent_estado;
-                    tabla += "</td>";
+                    tabla += "<td>"+ objeto.redpag_cod +"</td>";
+                    tabla += "<td>"+ objeto.redpag_descri +"</td>";
+                    tabla += "<td>"+ objeto.redpag_estado +"</td>";
                 tabla += "</tr>";
             }
             $("#grilla_datos").html(tabla);

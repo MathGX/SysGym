@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getFunCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#fun_fechaingreso, #per_cod, #per_nrodoc, #persona, #ciu_cod, #ciu_descripcion, #car_cod, #car_descri, #emp_cod, #emp_razonsocial, #suc_cod, #suc_descri").val("");
     $("#fun_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getFunCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

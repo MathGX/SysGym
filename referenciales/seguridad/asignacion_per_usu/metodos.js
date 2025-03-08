@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getAsigCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#usu_login, #perfperm_cod, #perf_cod, #perf_descri, #permi_cod, #permi_descri").val("");
     $("#asigusu_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getAsigCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getMarTarjCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#martarj_descri").val("");
     $("#martarj_estado").val('ACTIVO'); 
     $(".tbl").attr("style", "display:none");
-    getMarTarjCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

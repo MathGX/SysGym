@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getProvCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#tiprov_cod, #tiprov_descripcion, #pro_razonsocial, #pro_ruc, #pro_timbrado, #pro_direccion, #pro_telefono, #pro_email").val("");
     $(".tbl").attr("style", "display:none");
     $("#pro_estado").val('ACTIVO');
-    getProvCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

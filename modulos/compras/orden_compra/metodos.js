@@ -56,7 +56,7 @@ let limpiarCab = () =>{
     });
 }
 
-let getOrdcomCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -77,7 +77,7 @@ let nuevo = () => {
     $("#ordcom_intefecha").val('S/I');
     $("#ordcom_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
-    getOrdcomCod();
+    getCod();
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);

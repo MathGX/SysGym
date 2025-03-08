@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getTipProvCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#tiprov_descripcion").val("");
     $("#tiprov_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getTipProvCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

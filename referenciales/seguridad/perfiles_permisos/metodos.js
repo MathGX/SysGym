@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getPerfPermCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#perf_cod, #perf_descri, #permi_cod, #permi_descri").val("");
     $("#perfperm_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getPerfPermCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

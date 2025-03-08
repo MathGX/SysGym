@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getComiCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#comi_descri").val("");
     $("#comi_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getComiCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getEntAdCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#martarj_cod, #martarj_descri, #ent_cod, #ent_razonsocial").val("");
     $("#entahd_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getEntAdCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

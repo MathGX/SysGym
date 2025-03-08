@@ -40,7 +40,7 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
-let getAjinvCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -60,7 +60,7 @@ let nuevo = () => {
     $("#ajinv_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
     habilitarBotones(true);
-    getAjinvCod();
+    getCod();
     datusUsuarios();
     $("#ajinv_fecha").val(formatoFecha(ahora));
     window.scroll(0, -100);

@@ -55,7 +55,7 @@ let limpiarCab = () =>{
     });
 }
 
-let getAsisCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -72,7 +72,7 @@ let nuevo = () => {
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
     $(".tbl").attr("style", "display:none");
-    getAsisCod();
+    getCod();
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);

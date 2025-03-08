@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getGuiCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#mod_descri, #gui_descri").val("");
     $("#gui_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getGuiCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

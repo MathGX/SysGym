@@ -11,7 +11,7 @@ let habilitarBotones = (operacion) => {
 };
 
 //funcion para obtener el codigo de un nuevo cliente
-let getCliCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -30,7 +30,7 @@ let agregar = () => {
     $("#per_cod, #per_nrodoc, #persona, #ciu_cod, #ciu_descripcion, #cli_direccion").val("");
     $("#cli_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getCliCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

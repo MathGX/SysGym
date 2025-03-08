@@ -59,7 +59,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-const codAperturaCierre = () => {
+const getCod = () => {
     $.ajax({
         method: "GET",
         url: "controlador.php"
@@ -77,7 +77,7 @@ let abrir = () => {
     $(".aper").attr("style", "display:block"); 
     $(".disabledno").removeAttr("disabled");
     $("#apcier_fechahora_aper").val(formatoFecha(ahora));
-    codAperturaCierre();
+    getCod();
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);

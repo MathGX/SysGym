@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getEjerCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -30,7 +30,7 @@ let agregar = () => {
     $("#ejer_estado").val('ACTIVO');
     $(".disabledno").removeAttr("disabled");
     $(".tbl").attr("style", "display:none");
-    getEjerCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

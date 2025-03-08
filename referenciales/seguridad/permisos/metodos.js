@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getPermiCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#permi_descri").val("");
     $("#permi_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getPermiCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

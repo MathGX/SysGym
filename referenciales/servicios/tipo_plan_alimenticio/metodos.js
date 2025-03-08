@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getTiPlanCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#tiplan_descri").val("");
     $("#tiplan_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getTiPlanCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

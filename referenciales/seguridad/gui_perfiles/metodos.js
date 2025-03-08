@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getGuiPerfCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#perf_cod, #perf_descri, #gui_cod, #gui_descri, #mod_cod, #mod_descri").val("");
     $("#guiperf_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getGuiPerfCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

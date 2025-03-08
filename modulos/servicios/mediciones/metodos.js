@@ -55,7 +55,7 @@ let limpiarCab = () =>{
     });
 }
 
-let getMedCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -74,7 +74,7 @@ let nuevo = () => {
     $(".focus").attr("class", "form-line focus focused");
     $("#med_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
-    getMedCod();
+    getCod();
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);

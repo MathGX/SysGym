@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getCiuCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -30,7 +30,7 @@ let agregar = () => {
     $("#ciu_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
     habilitarBotones(true);
-    getCiuCod();
+    getCod();
     window.scroll(0, -100);
 };
 

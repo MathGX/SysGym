@@ -62,7 +62,7 @@ let limpiarCab = () =>{
     });
 }
 
-let getVenCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -99,7 +99,7 @@ let nuevo = () => {
     $("#ven_intefecha").val('S/I');
     $("#ven_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
-    getVenCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

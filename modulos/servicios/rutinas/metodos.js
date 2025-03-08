@@ -56,7 +56,7 @@ let limpiarCab = () =>{
     });
 }
 
-let getRutCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -75,7 +75,7 @@ let nuevo = () => {
     $(".focus").attr("class", "form-line focus focused");
     $("#rut_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
-    getRutCod();
+    getCod();
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);

@@ -555,6 +555,9 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/referenciales/ventas/entidad_adherida/index.php">Entidades Adheridas</a>
                                 </li>
                                 <li>
+                                    <a href="/SysGym/referenciales/ventas/red_pago/index.php">Redes de pago</a>
+                                </li>
+                                <li>
                                     <a href="/SysGym/referenciales/ventas/caja/index.php">Cajas</a>
                                 </li>
                                 <li>

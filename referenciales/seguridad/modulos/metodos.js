@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getModCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#mod_descri").val("");
     $("#mod_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getModCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

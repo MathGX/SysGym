@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getTipEquiCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#tipequi_descri").val("");
     $("#tipequi_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getTipEquiCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

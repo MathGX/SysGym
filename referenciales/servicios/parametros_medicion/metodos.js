@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getParamCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#param_descri, #param_formula, #uni_descri, #uni_cod").val("");
     $("#param_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getParamCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

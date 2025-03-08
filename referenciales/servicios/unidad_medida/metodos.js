@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getUniCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#uni_descri, #uni_simbolo").val("");
     $("#uni_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getUniCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };

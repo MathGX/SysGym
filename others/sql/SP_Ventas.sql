@@ -572,6 +572,69 @@ end;
 $$
 language plpgsql;
 
+--sp_abm_red_pago (RED_PAGO)
+CREATE OR REPLACE FUNCTION sp_abm_red_pago
+(redpagcod integer, 
+redpagdescri varchar, 
+redpagestado varchar,
+operacion integer,
+usucod integer,
+usulogin varchar,
+transaccion varchar)
+RETURNS void
+AS $$
+declare redpagaudit text;
+begin --iniciar
+	--se designan validaciones
+	if operacion in (1,2) then
+		perform * from red_pago
+		where redpag_descri = upper(redpagdescri) and redpag_cod != redpagcod;
+		if found then
+			raise exception '1';
+		elseif operacion = 1 then --realizamos un insert
+			INSERT INTO public.red_pago
+			(redpag_cod, 
+			redpag_descri, 
+			redpag_estado)
+			VALUES(
+			redpagcod, 
+			upper(redpagdescri), 
+			'ACTIVO');
+			raise notice 'EL TIPO DE DOCUMENTO FUE REGISTRADO CON EXITO';
+		elseif operacion = 2 then -- realizamos un update 
+			UPDATE public.red_pago 
+			SET redpag_descri=upper(redpagdescri), 
+			redpag_estado='ACTIVO'
+			WHERE redpag_cod=redpagcod;
+			raise notice 'EL TIPO DE DOCUMENTO FUE MODIFICADO CON EXITO';
+		end if;
+	end if;
+	if operacion = 3 then -- realizamos un update 
+		update red_pago
+		set redpag_estado = 'INACTIVO'
+		WHERE redpag_cod = redpagcod ;
+		raise notice 'EL TIPO DE DOCUMENTO FUE BORRADO CON EXITO';
+	end if;
+	--se selecciona la ultima auditoria
+	select coalesce(redpag_audit,'') into redpagaudit
+	from red_pago
+	where redpag_cod = redpagcod;
+
+	--se actualiza la auditoria
+	update red_pago
+    set redpag_audit = redpagaudit||' '||json_build_object(
+        'usu_cod', usucod,
+		'usu_login', usulogin,
+        'fecha y hora', to_char(current_timestamp,'dd/mm/yyyy hh24:mi:ss'),
+        'transaccion', upper(transaccion),
+		'redpag_descri', upper(redpagdescri), 
+		'redpag_estado', upper(redpagestado)
+    )||','
+    WHERE redpag_cod = redpagcod;
+end--finalizar
+$$
+language plpgsql;
+
 
 -------------------------------MOVIMIENTOS-------------------------------
 

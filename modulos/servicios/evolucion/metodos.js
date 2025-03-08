@@ -55,7 +55,7 @@ let limpiarCab = () =>{
     });
 }
 
-let getEvoCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -74,7 +74,7 @@ let nuevo = () => {
     $(".focus").attr("class", "form-line focus focused");
     $("#evo_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
-    getEvoCod();
+    getCod();
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);

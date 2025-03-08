@@ -10,7 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
-let getItemCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -29,7 +29,7 @@ let agregar = () => {
     $("#tipitem_cod, #tipitem_descri, #itm_descri, #itm_costo, #itm_precio, #uni_cod, #uni_descri, #tipimp_cod, #tipimp_descri").val("");
     $("#itm_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
-    getItemCod();
+    getCod();
     habilitarBotones(true);
     window.scroll(0, -100);
 };
