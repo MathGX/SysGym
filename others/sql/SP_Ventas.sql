@@ -1130,56 +1130,66 @@ language plpgsql;
 --sp_cobros_cab (CUENTAS CABECERA)
 CREATE OR REPLACE FUNCTION sp_cobros_cab
 (cobrcod integer,
-cobrfecha date,
+cobrfecha timestamp,
 cobrestado varchar,
 cajcod integer,
 succod integer,
 empcod integer,
 usucod integer,
 apciercod integer,
+tipcompcod integer,
 operacion integer)
 RETURNS void
 AS $$
-declare cobdet record;
-declare cobtarj record;
-declare cobcheq record;
-declare ultcod integer;
+declare
+	venestado varchar := (select ven_estado from ventas_cab where ven_cod = vencod); --> estado de ventas_cab
+	cobdet record; --> variable de tipo record para recorrer cobros detalle
 begin 
-	ultcod = (select coalesce (max(cobr_cod),0)+1 from cobros_cab);
 	if operacion = 1 then
 	    -- aqui hacemos un insert
 		INSERT INTO cobros_cab 
-	    (cobr_cod,
-		cobr_fecha,
-		cobr_estado,
-		caj_cod,
-		suc_cod,
-		emp_cod,
-		usu_cod,
-		apcier_cod)
+		    (cobr_cod,
+			cobr_fecha,
+			cobr_estado,
+			caj_cod,
+			suc_cod,
+			emp_cod,
+			usu_cod,
+			apcier_cod,
+			tipcomp_cod)
 		VALUES(
-		ultcod,
-		cobrfecha,
-		'ACTIVO',
-		cajcod,
-		succod,
-		empcod,
-		usucod,
-		apciercod);
+			cobrcod,
+			cobrfecha,
+			'ACTIVO',
+			cajcod,
+			succod,
+			empcod,
+			usucod,
+			apciercod,
+			tipcompcod);
 		raise notice 'EL COBRO FUE REGISTADO CON EXITO';
     end if;
     if operacion = 2 then
         -- aqui hacemos un update de COBRO CABACERA
 		update cobros_cab 
-		SET cobr_estado = 'ANULADO'
+			SET cobr_estado = 'ANULADO',
+			usu_cod = usucod
         WHERE cobr_cod = cobrcod;
-        -- ACTUALIZA CUENTAS COBRAR (SUMA EFECTIVO)
-		for cobdet in select * from cobros_det where cobr_cod = cobrcod loop
+        -- se actualiza cuentas a cobrar sumando lo restado por cobro detalles
+		for cobdet in (select * from cobros_det where cobr_cod = cobrcod) loop
 			UPDATE cuentas_cobrar
-			set cuencob_saldo = cuencob_saldo + cobdet.cobrdet_monto,
-			cuencob_estado = 'ACTIVO'
+				set cuencob_saldo = cuencob_saldo + cobdet.cobrdet_monto,
+				cuencob_estado = 'ACTIVO',
+				tipcomp_cod = 5
 			where ven_cod = cobdet.ven_cod;
 		end loop;
+		-- ACTUALIZA VENTAS CABECERA (ESTADO)
+		if venestado = 'CANCELADO' then
+			update ventas_cab 
+				set ven_estado = 'ACTIVO',
+				usu_cod = usucod
+			where ven_cod = cobdet.ven_cod;
+		end if;
 		raise notice 'EL COBRO FUE ANULADO CON EXITO';
     end if;
 end
@@ -1192,75 +1202,85 @@ CREATE OR REPLACE FUNCTION sp_cobros_det
 cobrcod integer, 
 cobrdetcod integer, 
 cobrdetmonto integer,
-cobrdetnrocuota integer,
+cobrdetnrocuota integer, 
 forcobcod integer, 
-cobrtarjnum varchar,
-entahdcod integer, 
 cobrcheqnum varchar,
 entcod integer,
+usucod varchar,
+cobrtarjtransaccion varchar,
+redpagcod integer,
 operacion integer)
 RETURNS void
 AS $$
+declare
+	venestado varchar := (select ven_estado from ventas_cab where ven_cod = vencod); --> estado de ventas_cab
 begin
-		if operacion = 1 and forcobcod = 3 then
-			perform * from cobro_tarjeta
-			where cobrtarj_num = cobrtarjnum and entahd_cod = entahdcod and ven_cod = vencod and cobr_cod = cobrcod;
-		    if found then
-				raise exception 'tarjeta';
-		    end if;
-		end if;
-		if operacion = 1 and forcobcod = 1 then
+	if operacion = 1 then
+		if forcobcod = 1 then --> se valida que no se repita el nro de cheque por entidad emisora
 			perform * from cobro_cheque
 			where cobrcheq_num = cobrcheqnum and ent_cod = entcod;
 		    if found then
 				raise exception 'cheque';
 			end if;
-		end if;
-		if operacion = 1 then
+		elsif forcobcod = 2 then --> se valida que no se repita la misma venta
+			perform * from cobros_det
+			where cobr_cod = cobrcod and ven_cod = vencod;
+		    if found then
+				raise exception 'efectivo';
+			end if;
+		elsif forcobcod = 3 then --> se valida que no se repita el nro de transaccion por red de pago
+			perform * from cobro_tarjeta
+			where cobrtarj_transaccion = cobrtarjtransaccion and redpag_cod = redpagcod;
+		    if found then
+				raise exception 'tarjeta';
+			end if;
+		else
 			-- aqui hacemos un insert
 		    INSERT INTO cobros_det 
-		    (ven_cod,
-		    cobr_cod,
-		    cobrdet_cod, 
-		    cobrdet_monto, 
-		    cobrdet_nrocuota,
-		    forcob_cod)
+			    (ven_cod,
+			    cobr_cod,
+			    cobrdet_cod, 
+			    cobrdet_monto, 
+			    cobrdet_nrocuota,
+			    forcob_cod)
 		    VALUES(
-		    vencod,
-		    cobrcod,
-		    cobrdetcod,
-		    cobrdetmonto,
-		    cobrdetnrocuota,
-		    forcobcod);
+			    vencod,
+			    cobrcod,
+			    cobrdetcod,
+			    cobrdetmonto,
+			    cobrdetnrocuota,
+			    forcobcod);
 		    -- ACTUALIZA CUENTAS A COBRAR (RESTA)
 			UPDATE cuentas_cobrar  
-			set cuencob_saldo = cuencob_saldo - cobrdetmonto
+				set cuencob_saldo = cuencob_saldo - cobrdetmonto,
+				tipcomp_cod = 5
 			where ven_cod = vencod;
 			raise notice 'EL DETALLE FUE REGISTADO CON EXITO';
-	end if;
-    if operacion = 2 then
-    	if forcobcod = 1 then
-    		-- aqui hacemos un delete de cobro cheque
-			delete from cobro_cheque 
-			where 
-			cobrdet_cod = cobrdetcod;
-		elseif forcobcod = 3 then
-	    	-- aqui hacemos un delete
-			delete from cobro_tarjeta 
-			where 
-			cobrdet_cod = cobrdetcod;
-			raise notice 'EL COBRO DE TARJETA FUE ELIMINADO CON EXITO';
 		end if;
-		raise notice 'EL COBRO DE CHEQUE FUE ELIMINADO CON EXITO';
-    	-- aqui hacemos un delete
+    elsif operacion = 2 then
+    	if forcobcod = 1 then --> aqui hacemos un delete de cobro cheque
+			delete from cobro_cheque 
+			where cobrdet_cod = cobrdetcod;
+		elseif forcobcod = 3 then -- aqui hacemos un delete de cobro tarjeta
+			delete from cobro_tarjeta 
+			where cobrdet_cod = cobrdetcod;
+		end if;
+    	-- aqui hacemos el delete de cobros detalle
 		delete from cobros_det 
-		where 
-		cobrdet_cod = cobrdetcod;
+		where cobrdet_cod = cobrdetcod;
 		-- ACTUALIZA CUENTAS A COBRAR (SUMA)
 		update cuentas_cobrar  
-		set cuencob_saldo = cuencob_saldo + cobrdetmonto,
-		cuencob_estado = 'ACTIVO'
+			set cuencob_saldo = cuencob_saldo + cobrdetmonto,
+			cuencob_estado = 'ACTIVO',
+			tipcomp_cod = 5
 		where ven_cod = vencod;
+		-- ACTUALIZA VENTAS CABECERA (ESTADO)
+		if venestado = 'CANCELADO' then
+			update ventas_cab 
+				set ven_estado = 'ACTIVO',
+				usu_cod = usucod
+			where ven_cod = vencod;
+		end if;
 		raise notice 'EL DETALLE FUE ELIMINADO CON EXITO';
 	end if;
 end
@@ -1283,10 +1303,10 @@ RETURNS void
 AS $$
 declare ultcod integer;
 begin 
-	ultcod = (select coalesce (max(cobrcheq_cod),0)+1 from cobro_cheque);
+	ultcod = (select coalesce (max(cobrcheq_cod),0)+1 from cobro_cheque); --> codigo autoincremental
 	if operacion = 1 then
-	        -- aqui hacemos un insert
-	        INSERT INTO cobro_cheque 
+        -- aqui hacemos un insert
+        INSERT INTO cobro_cheque 
 	        (cobrcheq_cod,
 	        cobrcheq_num,
 	        cobrcheq_monto,
@@ -1296,7 +1316,7 @@ begin
 	        cobr_cod,
 	        cobrdet_cod,
 	        ent_cod)
-	        VALUES(
+        VALUES(
 	        ultcod,
 	        cobrcheqnum,
 	        cobrcheqmonto,
@@ -1306,7 +1326,7 @@ begin
 	       	cobrcod,
 	       	cobrdetcod,
 	       	entcod);
-	        raise notice 'EL COBRO DE CHEQUE FUE REGISTADO CON EXITO';
+        raise notice 'EL COBRO DE CHEQUE FUE REGISTADO CON EXITO';
 	end if;
 end
 $$
@@ -1324,37 +1344,44 @@ cobrdetcod integer,
 martarjcod integer,
 entcod integer,
 entahdcod integer,
+cobrtarj_transaccion varchar,
+redpag_cod integer,
 operacion integer)
 RETURNS void
 AS $$
-declare ultcod integer;
+declare 
+	ultcod integer;
 begin 
-	ultcod = (select coalesce (max(cobrtarj_cod),0)+1 from cobro_tarjeta);
+	ultcod = (select coalesce (max(cobrtarj_cod),0)+1 from cobro_tarjeta); --> clave autoincremental de la tabla
 	if operacion = 1 then
 	        -- aqui hacemos un insert
 	        INSERT INTO cobro_tarjeta 
-	        (cobrtarj_cod,
-	        cobrtarj_num,
-	        cobrtarj_monto,
-	        cobrtarj_tiptarj,
-	        ven_cod,
-	        cobr_cod,
-	        cobrdet_cod,
-	        martarj_cod,
-	        ent_cod,
-	        entahd_cod)
+		        (cobrtarj_cod,
+		        cobrtarj_num,
+		        cobrtarj_monto,
+		        cobrtarj_tiptarj,
+		        ven_cod,
+		        cobr_cod,
+		        cobrdet_cod,
+		        martarj_cod,
+		        ent_cod,
+		        entahd_cod,
+				cobrtarj_transaccion,
+				redpag_cod)
 	        VALUES(
-	        ultcod,
-	        cobrtarjnum,
-	        cobrtarjmonto,
-	        cobrtarjtiptarj,
-	       	vencod,
-	       	cobrcod,
-	       	cobrdetcod,
-	       	martarjcod,
-	       	entcod,
-	       	entahdcod);
-	        raise notice 'EL COBRO DE TARJETA FUE REGISTADO CON EXITO';
+		        ultcod,
+		        cobrtarjnum,
+		        cobrtarjmonto,
+		        cobrtarjtiptarj,
+		       	vencod,
+		       	cobrcod,
+		       	cobrdetcod,
+		       	martarjcod,
+		       	entcod,
+		       	entahdcod,
+				cobrtarjtransaccion,
+				redpagcod);
+	        raise notice 'EL COBRO CON TARJETA FUE REGISTRADO CON EXITO';
 	end if;
 end
 $$
@@ -1591,6 +1618,78 @@ from ventas_det vd
 			join unidad_medida um on um.uni_cod = i.uni_cod 
 		join depositos d on d.dep_cod = s.dep_cod and d.suc_cod = s.suc_cod and d.emp_cod = s.emp_cod
 order by vd.ven_cod;
+
+--v_cobros_cab (COBROS CABECERA)
+create or replace view v_cobros_cab as
+select 
+cc.*,
+to_char(cc.cobr_fecha, 'dd/mm/yyyy') cobr_fecha2,
+u.usu_login,
+s.suc_descri,
+e.emp_razonsocial,
+c.caj_descri 
+from cobros_cab cc 
+join apertura_cierre ac on ac.apcier_cod = cc.apcier_cod and ac.caj_cod = cc.caj_cod 
+	join caja c on c.caj_cod = ac.caj_cod 
+join sucursales s on s.suc_cod = cc.suc_cod and s.emp_cod = cc.emp_cod 
+	join empresa e on e.emp_cod = s.emp_cod
+join usuarios u on u.usu_cod = cc.usu_cod
+where cc.cobr_estado <> 'ANULADO'
+order by cc.cobr_cod;
+
+--v_cobros_det (COBROS DETALLE)
+create or replace view v_cobros_det as
+select
+cd.cobr_cod,
+cd.ven_cod,
+vc.ven_nrofac,
+vc.ven_montocuota,
+vc.ven_intefecha,
+p.per_nombres||' '||p.per_apellidos as cliente,
+p.per_nrodoc,
+cd.cobrdet_cod,
+cd.cobrdet_monto,
+cd.cobrdet_nrocuota,
+cd.forcob_cod,
+fc.forcob_descri,
+cc.cuencob_saldo,
+cc.cuencob_cuotas,
+ct.cobrtarj_cod,
+ct.cobrtarj_num,
+ct.cobrtarj_monto,
+ct.cobrtarj_tiptarj,
+ct.entahd_cod,
+ct.ent_cod as ent_cod_tarj,
+ee.ent_razonsocial as ent_razonsocial_tarj,
+ct.cobrtarj_transaccion,
+ct.redpag_cod,
+rp.redpag_descri,
+ct.martarj_cod,
+mt.martarj_descri,
+cc3.cobrcheq_cod,
+cc3.cobrcheq_num,
+cc3.cobrcheq_monto,
+cc3.cobrcheq_tipcheq,
+cc3.cobrcheq_fechaven,
+cc3.ent_cod,
+ee2.ent_razonsocial 
+from cobros_det cd 
+join cuentas_cobrar cc on cc.ven_cod = cd.ven_cod 
+	join ventas_cab vc on vc.ven_cod = cc.ven_cod
+		join sucursales s on s.suc_cod = vc.suc_cod and s.emp_cod = vc.emp_cod
+	    	join empresa e on e.emp_cod = s.emp_cod
+		join clientes c on c.cli_cod = vc.cli_cod
+			join personas p on p.per_cod = c.per_cod
+join cobros_cab cc2 on cc2.cobr_cod = cd.cobr_cod 
+join forma_cobro fc on fc.forcob_cod = cd.forcob_cod
+left join cobro_tarjeta ct on ct.ven_cod = cd.ven_cod and ct.cobr_cod = cd.cobr_cod and ct.cobrdet_cod = cd.cobrdet_cod
+	left join entidad_adherida ea on ea.entahd_cod = ct.entahd_cod and ea.martarj_cod = ct.martarj_cod and ea.ent_cod = ct.ent_cod 
+		left join marca_tarjeta mt on mt.martarj_cod = ea.martarj_cod 
+		left join entidad_emisora ee on ee.ent_cod = ea.ent_cod
+		left join red_pago rp on rp.redpag_cod = ct.redpag_cod 
+left join cobro_cheque cc3 on cc3.ven_cod = cd.ven_cod and cc3.cobr_cod = cd.cobr_cod and cc3.cobrdet_cod = cd.cobrdet_cod
+	left join entidad_emisora ee2 on ee2.ent_cod = cc3.ent_cod 
+order by cd.cobrdet_cod;
 
 
 
@@ -1895,59 +1994,48 @@ for each row execute function sp_arqueo_control_auditoria();
 create or replace function sp_ventas_cab_auditoria() 
 returns trigger
 as $$
-	declare 
-		usu_cod_new integer;
-		--se trae de cuentas a cobrar
-		cuencob_saldo numeric := (select cuencob_saldo from cuentas_cobrar where ven_cod = new.ven_cod);
-		tipo_comp integer := (select tipcomp_cod from cuentas_cobrar where ven_cod = new.ven_cod);
-	begin
-		if (cuencob_saldo = 0 and tipo_comp = 5) then
-			usu_cod_new = (select distinct cc.usu_cod from cobros_cab cc 
-							join cobros_det cd on cd.cobr_cod = cc.cobr_cod where cd.ven_cod = new.ven_cod and cc.cobr_estado = 'ACTIVO');
-		elsif (cuencob_saldo = 0 and tipo_comp = 1) then
-			usu_cod_new = (select usu_cod from nota_venta_cab 
-							where ven_cod = new.ven_cod and tipcomp_cod = new.tipcomp_cod and notven_estado = 'ACTIVO');
-		else 
-			usu_cod_new = new.usu_cod;
-		end if;
-		-- Si la operacion es insertar o modificar un registro
-	    if (TG_OP  in ('INSERT','UPDATE')) then
-	        insert into ventas_cab_auditoria (
-				vcaudi_operacion,
-				ven_cod, 
-				ven_fecha,
-				ven_timbrado,
-				ven_nrofac,
-				ven_tipfac,
-				ven_cuotas,
-				ven_montocuota, 
-				ven_intefecha,
-				ven_estado,
-				cli_cod,
-				usu_cod,
-				suc_cod,
-				emp_cod,
-				tipcomp_cod)
-	        values (
-				TG_OP,
-				new.ven_cod, 
-				new.ven_fecha,
-				new.ven_timbrado,
-				new.ven_nrofac,
-				new.ven_tipfac,
-				new.ven_cuotas,
-				new.ven_montocuota, 
-				new.ven_intefecha,
-				new.ven_estado,
-				new.cli_cod,
-				usu_cod_new,
-				new.suc_cod,
-				new.emp_cod,
-				new.tipcomp_cod);
-	    end if;
-		-- Se retorna null para cerrar la funcion
-	    return null; 
-	end; 
+begin
+	-- Si la operacion es insertar o modificar un registro
+    if (TG_OP  in ('INSERT','UPDATE')) then
+        insert into ventas_cab_auditoria (
+			vcaudi_operacion,
+			ven_cod, 
+			ven_fecha,
+			ven_timbrado,
+			ven_nrofac,
+			ven_tipfac,
+			ven_cuotas,
+			ven_montocuota, 
+			ven_intefecha,
+			ven_estado,
+			cli_cod,
+			usu_cod,
+			suc_cod,
+			emp_cod,
+			tipcomp_cod)
+        values (
+			case 
+				TG_OP when 'INSERT' then 'ALTA'
+				else 'BAJA'
+			end,
+			new.ven_cod, 
+			new.ven_fecha,
+			new.ven_timbrado,
+			new.ven_nrofac,
+			new.ven_tipfac,
+			new.ven_cuotas,
+			new.ven_montocuota, 
+			new.ven_intefecha,
+			new.ven_estado,
+			new.cli_cod,
+			new.usu_cod,
+			new.suc_cod,
+			new.emp_cod,
+			new.tipcomp_cod);
+    end if;
+	-- Se retorna null para cerrar la funcion
+    return null; 
+end; 
 $$
 language plpgsql;
 
@@ -1973,7 +2061,7 @@ begin
 			ven_cod,
 			venped_cod)
         values (
-			TG_OP,
+			'ALTA',
 			usu_cod_new, 
 			usu_login_new, 
 			new.pedven_cod, 
@@ -2008,7 +2096,7 @@ begin
 			ven_cod,
 			prpr_cod)
         values (
-			TG_OP,
+			'ALTA',
 			usu_cod_new, 
 			usu_login_new, 
 			new.preven_cod, 
@@ -2051,7 +2139,7 @@ as $$
 				vendet_cantidad, 
 				vendet_precio)
 	        values (
-				TG_OP, 
+				'BAJA', 
 				usu_cod_old, 
 				usu_login_old,
 				old.ven_cod,
@@ -2065,7 +2153,7 @@ as $$
 		-- Si la operacion es insertar un registro
 	    elseif (TG_OP = 'INSERT') then
 	        insert into ventas_det_auditoria (
-				vdaudi_operacion,
+				'ALTA',
 				usu_cod,
 				usu_login,
 				ven_cod, 
@@ -2128,7 +2216,10 @@ as $$
 				tipcomp_cod,
 				libven_estado)
 	        values (
-				TG_OP,
+				case 
+					TG_OP when 'INSERT' then 'ALTA'
+					else 'MODIFICACION'
+				end,
 				usu_cod_new,
 				(select usu_login from usuarios where usu_cod = usu_cod_new),
 				new.ven_cod, 
@@ -2157,12 +2248,20 @@ returns trigger
 as $$
 	declare 
 		usu_cod_new integer;
+		ult_cobr_cod integer:= (select coalesce((select cc.cobr_cod from cobros_cab cc 
+									join cobros_det cd on cd.cobr_cod = cc.cobr_cod 
+								where cd.ven_cod = new.ven_cod
+								order by cc.cobr_cod desc 
+								limit 1),0));
 	begin
 		if new.tipcomp_cod = 4 then
 			usu_cod_new = (select usu_cod from ventas_cab where ven_cod = new.ven_cod);
 		elsif new.tipcomp_cod = 5 then
-			usu_cod_new = (select distinct cc.usu_cod from cobros_cab cc 
-							join cobros_det cd on cd.cobr_cod = cc.cobr_cod where cd.ven_cod = new.ven_cod and cc.cobr_estado = 'ACTIVO');
+			if ult_cobr_cod = 0 then
+				usu_cod_new = (select usu_cod from cobros_det_auditoria where ven_cod = new.ven_cod order by cobr_cod desc limit 1);
+			else
+				usu_cod_new = (select usu_cod from cobros_cab where cobr_cod = ult_cobr_cod);
+			end if;
 		elsif new.tipcomp_cod in (1, 2) then
 			usu_cod_new = (select usu_cod from nota_venta_cab 
 							where ven_cod = new.ven_cod and tipcomp_cod = new.tipcomp_cod and notven_estado = 'ACTIVO');
@@ -2180,7 +2279,10 @@ as $$
 				tipcomp_cod,
 				cuencob_estado)
 	        values (
-				TG_OP,
+				case 
+					TG_OP when 'INSERT' then 'ALTA'
+					else 'MODIFICACION'
+				end,
 				usu_cod_new,
 				(select usu_login from usuarios where usu_cod = usu_cod_new),
 				new.ven_cod, 
@@ -2199,3 +2301,305 @@ language plpgsql;
 create trigger tg_cuentas_cobrar_auditoria
 after insert or update on cuentas_cobrar
 for each row execute function sp_cuentas_cobrar_auditoria();
+
+--tg_cobros_cab_auditoria (Auditoria de cobros cabecera)-------------------------------------------------------------------------------
+create or replace function sp_cobros_cab_auditoria() 
+returns trigger
+as $$
+	-- Se declaran los codigos y nombres de usuario para la tabla de auditoria
+	declare
+		cobaudicod integer := (select coalesce(max(cobaudi_cod), 0) + 1 from cobros_cab_auditoria);
+	begin
+		-- Si la operacion es eliminar el registro
+	    if TG_OP in ('INSERT','UPDATE') then
+	        insert into cobros_cab_auditoria (
+				cobaudi_cod,
+				cobaudi_operacion,
+				cobr_cod,
+				cobr_fecha,
+				cobr_estado,
+				caj_cod, 
+				suc_cod, 
+				emp_cod,
+				usu_cod,
+				apcier_cod,
+				tipcomp_cod)
+	        values (
+				cobaudicod,
+				case
+					when TG_OP = 'INSERT' then 'ALTA'
+					else 'BAJA'
+				end, 
+				new.cobr_cod,
+				new.cobr_fecha,
+				new.cobr_estado,
+				new.caj_cod,
+				new.suc_cod,
+				new.emp_cod,
+				new.usu_cod,
+				new.apcier_cod,
+				new.tipcomp_cod);
+	    end if;
+		-- Se retorna null para cerrar la funcion
+	    return null; 
+	end; 
+$$
+language plpgsql;
+
+create trigger tg_cobros_cab_auditoria
+after insert or update on cobros_cab
+for each row execute function sp_cobros_cab_auditoria();
+
+--tg_cobros_det_auditoria (AUDITORIA DE COBROS DETALLE)------------------------------------------------------------------------
+create or replace function sp_cobros_det_auditoria() 
+returns trigger
+as $$
+	-- Se declaran los codigos y nombres de usuario para la tabla de auditoria
+	declare
+		usu_cod_old integer := (select cc.usu_cod from cobros_cab cc where cc.cobr_cod = old.cobr_cod);
+		usu_login_old varchar := (select u.usu_login from usuarios u where u.usu_cod = usu_cod_old);
+		usu_cod_new integer := (select cc.usu_cod from cobros_cab cc where cc.cobr_cod = new.cobr_cod);
+		usu_login_new varchar := (select u.usu_login from usuarios u where u.usu_cod = usu_cod_new);
+		cdaudicod integer := (select coalesce(max(cdaudi_cod),0)+1 from cobros_det_auditoria);
+	begin
+		-- Si la operacion es eliminar el registro
+	    if (TG_OP = 'DELETE') then
+	        insert into cobros_det_auditoria (
+				cdaudi_cod, 
+				cdaudi_operacion, 
+				usu_cod, 
+				usu_login, 
+				ven_cod, 
+				cobr_cod, 
+				cobrdet_cod, 
+				cobrdet_monto, 
+				cobrdet_nrocuota, 
+				forcob_cod)
+			values(
+				cdaudicod, 
+				'BAJA', 
+				usu_cod_old,
+				usu_login_old,
+				old.ven_cod,
+				old.cobr_cod, 
+				old.cobrdet_cod, 
+				old.cobrdet_monto,
+				old.cobrdet_nrocuota,
+				old.forcob_cod);
+		-- Si la operacion es insertar un registro
+	    elseif (TG_OP = 'INSERT') then
+	        insert into cobros_det_auditoria (
+				cdaudi_cod, 
+				cdaudi_operacion, 
+				usu_cod, 
+				usu_login, 
+				ven_cod, 
+				cobr_cod, 
+				cobrdet_cod, 
+				cobrdet_monto, 
+				cobrdet_nrocuota, 
+				forcob_cod)
+			values(
+				cdaudicod, 
+				'ALTA', 
+				usu_cod_new,
+				usu_login_new,
+				new.ven_cod,
+				new.cobr_cod, 
+				new.cobrdet_cod, 
+				new.cobrdet_monto,
+				new.cobrdet_nrocuota,
+				new.forcob_cod);
+	    end if;
+		-- Se retorna null para cerrar la funcion
+	    return null; 
+	end; 
+$$
+language plpgsql;
+
+create trigger tg_cobros_det_auditoria
+after insert or delete on cobros_det
+for each row execute function sp_cobros_det_auditoria();
+
+--tg_cobro_cheque_auditoria (AUDITORIA DE COBROS CHEQUE)------------------------------------------------------------------------
+create or replace function sp_cobro_cheque_auditoria() 
+returns trigger
+as $$
+	-- Se declaran los codigos y nombres de usuario para la tabla de auditoria
+	declare
+		usu_cod_old integer := (select cc.usu_cod from cobros_cab cc where cc.cobr_cod = old.cobr_cod);
+		usu_login_old varchar := (select u.usu_login from usuarios u where u.usu_cod = usu_cod_old);
+		usu_cod_new integer := (select cc.usu_cod from cobros_cab cc where cc.cobr_cod = new.cobr_cod);
+		usu_login_new varchar := (select u.usu_login from usuarios u where u.usu_cod = usu_cod_new);
+		cheqaudicod integer := (select coalesce(max(cheqaudi_cod),0)+1 from cobro_cheque_auditoria);
+	begin
+		-- Si la operacion es eliminar el registro
+	    if (TG_OP = 'DELETE') then
+	        insert into cobro_cheque_auditoria (
+				cheqaudi_cod, 
+				cheqaudi_operacion, 
+				usu_cod, 
+				usu_login, 
+				cobrcheq_cod, 
+				cobrcheq_num, 
+				cobrcheq_monto, 
+				cobrcheq_tipcheq,
+				cobrcheq_fechaven,
+				ven_cod, 
+				cobr_cod,
+				cobrdet_cod,
+				martarj_cod,
+				ent_cod)
+			values(
+				cheqaudicod, 
+				'BAJA', 
+				usu_cod_old,
+				usu_login_old,
+				old.cobrcheq_cod,
+				old.cobrcheq_num, 
+				old.cobrcheq_monto, 
+				old.cobrcheq_tipcheq,
+				old.cobrcheq_fechaven,
+				old.ven_cod,
+				old.cobr_cod,
+				old.cobrdet_cod,
+				old.martarj_cod,
+				old.ent_cod);
+		-- Si la operacion es insertar un registro
+	    elseif (TG_OP = 'INSERT') then
+	        insert into cobro_cheque_auditoria (
+				cheqaudi_cod, 
+				cheqaudi_operacion, 
+				usu_cod, 
+				usu_login, 
+				cobrcheq_cod, 
+				cobrcheq_num, 
+				cobrcheq_monto, 
+				cobrcheq_tipcheq,
+				cobrcheq_fechaven,
+				ven_cod, 
+				cobr_cod,
+				cobrdet_cod,
+				martarj_cod,
+				ent_cod)
+			values(
+				cheqaudicod, 
+				'BAJA', 
+				usu_cod_new,
+				usu_login_new,
+				new.cobrcheq_cod,
+				new.cobrcheq_num, 
+				new.cobrcheq_monto, 
+				new.cobrcheq_tipcheq,
+				new.cobrcheq_fechaven,
+				new.ven_cod,
+				new.cobr_cod,
+				new.cobrdet_cod,
+				new.martarj_cod,
+				new.ent_cod);
+	    end if;
+		-- Se retorna null para cerrar la funcion
+	    return null; 
+	end; 
+$$
+language plpgsql;
+
+create trigger tg_cobro_cheque_auditoria
+after insert or delete on cobro_cheque
+for each row execute function sp_cobro_cheque_auditoria();
+
+
+--tg_cobro_tarjeta_auditoria (AUDITORIA DE COBROS TARJETA)------------------------------------------------------------------------
+create or replace function sp_cobro_tarjeta_auditoria() 
+returns trigger
+as $$
+	-- Se declaran los codigos y nombres de usuario para la tabla de auditoria
+	declare
+		usu_cod_old integer := (select cc.usu_cod from cobros_cab cc where cc.cobr_cod = old.cobr_cod);
+		usu_login_old varchar := (select u.usu_login from usuarios u where u.usu_cod = usu_cod_old);
+		usu_cod_new integer := (select cc.usu_cod from cobros_cab cc where cc.cobr_cod = new.cobr_cod);
+		usu_login_new varchar := (select u.usu_login from usuarios u where u.usu_cod = usu_cod_new);
+		taraudicod integer := (select coalesce(max(taraudi_cod),0)+1 from cobro_tarjeta_auditoria);
+	begin
+		-- Si la operacion es eliminar el registro
+	    if (TG_OP = 'DELETE') then
+	        insert into cobro_tarjeta_auditoria (
+				taraudi_cod, 
+				taraudi_operacion, 
+				usu_cod, 
+				usu_login, 
+				cobrtarj_cod, 
+				cobrtarj_numtarj, 
+				cobrtarj_monto, 
+				cobrtarj_tiptarj, 
+				ven_cod, 
+				cobr_cod,
+				cobrdet_cod,
+				martarj_cod,
+				ent_cod,
+				entahd_cod,
+				cobrtarj_transaccion,
+				redpag_cod)
+			values(
+				taraudicod, 
+				'BAJA', 
+				usu_cod_old,
+				usu_login_old,
+				old.cobrtarj_cod,
+				old.cobrtarj_numtarj, 
+				old.cobrtarj_monto, 
+				old.cobrtarj_tiptarj,
+				old.ven_cod,
+				old.cobr_cod,
+				old.cobrdet_cod,
+				old.martarj_cod,
+				old.ent_cod,
+				old.entahd_cod,
+				old.cobrtarj_transaccion,
+				old.redpag_cod);
+		-- Si la operacion es insertar un registro
+	    elseif (TG_OP = 'INSERT') then
+	        insert into cobro_tarjeta_auditoria (
+				taraudi_cod, 
+				taraudi_operacion, 
+				usu_cod, 
+				usu_login, 
+				cobrtarj_cod, 
+				cobrtarj_numtarj, 
+				cobrtarj_monto, 
+				cobrtarj_tiptarj, 
+				ven_cod, 
+				cobr_cod,
+				cobrdet_cod,
+				martarj_cod,
+				ent_cod,
+				entahd_cod,
+				cobrtarj_transaccion,
+				redpag_cod)
+			values(
+				taraudicod, 
+				'BAJA', 
+				usu_cod_new,
+				usu_login_new,
+				new.cobrtarj_cod,
+				new.cobrtarj_numtarj, 
+				new.cobrtarj_monto, 
+				new.cobrtarj_tiptarj,
+				new.ven_cod,
+				new.cobr_cod,
+				new.cobrdet_cod,
+				new.martarj_cod,
+				new.ent_cod,
+				new.entahd_cod,
+				new.cobrtarj_transaccion,
+				new.redpag_cod);
+	    end if;
+		-- Se retorna null para cerrar la funcion
+	    return null; 
+	end; 
+$$
+language plpgsql;
+
+create trigger tg_cobro_tarjeta_auditoria
+after insert or delete on cobro_tarjeta
+for each row execute function sp_cobro_tarjeta_auditoria();
