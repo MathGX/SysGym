@@ -82,6 +82,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
+                                            <input type="text" id="tipcomp_cod" value="5">
                                             <input type="text" id="cobr_cod" class="form-control" disabled>
                                             <label class="form-label">Cobro Nro.</label>
                                         </div>
@@ -230,16 +231,9 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-12 bg-indigo"></div>
                                 
                             </div>
+                            
+                            <input type="hidden" id="cobrdet_cod" class="form-control" value="0">
                             <div class="row clearfix">
-
-                                <div class="col-sm-2" style= "display: ">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc">
-                                            <input type="text" id="cobrdet_cod" class="form-control" disabled>
-                                            <label class="form-label">Cobro detalle Nro.</label>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
@@ -375,13 +369,61 @@ $u = $_SESSION['usuarios'];
                             </h2>
                         </div>
                         <div class="body">
-                            <input type="hidden" id="operacion_det" value="0">
+                            <input type="hidden" id="cobrtarj_cod" value="0">
                             <div class="row clearfix">
 
-                                <div class="col-sm-5">
+                                <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="hidden" id="cobrtarj_cod" class="form-control">
+                                            <input type="text" class="form-control disabledno" id="cobrtarj_tiptarj" disabled onclick="getTipTarj()">
+                                            <label class="form-label">Tip. Tarjeta</label>
+                                            <div id="listaTipTarj" style="display: none;">
+                                                <ul class="list-group" id="ulTipTarj" style="height:60px; overflow:auto"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc">
+                                            <input type="hidden" id="entahd_cod" value="0">
+                                            <input type="hidden" id="ent_cod_tarj" value="0">
+                                            <input type="text" class="form-control disabledno" id="ent_razonsocial_tarj" disabled onkeyup="getEntAd()">
+                                            <label class="form-label">Ent. Financiera</label>
+                                            <div id="listaEntAd" style="display: none;">
+                                                <ul class="list-group" id="ulEntAd" style="height:60px; overflow:auto"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc">                                            
+                                            <input type="hidden" id="martarj_cod" value="0">
+                                            <input type="text" id="martarj_descri" class="form-control disabledno" disabled>
+                                            <label class="form-label">Marc. Tarjeta</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc">
+                                            <input type="hidden" id="retpag_cod" value="0">
+                                            <input type="text" class="form-control disabledno" id="redpag_descti" disabled onkeyup="getRedPago()">
+                                            <label class="form-label">Red de pago</label>
+                                            <div id="listaRedPago" style="display: none;">
+                                                <ul class="list-group" id="ulRedPago" style="height:60px; overflow:auto"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc">
                                             <input type="text" class="form-control disabledno" id="cobrtarj_num" disabled>
                                             <label class="form-label">Tarjeta Nro.</label>
                                         </div>
@@ -391,44 +433,17 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-4">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
+                                            <input type="number" id="cobrtarj_transaccion" class="form-control disabledno" disabled>
+                                            <label class="form-label">Nro. de Transaccion</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-4">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc">
                                             <input type="number" id="cobrtarj_monto" class="form-control disabledno" disabled>
                                             <label class="form-label">Monto</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc">
-                                            <input type="text" class="form-control disabledno" id="cobrtarj_tiptarj" disabled onclick="getTipTarj()">
-                                            <label class="form-label">Tipo de Tarjeta</label>
-                                            <div id="listaTipTarj" style="display: none;">
-                                                <ul class="list-group" id="ulTipTarj" style="height:60px; overflow:auto"></ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-7">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc">
-                                            <input type="hidden" id="entahd_cod" value="0">
-                                            <input type="hidden" id="ent_cod_tarj" value="0">
-                                            <input type="text" class="form-control disabledno" id="ent_razonsocial_tarj" disabled onkeyup="getEntAd()">
-                                            <label class="form-label">Entidad Financiera</label>
-                                            <div id="listaEntAd" style="display: none;">
-                                                <ul class="list-group" id="ulEntAd" style="height:60px; overflow:auto"></ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-5">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc">                                            
-                                            <input type="hidden" id="martarj_cod" value="0">
-                                            <input type="text" id="martarj_descri" class="form-control disabledno" disabled>
-                                            <label class="form-label">Marca de la Tarjeta</label>
                                         </div>
                                     </div>
                                 </div>
@@ -448,13 +463,12 @@ $u = $_SESSION['usuarios'];
                             </h2>
                         </div>
                         <div class="body">
-                            <input type="hidden" id="operacion_det" value="0">
+                            <input type="hidden" id="cobrcheq_cod" value="0">
                             <div class="row clearfix">
                                 
                                 <div class="col-sm-5">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="hidden" id="cobrcheq_cod" class="form-control">
                                             <input type="text" class="form-control disabledno" id="cobrcheq_num" disabled>
                                             <label class="form-label">Cheque Nro.</label>
                                         </div>

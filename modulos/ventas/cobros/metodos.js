@@ -46,7 +46,7 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
-let getCobrCod = () => {
+let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
@@ -64,7 +64,7 @@ let nuevo = () => {
     $("#cobr_estado").val('ACTIVO');
     $(".tbldet, .tblgrcab").attr("style", "display:none");
     $("#cobr_fecha").val(formatoFecha(ahora));
-    getCobrCod();
+    getCod();
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);
@@ -102,6 +102,7 @@ let grabar = () => {
             emp_cod: $("#emp_cod").val(),
             usu_cod: $("#usu_cod").val(),
             apcier_cod: $("#apcier_cod").val(),
+            tipcomp_cod: $("#tipcomp_cod").val(),
             operacion_cab: $("#operacion_cab").val()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
@@ -179,17 +180,15 @@ let controlVacio = () => {
 
     if ($("#cobr_cod").val() == "") {
         condicion = "i";
-    } else if ($("#usu_login").val() == "") {
+    } else if ($("#emp_razonsocial").val() == "") {
         condicion = "i";
     } else if ($("#suc_descri").val() == "") {
         condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
+    } else if ($("#usu_login").val() == "") {
         condicion = "i";
     } else if ($("#cobr_fecha").val() == "") {
         condicion = "i";
     } else if ($("#apcier_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#caj_cod").val() == "") {
         condicion = "i";
     } else if ($("#caj_descri").val() == "") {
         condicion = "i";
@@ -249,7 +248,7 @@ let habilitarBotones2 = (operacion_det) => {
     }
 };
 
-const getCod = () => {
+const getCodDet = () => {
     $.ajax({
         method: "GET",
         url: "controlaCheqTarj.php"
@@ -301,7 +300,7 @@ let agregar = () => {
     $(".foc").attr("class", "form-line foc focused");
     $(".grilla_det1").attr("style", "display:none");
     habilitarBotones2(true);
-    getCod();
+    getCodDet();
     window.scroll(0, -100);
 };
 
