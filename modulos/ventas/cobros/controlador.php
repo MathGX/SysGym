@@ -27,6 +27,7 @@ if (isset($_POST['operacion_cab'])) {
         {$_POST['emp_cod']},
         {$_POST['usu_cod']},
         {$_POST['apcier_cod']},
+        {$_POST['tipcomp_cod']},
         {$_POST['operacion_cab']}
     );";
 

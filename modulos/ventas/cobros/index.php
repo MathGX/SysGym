@@ -82,7 +82,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="tipcomp_cod" value="5">
+                                            <input type="hidden" id="tipcomp_cod" value="5">
                                             <input type="text" id="cobr_cod" class="form-control" disabled>
                                             <label class="form-label">Cobro Nro.</label>
                                         </div>
@@ -184,7 +184,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-12 tbldet" style="display: ;">
+                <div class="col-lg-12 tbldet" style="display:none;">
                     <div class="card">
                     <!-- formulario de detalles de COBROS -->
                         <div class="header bg-indigo">
@@ -360,7 +360,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-6 tbltarj" style="display: ;">
+                <div class="col-lg-6 tbltarj" style="display:none;">
                     <div class="card">
                     <!-- formulario de COBRO TARJETA -->
                         <div class="header bg-indigo">
@@ -454,7 +454,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-6 tblcheq" style="display: ;">
+                <div class="col-lg-6 tblcheq" style="display:none;">
                     <div class="card">
                     <!-- formulario de COBRO CHEQUE-->
                         <div class="header bg-indigo">
