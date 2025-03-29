@@ -277,13 +277,10 @@ const cuotaNro = () => {
 }
 
 let limpiarDet = () =>{
-    $(".tbl input").each(function(){
+    $(".tbldet input").each(function(){
         $(this).val('');
     });
-    $(".tbl .header .foc").each(function() {
-        $(this).attr("class", "form-line foc")
-    });
-    $(".tbl .body .foc").each(function() {
+    $(".tbldet .foc").each(function() {
         $(this).attr("class","form-line foc" )
     });
     $(".tbltarj input").each(function() {
@@ -321,7 +318,7 @@ function grabarCheque() {
         method: "POST",
         url: "controlaCheqTarj.php",
         data: {
-            cobrcheq_cod: $("#cobrcheq_cod").val(),       
+            cobrcheq_cod: $("#cobrcheq_cod").val(),
             cobrcheq_num: $("#cobrcheq_num").val(),
             cobrcheq_monto: $("#cobrcheq_monto").val(),
             cobrcheq_tipcheq: $("#cobrcheq_tipcheq").val(),
@@ -341,7 +338,7 @@ function grabarTarjeta() {
         method: "POST",
         url: "controlaCheqTarj.php",
         data: {
-            cobrtarj_cod: $("#cobrtarj_cod").val(),       
+            cobrtarj_cod: $("#cobrtarj_cod").val(),
             cobrtarj_num: $("#cobrtarj_num").val(),
             cobrtarj_monto: $("#cobrtarj_monto").val(),
             cobrtarj_tiptarj: $("#cobrtarj_tiptarj").val(),
@@ -351,6 +348,8 @@ function grabarTarjeta() {
             martarj_cod: $("#martarj_cod").val(),
             ent_cod: $("#ent_cod_tarj").val(),
             entahd_cod: $("#entahd_cod").val(),
+            cobrtarj_transaccion: $("#cobrtarj_transaccion").val(),
+            redpag_cod: $("#redpag_cod").val(),
             operacion_det: $("#operacion_det").val(),
             forcob_cod: $("#forcob_cod").val()
         }
@@ -362,16 +361,17 @@ function grabar2() {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            ven_cod: $("#ven_cod").val(),       
+            ven_cod: $("#ven_cod").val(),
             cobr_cod: $("#cobr_cod").val(),
             cobrdet_cod: $("#cobrdet_cod").val(),
             cobrdet_monto: $("#cobrdet_monto").val(),
             cobrdet_nrocuota: $("#cobrdet_nrocuota").val(),
-            forcob_cod: $("#forcob_cod").val(),       
-            cobrtarj_num: $("#cobrtarj_num").val(),
-            entahd_cod: $("#entahd_cod").val(),       
-            cobrcheq_num: $("#cobrcheq_num").val(),
-            ent_cod: $("#ent_cod").val(),
+            forcob_cod: $("#forcob_cod").val(),
+            cobrcheq_num: $("#cobrcheq_num").val() ? $("#cobrcheq_num").val() : "----",
+            ent_cod: $("#ent_cod").val() ? $("#ent_cod").val() : 0,
+            usu_cod: $("#usu_cod").val(),
+            cobrtarj_transaccion: $("#cobrtarj_transaccion").val() ? $("#cobrtarj_transaccion").val() : "-----",
+            redpag_cod: $("#redpag_cod").val() ? $("#redpag_cod").val() : 0,
             operacion_det: $("#operacion_det").val(),
             cobrcheq_monto: $("#cobrcheq_monto").val(),
             cobrtarj_monto: $("#cobrtarj_monto").val(),
@@ -533,6 +533,10 @@ let controlVacio2 = () => {
             condicion = "i";
         } else if ($("#martarj_descri").val() == "") {
             condicion = "i";
+        } else if ($("#redpag_descri").val() == "") {
+            condicion = "i";
+        } else if ($("#cobrtarj_transaccion").val() == "") {
+            condicion = "i";
         }
     } else if ($("#forcob_cod").val() == "1") {
         if ($("#cobrcheq_cod").val() == "") {
@@ -591,24 +595,12 @@ let listar2 = () => {
             let tabla = "";
             for (objeto of respuesta) {;
                 tabla += "<tr onclick='seleccionarFila2(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>";
-                        tabla += objeto.ven_cod;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.ven_nrofac;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.cliente;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.cobrdet_nrocuota;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.cobrdet_monto;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.forcob_descri;
-                    tabla += "</td>";
+                    tabla += "<td>"+ objeto.ven_cod +"</td>";
+                    tabla += "<td>"+ objeto.ven_nrofac +"</td>";
+                    tabla += "<td>"+ objeto.cliente +"</td>";
+                    tabla += "<td>"+ objeto.cobrdet_nrocuota +"</td>";
+                    tabla += "<td>"+ objeto.cobrdet_monto +"</td>";
+                    tabla += "<td>"+ objeto.forcob_descri +"</td>";
                 tabla += "</tr>";
             }
             $("#grilla_det").html(tabla);
@@ -639,24 +631,12 @@ let listar = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>";
-                        tabla += objeto.cobr_cod;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.cobr_fecha;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.usu_login;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.suc_descri;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.caj_descri;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.cobr_estado;
-                    tabla += "</td>";
+                    tabla += "<td>"+ objeto.cobr_cod +"</td>";
+                    tabla += "<td>"+ objeto.cobr_fecha +"</td>";
+                    tabla += "<td>"+ objeto.usu_login +"</td>";
+                    tabla += "<td>"+ objeto.suc_descri +"</td>";
+                    tabla += "<td>"+ objeto.caj_descri +"</td>";
+                    tabla += "<td>"+ objeto.cobr_estado +"</td>";
                 tabla += "</tr>";
             }
             $("#grilla_cab").html(tabla);
@@ -669,24 +649,42 @@ let listar = () => {
 
 listar();
 
-let formaCobro = () => {
-    if ($("#forcob_cod").val() == "1") {
-        $(".tbl").attr("class", "col-lg-6 tbl");
-        $(".tblcheq").attr("style", "display: block");
-        $(".tbltarj").attr("style", "display: none");
+//funcion para seleccionar la forma de cobro y mostrar los botones y formularios correspondientes
+let setForcobCod = (cod) => {
+    $("#forcob_cod").val(cod); // Establece el valor del input hidden según el botón seleccionado
+    if (cod == 1) {
         $(".abono").attr("style", "display: none");
-    } else if ($("#forcob_cod").val() == "3") {
-        $(".tbl").attr("class", "col-lg-6 tbl");
-        $(".tbltarj").attr("style", "display: block");
-        $(".tblcheq").attr("style", "display: none");
-        $(".abono").attr("style", "display: none");
-    } else {
-        $(".tbl").attr("class", "col-lg-12 tbl");
-        $(".abono").attr("style", "display: block");
+        $(".tblcheq").attr("style", "");
+        $(".tbltarj").attr("style", "display: none");
+        $(".abono input").each(function() {
+            $(this).val("")
+        });
+        $(".tbltarj input").each(function() {
+            $(this).val("")
+        });
+    } else if (cod == 2) {
+        $(".abono").attr("style", "");
         $(".tbltarj").attr("style", "display: none");
         $(".tblcheq").attr("style", "display: none");
+        $(".tbltarj input").each(function() {
+            $(this).val("")
+        });
+        $(".tblcheq input").each(function() {
+            $(this).val("")
+        });
+    } else if (cod == 3) {
+        $(".abono").attr("style", "display: none");
+        $(".tblcheq").attr("style", "display: none");
+        $(".tbltarj").attr("style", "");
+        $(".abono input").each(function() {
+            $(this).val("")
+        });
+        $(".tblcheq input").each(function() {
+            $(this).val("")
+        });
     }
 }
+
 
 /*---------------------------------------------------- AUTOCOMPLETADOS ----------------------------------------------------*/
 
@@ -696,7 +694,6 @@ function getEntAd() {
         method: "POST",
         url: "/SysGym/modulos/ventas/cobros/listas/listaEntAd.php",
         data: {
-            ent_cod: $("#ent_cod_tarj").val(),
             ent_razonsocial_tarj:$("#ent_razonsocial_tarj").val()
         }
         //en base al JSON traído desde el listaEntAd arrojamos un resultado
@@ -705,8 +702,8 @@ function getEntAd() {
         let fila = "";
         //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
         if(lista.true == true){
-            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
-        }else{    
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>";
+        }else{
             $.each(lista,function(i, item) {
                 fila += "<li class='list-group-item' onclick='seleccionEntAd("+JSON.stringify(item)+")'>"+item.ent_razonsocial_tarj+" - "+item.martarj_descri+"</li>";
             });
@@ -736,7 +733,6 @@ function getEntidad() {
         method: "POST",
         url: "/SysGym/modulos/ventas/cobros/listas/listaEntidad.php",
         data: {
-            ent_cod:$("#ent_cod").val(),
             ent_razonsocial:$("#ent_razonsocial").val()
         }
         //en base al JSON traído desde el listaEntidad arrojamos un resultado
@@ -745,8 +741,8 @@ function getEntidad() {
         let fila = "";
         //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
         if(lista.true == true){
-            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
-        }else{    
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>";
+        }else{
             $.each(lista,function(i, item) {
                 fila += "<li class='list-group-item' onclick='seleccionEntidad("+JSON.stringify(item)+")'>"+item.ent_razonsocial+"</li>";
             });
@@ -777,57 +773,95 @@ function getForcob() {
         method: "POST",
         url: "/SysGym/modulos/ventas/cobros/listas/listaForcob.php",
         data: {
-            ven_cod: $("#ven_cod").val(),
-            cobr_cod:$("#cobr_cod").val(),
-            forcob_cod:$("#forcob_cod").val(),
-            forcob_descri:$("#forcob_descri").val()
+            ven_cod: $("#ven_cod").val() ? $("#ven_cod").val() : 0,
+            cobr_cod: $("#cobr_cod").val() ? $("#cobr_cod").val() : 0
         }
-        //en base al JSON traído desde el listaForcob arrojamos un resultado
+    }).done(function(lista) {
+        if (lista.true === true) {
+            // Muestra un mensaje de error si no hay datos
+            swal("ERROR", lista.fila, "error");
+        } else {
+            // Limpia todos los botones primero
+            $(".icon-button-demo button").hide();
+            // Muestra los botones según el valor de forcob_cod
+            $.each(lista, function(i, item) {
+                $(".formaDeCobro").attr("style", "");
+                if (item.forcob_descri == 'CHEQUE') {
+                    $("#btnCheque").show().attr("onclick", "setForcobCod("+item.forcob_cod+")");
+                } else if (item.forcob_descri == 'EFECTIVO') {
+                    $("#btnEfectivo").show().attr("onclick", "setForcobCod("+item.forcob_cod+")");
+                } else if (item.forcob_descri == 'TARJETA') {
+                    $("#btnTarjeta").show().attr("onclick", "setForcobCod("+item.forcob_cod+")");
+                }
+            });
+        }
+    }).fail(function(a, b, c) {
+        swal("ERROR", c, "error");
+    }); 
+}
+
+//capturamos los datos de la tabla red_pago emisora en un JSON a través de POST para listarlo
+function getRedPago() {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/modulos/ventas/cobros/listas/listaRedPago.php",
+        data: {
+            redpag_descri:$("#redpag_descri").val()
+        }
+        //en base al JSON traído desde el listaRedPago arrojamos un resultado
     }).done(function(lista) {
         //el JSON de respuesta es mostrado en una lista
-        var fila = "";
+        let fila = "";
         //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
         if(lista.true == true){
-            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
-        }else{    
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>";
+        }else{
             $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionForcob("+JSON.stringify(item)+")'>"+item.forcob_descri+"</li>";
+                fila += "<li class='list-group-item' onclick='seleccionRedPago("+JSON.stringify(item)+")'>"+item.redpag_descri+"</li>";
             });
         }
         //enviamos a los input correspondientes de el conjunto de filas
-        $("#ulForcob").html(fila);
-        //le damos un estilo a la lista de Forcob
-        $("#listaForcob").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+        $("#ulRedPago").html(fila);
+        //le damos un estilo a la lista de RedPago
+        $("#listaRedPago").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");
     })
 }
 
-//seleccionamos la forma de cobro por su key y enviamos el dato al input correspondiente
-function seleccionForcob (datos) {
+//seleccionamos el RedPago por su key y enviamos el dato al input correspondiente
+function seleccionRedPago (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
-    $("#ulForcob").html();
-    $("#listaForcob").attr("style", "display:none;");
+    $("#ulRedPago").html();
+    $("#listaRedPago").attr("style", "display:none;");
     $(".foc").attr("class", "form-line foc focused");
-    formaCobro();
+
 }
 
 //funcion para seleccionar TipCheq
 function getTipCheq () {
     $.ajax({
         //Enviamos datos para poder filtrar
-        method: "GET",
+        method: "POST",
         url: "/SysGym/modulos/ventas/cobros/listas/listaTipCheq.php",
+        data: {
+            cobrcheq_tipcheq: $("#cobrcheq_tipcheq").val()
+        }
     }) //Cargamos la lista
         .done(function (lista) {
             let fila = "";
-            //recorremos el array de objetos
-            $.each(lista, function (i, objeto) {
-                fila +=
-                    "<li class='list-group-item' onclick='seleccionTipCheq(" + JSON.stringify(objeto) + ")'>" + objeto.cobrcheq_tipcheq + "</li>";
-            });
+            //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+            if(lista.true == true){
+                fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+            } else {
+                //recorremos el array de objetos
+                $.each(lista, function (i, objeto) {
+                    fila +=
+                        "<li class='list-group-item' onclick='seleccionTipCheq(" + JSON.stringify(objeto) + ")'>" + objeto.cobrcheq_tipcheq + "</li>";
+                });
+            }
             //cargamos la lista
             $("#ulTipCheq").html(fila);
             //hacemos visible la lista
@@ -854,16 +888,24 @@ function seleccionTipCheq (datos) {
 function getTipTarj () {
     $.ajax({
         //Enviamos datos para poder filtrar
-        method: "GET",
+        method: "POST",
         url: "/SysGym/modulos/ventas/cobros/listas/listaTipTarj.php",
+        data: {
+            cobrtarj_tiptarj: $("#cobrtarj_tiptarj").val()
+        }
     }) //Cargamos la lista
         .done(function (lista) {
             let fila = "";
-            //recorremos el array de objetos
-            $.each(lista, function (i, objeto) {
-                fila +=
-                    "<li class='list-group-item' onclick='seleccionTipTarj(" + JSON.stringify(objeto) + ")'>" + objeto.cobrtarj_tiptarj + "</li>";
-            });
+            //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+            if(lista.true == true){
+                fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+            } else {
+                //recorremos el array de objetos
+                $.each(lista, function (i, objeto) {
+                    fila +=
+                        "<li class='list-group-item' onclick='seleccionTipTarj(" + JSON.stringify(objeto) + ")'>" + objeto.cobrtarj_tiptarj + "</li>";
+                });
+            }
             //cargamos la lista
             $("#ulTipTarj").html(fila);
             //hacemos visible la lista
@@ -901,15 +943,15 @@ function getVentas() {
         let fila = "";
         //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
         if(lista.true == true){
-            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
-        }else{    
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>";
+        }else{
             $.each(lista,function(i, item) {
                 fila += "<li class='list-group-item' onclick='seleccionVentas("+JSON.stringify(item)+")'>Venta: "+item.ven_cod+" - Factura: "+item.ven_nrofac+"</li>";
             });
         }
         //enviamos a los input correspondientes de el conjunto de filas
         $("#ulVentas").html(fila);
-        //le damos un estilo a la lista de Entidad Adherida
+        //le damos un estilo a la lista de ventas
         $("#listaVentas").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");

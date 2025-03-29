@@ -67,7 +67,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 <?php }?>
 
-                <div class="col-lg-12">
+                <div class="col-sm-12">
                     <!-- formulario de COBROS cabecera -->
                     <div class="card">
                         <div class="header bg-indigo">
@@ -184,7 +184,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-12 tbldet" style="display:none;">
+                <div class="col-sm-12 tbldet" style="display:none;">
                     <div class="card">
                     <!-- formulario de detalles de COBROS -->
                         <div class="header bg-indigo">
@@ -193,15 +193,17 @@ $u = $_SESSION['usuarios'];
                             </h2>
                         </div>
                         <div class="body">
+                            <div class="row clearfix">
 
-                            <input type="hidden" id="operacion_det" value="0">
-                            <input type="hidden" id="cuencob_montotal" value="0">
+                                <input type="hidden" id="operacion_det" value="0">
+                                <input type="hidden" id="cobrdet_cod" value="0">
+                                <input type="hidden" id="cuencob_montotal" value="0">
+                                <input type="hidden" id="ven_cod" value="0">
 
-                            <div class="row clearfix" >
-                                <div class="col-sm-6">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getVentas()">
+                                            <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getVentas()" onchange="getForcob()">
                                             <label class="form-label">C.I.</label>
                                             <div id="listaVentas" style="display: none;">
                                                 <ul class="list-group" id="ulVentas" style="height:60px; overflow:auto;"></ul>
@@ -210,7 +212,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" class="form-control" id="cuencob_saldo" disabled>
@@ -219,7 +221,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" id="cuencob_cuotas" class="form-control" disabled>
@@ -228,23 +230,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-12 bg-indigo"></div>
-                                
-                            </div>
-                            
-                            <input type="hidden" id="cobrdet_cod" class="form-control" value="0">
-                            <div class="row clearfix">
-
-                                <div class="col-sm-2">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc">
-                                            <input type="text" id="ven_cod" class="form-control" disabled>
-                                            <label class="form-label">Venta Nro.</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" id="ven_nrofac" class="form-control" disabled>
@@ -253,7 +239,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-4">
+                                <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" class="form-control" id="cliente" disabled>
@@ -289,20 +275,41 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <!-- <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="forcob_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="forcob_descri" disabled onkeyup="getForcob()">
+                                            <input type="text" class="form-control disabledno" id="forcob_descri" disabled readonly onclick="getForcob()">
                                             <label class="form-label">Forma de cobro</label>
                                             <div id="listaForcob" style="display: none;">
                                                 <ul class="list-group" id="ulForcob" style="height:60px; overflow:auto"></ul>
                                             </div>
                                         </div>
                                     </div>
+                                </div> -->
+
+                                
+                                <div class="col-sm-2 formaDeCobro" style="display:none;">
+                                    <div class="form-group form-float">
+                                        <div class="form-line" style="border:none; position:absolute; top:-20px; left:2; font-size:12px; transition:0.2s ease all;">
+                                            <input type="hidden" id="forcob_cod" value="0">
+                                            <label class="form-label">Forma de cobro</label>
+                                        </div>
+                                        <div class="icon-button-demo" style="margin-top: 10px;">
+                                            <button type="button" id="btnEfectivo" class="btn bg-teal btn-circle waves-effect waves-circle waves-float" style="display:none; e">
+                                                <i class="material-icons">attach_money</i>
+                                            </button>
+                                            <button type="button" id="btnTarjeta" class="btn bg-teal btn-circle waves-effect waves-circle waves-float" style="display:none;">
+                                                <i class="material-icons">credit_card</i>
+                                            </button>
+                                            <button type="button" id="btnCheque" class="btn bg-teal btn-circle waves-effect waves-circle waves-float" style="display:none;">
+                                                <i class="material-icons">local_atm</i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="col-sm-3 abono">
+                                <div class="col-sm-4 abono" style="display:none;">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="number" id="cobrdet_monto" class="form-control disabledno" disabled>
@@ -360,7 +367,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-6 tbltarj" style="display:none;">
+                <div class="col-sm-12 tbltarj" style="display:none;">
                     <div class="card">
                     <!-- formulario de COBRO TARJETA -->
                         <div class="header bg-indigo">
@@ -375,7 +382,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" class="form-control disabledno" id="cobrtarj_tiptarj" disabled onclick="getTipTarj()">
+                                            <input type="text" class="form-control disabledno" id="cobrtarj_tiptarj" disabled onkeyup="getTipTarj()">
                                             <label class="form-label">Tip. Tarjeta</label>
                                             <div id="listaTipTarj" style="display: none;">
                                                 <ul class="list-group" id="ulTipTarj" style="height:60px; overflow:auto"></ul>
@@ -412,7 +419,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="retpag_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="redpag_descti" disabled onkeyup="getRedPago()">
+                                            <input type="text" class="form-control disabledno" id="redpag_descri" disabled onkeyup="getRedPago()">
                                             <label class="form-label">Red de pago</label>
                                             <div id="listaRedPago" style="display: none;">
                                                 <ul class="list-group" id="ulRedPago" style="height:60px; overflow:auto"></ul>
@@ -454,7 +461,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-6 tblcheq" style="display:none;">
+                <div class="col-sm-12 tblcheq" style="display:none;">
                     <div class="card">
                     <!-- formulario de COBRO CHEQUE-->
                         <div class="header bg-indigo">
@@ -487,7 +494,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" class="form-control disabledno" id="cobrcheq_tipcheq" disabled onclick="getTipCheq()">
+                                            <input type="text" class="form-control disabledno" id="cobrcheq_tipcheq" disabled onkeyup="getTipCheq()">
                                             <label class="form-label">Tipo Cheque</label>
                                             <div id="listaTipCheq" style="display: none;">
                                                 <ul class="list-group" id="ulTipCheq" style="height:60px; overflow:auto"></ul>
@@ -524,7 +531,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-12 tblgrcab">
+                <div class="col-sm-12 tblgrcab">
                     <!-- grilla del formulario DE COBROS-->
                     <div class="card">
                         <div class="header bg-indigo">

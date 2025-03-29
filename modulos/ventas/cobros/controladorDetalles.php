@@ -11,62 +11,42 @@ $conexion = $objConexion->getConexion();
 //Consultamos si existe la variable operacion
 if (isset($_POST['operacion_det'])) {
 
+    $monto = (float)$_POST['cobrdet_monto'] + (float)$_POST['cobrcheq_monto'] + (float)$_POST['cobrtarj_monto'];
+
+    $cobrdet_monto = str_replace(",", ".", $monto);
+
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
-    if ($_POST['forcob_cod'] == '1') {
-        $sql = "select sp_cobros_det(
-            {$_POST['ven_cod']},
-            {$_POST['cobr_cod']},
-            {$_POST['cobrdet_cod']},
-            {$_POST['cobrcheq_monto']},
-            {$_POST['cobrdet_nrocuota']},
-            {$_POST['forcob_cod']},
-            '{$_POST['cobrcheq_num']}',
-            {$_POST['ent_cod']},
-            '{$_POST['cobrcheq_num']}',
-            {$_POST['ent_cod']},
-            {$_POST['operacion_det']}
-        );";
-    } else if ($_POST['forcob_cod'] == '3'){
-        $sql = "select sp_cobros_det(
-            {$_POST['ven_cod']},
-            {$_POST['cobr_cod']},
-            {$_POST['cobrdet_cod']},
-            {$_POST['cobrtarj_monto']},
-            {$_POST['cobrdet_nrocuota']},
-            {$_POST['forcob_cod']},
-            '{$_POST['cobrtarj_num']}',
-            {$_POST['entahd_cod']},
-            '{$_POST['cobrtarj_num']}',
-            {$_POST['entahd_cod']},
-            {$_POST['operacion_det']}
-        );";
-    } else {
-        $sql = "select sp_cobros_det(
-            {$_POST['ven_cod']},
-            {$_POST['cobr_cod']},
-            {$_POST['cobrdet_cod']},
-            {$_POST['cobrdet_monto']},
-            {$_POST['cobrdet_nrocuota']},
-            {$_POST['forcob_cod']},
-            '11111',
-            1111,
-            '11111',
-            1111,
-            {$_POST['operacion_det']}
-        );";
-    }
+    $sql = "select sp_cobros_det(
+        {$_POST['ven_cod']},
+        {$_POST['cobr_cod']},
+        {$_POST['cobrdet_cod']},
+        $cobrdet_monto,
+        {$_POST['cobrdet_nrocuota']},
+        {$_POST['forcob_cod']},
+        coalesce('{$_POST['cobrcheq_num']}','0'),
+        {$_POST['ent_cod']},
+        {$_POST['usu_cod']},
+        coalesce('{$_POST['cobrtarj_transaccion']}','0'),
+        {$_POST['redpag_cod']},
+        {$_POST['operacion_det']}
+    );";
 
     pg_query($conexion, $sql);
         $error = pg_last_error($conexion);
         //Si ocurre un error lo capturamos y lo enviamos al front-end
         if (strpos($error, "tarjeta") !== false) {
             $response = array(
-                "mensaje" => "EN ESTE REGISTRO YA SE COBRÓ CON ESTA TARJETA",
+                "mensaje" => "EL NRO DE TRANSACCION YA EXISTE PARA LA RED DE PAGO SELECCIONADA",
                 "tipo" => "error"
             );
         } else if (strpos($error, "cheque") !== false) {
             $response = array(
-                "mensaje" => "EL N° DE CHEQUE YA EXISTE",
+                "mensaje" => "EL N° DE CHEQUE YA FUE REGISTRADO EN OTRA OPERACION",
+                "tipo" => "error"
+            );
+        } else if (strpos($error, "efectivo") !== false) {
+            $response = array(
+                "mensaje" => "YA FUE REALIZADO UN COBRO EN EFECTIVO PARA ESTA TRANSACCION",
                 "tipo" => "error"
             );
         } else {

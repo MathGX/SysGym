@@ -14,13 +14,11 @@ $conexion = $objConexion->getConexion();
 if ((isset($_POST['operacion_det']))) {
 
     if ($_POST['forcob_cod'] == '1') {
-        
-        $tipcheq = $_POST['cobrcheq_tipcheq'];
+
         //ESCAPAMOS LOS DATOS CAPTURADOS
-        $cobrcheq_tipcheq = pg_escape_string($conexion, $tipcheq);
+        $cobrcheq_tipcheq = pg_escape_string($conexion,  $_POST['cobrcheq_tipcheq']);
 
         //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
-
         $sql = "select sp_cobro_cheque(
             {$_POST['cobrcheq_cod']},
             '{$_POST['cobrcheq_num']}',
@@ -34,22 +32,12 @@ if ((isset($_POST['operacion_det']))) {
             {$_POST['operacion_det']}
         );";
 
-        pg_query($conexion, $sql);
-    
-        $response = array(
-            "mensaje" => pg_last_notice($conexion),
-            "tipo" => "success"
-        );
-
     } else if ($_POST['forcob_cod'] == '3') {
-        
-        $tiptarj = $_POST['cobrtarj_tiptarj'];
 
         //ESCAPAMOS LOS DATOS CAPTURADOS
-        $cobrtarj_tiptarj = pg_escape_string($conexion, $tiptarj);
+        $cobrtarj_tiptarj = pg_escape_string($conexion, $_POST['cobrtarj_tiptarj']);
     
         //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
-    
         $sql = "select sp_cobro_tarjeta(
             {$_POST['cobrtarj_cod']},
             '{$_POST['cobrtarj_num']}',
@@ -61,27 +49,24 @@ if ((isset($_POST['operacion_det']))) {
             {$_POST['martarj_cod']},
             {$_POST['ent_cod']},
             {$_POST['entahd_cod']},
+            '{$_POST['cobrtarj_transaccion']}',
+            {$_POST['redpag_cod']},
             {$_POST['operacion_det']}
         );";
-    
-        pg_query($conexion, $sql);
-    
-        $response = array(
-            "mensaje" => pg_last_notice($conexion),
-            "tipo" => "success"
-        );
     }
+    
+    pg_query($conexion, $sql);
 
     echo json_encode($response);
     
 } else {
-    //Consultamos si existe la variable operacion
+    
+    //Si el post no recibe la operacion realizamos una consulta para generar el codigo de cobro detalle
+    $cobrDetCod = "select coalesce (max(cobrdet_cod),0)+1 as cobrdet_cod from cobros_det;";
 
-    $sql = "select coalesce (max(cobrdet_cod),0)+1 as cobrdet_cod from cobros_det;";
-
-    $resultado = pg_query($conexion, $sql);
-    $datos = pg_fetch_assoc($resultado);
-    echo json_encode($datos);
+    $codigo = pg_query($conexion, $cobrDetCod);
+    $codigoCobrDet = pg_fetch_assoc($codigo);
+    echo json_encode($codigoCobrDet);
 }
 
 ?>

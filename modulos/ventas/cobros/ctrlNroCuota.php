@@ -49,9 +49,13 @@ if ($_POST['case'] == 1) {
         $cuencob_montotal = $_POST['cuencob_montotal'];
         $montos = ((float)$_POST['cobrcheq_monto'] + (float)$_POST['cobrtarj_monto'] + (float)$_POST['cobrdet_monto']);
         
-        //se selecciona la suma de la columna cobrdet_monto de cobros detalle
-        $sqlMonto = "select sum(cd.cobrdet_monto) as cobrdet_monto from cobros_det cd 
-        where cd.ven_cod = $ven_cod and cd.cobr_cod = $cobr_cod;";
+        //se selecciona la suma del monto de cobros detalle y el saldo de la cuenta por cobrar
+        $sqlMonto = "select 
+            sum(cd.cobrdet_monto) as cobrdet_monto,
+            (select cuencob_saldo from cuentas_cobrar where ven_cod = $ven_cod) cuencob_saldo
+        from cobros_det cd 
+        where cd.ven_cod = $ven_cod 
+            and cd.cobr_cod = $cobr_cod;";
         
         //se convierte en array asociativo lo obtenido
         $respuesta = pg_query($conexion, $sqlMonto);
@@ -59,14 +63,7 @@ if ($_POST['case'] == 1) {
     
         //a la suma de de la columna cobrdet_monto se le suma el monto según la forma de cobro
         $montoTotal = ((float)$obtenido['cobrdet_monto'] + $montos);
-        
-        //se selecciona el saldo de la cuenta por cobrar
-        $sqlSaldo = "select cuencob_saldo from cuentas_cobrar 
-        where ven_cod = $ven_cod";
-        
-        //se convierte en array asociativo lo obtenido
-        $restante = pg_query($conexion, $sqlSaldo);
-        $saldo = pg_fetch_assoc($restante);
+        $saldo = (float)$obtenido['cuencob_saldo'];
 
         /*si la sumatoria de los montos de cobro detalle son mayores a lo que tienen que ser
         da un mensaje de error, si no, da un mensaje correcto*/
@@ -75,7 +72,7 @@ if ($_POST['case'] == 1) {
                 "mensaje" => "EL MONTO EXCEDE EL VALOR DE LA CUOTA",
                 "tipo" => "error"
             );
-        }else if ($montos > $saldo['cuencob_saldo']) {
+        }else if ($montos > $saldo) {
             $response = array(
                 "mensaje" => "EL MONTO EXCEDE EL VALOR DEL SALDO",
                 "tipo" => "error"
@@ -86,19 +83,8 @@ if ($_POST['case'] == 1) {
                 "tipo" => "success"
             );
 
-            //se selecciona el total de la deuda ya cobrado
-            $sqlTotal = "select sum(cd.cobrdet_monto) as cobrdet_monto from cobros_det cd 
-            where cd.ven_cod = $ven_cod;";
-            
-            //se convierte en array asociativo lo obtenido
-            $result = pg_query($conexion, $sqlTotal);
-            $total = pg_fetch_assoc($result);
-
-            //se 
-            $totalAbonado = (float)$total['cobrdet_monto'] + $montos;
-
             //la sumatoria de los montos de cobro detalle son iguales al total de la deuda, se actualizan estados
-            if ($totalAbonado == $cuencob_montotal) {
+            if ($montoTotal == $cuencob_montotal) {
                 $sqlEstado = "update cuentas_cobrar 
                 set cuencob_estado = 'CANCELADO'
                 where ven_cod = $ven_cod;

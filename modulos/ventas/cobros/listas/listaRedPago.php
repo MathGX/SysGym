@@ -12,39 +12,31 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$ven_cod = $_POST['ven_cod'];
-$cobr_cod = $_POST['cobr_cod'];
+$redpag_descri = $_POST['redpag_descri'];
 
-$sql = "select
-        fc.forcob_cod,
-        fc.forcob_descri
-        from forma_cobro fc
-        where fc.forcob_estado like 'ACTIVO'
-        and (not exists (
-                select 1
-                from cobros_det cd
-                where cd.ven_cod = coalesce($ven_cod, 0)
-                and cd.cobr_cod = coalesce($cobr_cod,0)
-                and cd.forcob_cod = 2
-        ) or fc.forcob_cod != 2)
-        order by fc.forcob_descri;";
-
+//se realiza la consulta SQL a la base de datos con el filtro
+$sql = "select 
+	rp.redpag_cod,
+	rp.redpag_descri 
+from red_pago rp 
+where rp.redpag_descri ilike '%$redpag_descri%' and rp.redpag_estado = 'ACTIVO';";
+        
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);
 //convertimos el resultado en un array asociativo
 $datos = pg_fetch_all($resultado);
-
 //se consulta si el array asociativo está vacío, de ser así se envía un mensaje al front-end
 if (empty($datos)) {
         echo json_encode(
                 array(
-                        "fila" => "No se encuentran formas de cobros registradas",
+                        "fila" => "No se encuentra el dato",
                         "true" => true
                 )
         );
-        // si datos no está vacío convertimos el array asociativo en json
+        // si datos no está vacío convertimoas el array asociativo en json
 } else {
         echo json_encode($datos);
 }
+
 
 ?>
