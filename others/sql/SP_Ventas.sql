@@ -1574,7 +1574,7 @@ from ventas_cab vc
 		join personas p on p.per_cod = c.per_cod
 	join venta_pedido vp on vp.ven_cod = vc.ven_cod
 		join pedido_venta_cab pvc on pvc.pedven_cod = vp.pedven_cod
-where vc.ven_estado = 'ACTIVO'
+where vc.ven_estado != 'ANULADO'
 order by vc.ven_cod;
 
 --v_venta_cab2 (VENTAS CABECERA 2)
@@ -1596,7 +1596,7 @@ from ventas_cab vc
 		join personas p on p.per_cod = c.per_cod
 	join presupuesto_venta pv on pv.ven_cod = vc.ven_cod
 		join presupuesto_prep_cab ppc on ppc.prpr_cod = pv.prpr_cod
-where vc.ven_estado = 'ACTIVO'
+where vc.ven_estado != 'ANULADO'
 order by vc.ven_cod;
 
 --v_venta_det (VENTAS DETALLE)

@@ -151,26 +151,20 @@ $datos = pg_fetch_all($resultado);
             <div class="cabecera">
                 <table>
                     <tr>
-                        <td class="subrayar"  style="width:8.5%">Proveedor: </td>
-                        <td> <?php echo $cabecera['pro_razonsocial'];?> </td>
+                        <td><span class="subrayar">Proveedor:</span></td>
+                        <td><?php echo $cabecera['pro_razonsocial']; ?></td>
+                        <td><span class="subrayar">Fecha de emisión:</span></td>
+                        <td><?php echo $cabecera['ordcom_fecha']; ?></td>
                     </tr>
-                </table>
-                <br>
-                <table>
                     <tr>
-                        <td class="subrayar" style="width:10%;" colspan="1"> Fecha de emisión: </td>
-                        <td style="width:12%;"><?php echo $cabecera['ordcom_fecha'];?> </td>
-                        <td class="subrayar" style="width:10%;">Condición de Pago: </td>
-                        <td> <?php echo $cabecera['ordcom_condicionpago'];?> </td>
+                        <td><span class="subrayar">Condición de Pago:</span></td>
+                        <td><?php echo $cabecera['ordcom_condicionpago']; ?></td>
+                        <td><span class="subrayar">Cantidad de Cuotas:</span></td>
+                        <td><?php echo $cabecera['ordcom_cuota']; ?></td>
                     </tr>
-                </table>
-                <br>
-                <table>
                     <tr>
-                        <td class="subrayar" style="width:9%;"> Cantidad de Cuotas: </td>
-                        <td style="width:5%;"><?php echo $cabecera['ordcom_cuota'];?> </td>
-                        <td class="subrayar" style="width:9%;"> Monto de Cuota: </td>
-                        <td> <?php echo number_format($cabecera['ordcom_montocuota'], 0, ',','.');?> </td>
+                        <td><span class="subrayar">Monto de Cuota:</span></td>
+                        <td colspan="3"><?php echo number_format($cabecera['ordcom_montocuota'], 0, ',', '.'); ?></td>
                     </tr>
                 </table>
             </div>

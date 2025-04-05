@@ -149,14 +149,14 @@ $datos = pg_fetch_all($resultado);
                     <tr class = "cuerpo">
                         <td>
                             <?php if (isset( $detalle['cliente'])) { 
-                                echo number_format($detalle['cliente']); 
+                                echo ($detalle['cliente']); 
                             } else {
                                 echo '-';
                             }?>
                         </td>
                         <td>
                             <?php if (isset( $detalle['ven_nrofac'])) { 
-                                echo number_format($detalle['ven_nrofac ']); 
+                                echo ($detalle['ven_nrofac']); 
                             } else {
                                 echo '-';
                             }?>

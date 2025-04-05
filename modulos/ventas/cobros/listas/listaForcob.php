@@ -12,7 +12,6 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$ven_cod = $_POST['ven_cod'];
 $cobr_cod = $_POST['cobr_cod'];
 
 $sql = "select
@@ -23,8 +22,7 @@ $sql = "select
         and (not exists (
                 select 1
                 from cobros_det cd
-                where cd.ven_cod = coalesce($ven_cod, 0)
-                and cd.cobr_cod = coalesce($cobr_cod,0)
+                where cd.cobr_cod = coalesce($cobr_cod,0)
                 and cd.forcob_cod = 2
         ) or fc.forcob_cod != 2)
         order by fc.forcob_descri;";

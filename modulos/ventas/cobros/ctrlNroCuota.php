@@ -46,7 +46,7 @@ if ($_POST['case'] == 1) {
         $ven_cod = $_POST['ven_cod'];
         $cobr_cod = $_POST['cobr_cod'];
         $ven_montocuota = $_POST['ven_montocuota'];
-        $cuencob_montotal = $_POST['cuencob_montotal'];
+        $cuencob_monto = $_POST['cuencob_monto'];
         $montos = ((float)$_POST['cobrcheq_monto'] + (float)$_POST['cobrtarj_monto'] + (float)$_POST['cobrdet_monto']);
         
         //se selecciona la suma del monto de cobros detalle y el saldo de la cuenta por cobrar
@@ -67,12 +67,12 @@ if ($_POST['case'] == 1) {
 
         /*si la sumatoria de los montos de cobro detalle son mayores a lo que tienen que ser
         da un mensaje de error, si no, da un mensaje correcto*/
-        if ($montoTotal > $ven_montocuota) {
+        if ($montos > $ven_montocuota) {
             $response = array(
                 "mensaje" => "EL MONTO EXCEDE EL VALOR DE LA CUOTA",
                 "tipo" => "error"
             );
-        }else if ($montos > $saldo) {
+        } else if ($montos > $saldo) {
             $response = array(
                 "mensaje" => "EL MONTO EXCEDE EL VALOR DEL SALDO",
                 "tipo" => "error"
@@ -84,7 +84,7 @@ if ($_POST['case'] == 1) {
             );
 
             //la sumatoria de los montos de cobro detalle son iguales al total de la deuda, se actualizan estados
-            if ($montoTotal == $cuencob_montotal) {
+            if ($montoTotal == $cuencob_monto) {
                 $sqlEstado = "update cuentas_cobrar 
                 set cuencob_estado = 'CANCELADO'
                 where ven_cod = $ven_cod;

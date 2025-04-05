@@ -55,9 +55,9 @@ if ((isset($_POST['operacion_det']))) {
         );";
     }
     
-    pg_query($conexion, $sql);
-
-    echo json_encode($response);
+    $cheque_tarjeta = pg_query($conexion, $sql);
+    $cheque_tarjeta_result = pg_fetch_assoc($cheque_tarjeta);
+    echo json_encode($cheque_tarjeta_result);
     
 } else {
     

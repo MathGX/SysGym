@@ -227,14 +227,14 @@ function formatoTabla() {
 }
 
 let reporteCobro = () => {
-    if ($("#notven_cod").val() == '') {
+    if ($("#cobr_cod").val() == '') {
         swal({
             title: "RESPUESTA!!",
             text: "SELECCIONE UN REGISTRO",
             type: "error",
         });
     } else {
-        window.open ("/SysGym/modulos/ventas/cobros/reporteCobro.php?notven_cod=" + $("#cobr_cod").val());
+        window.open ("/SysGym/modulos/ventas/cobros/reporteCobro.php?cobr_cod=" + $("#cobr_cod").val());
     }
 }
 
@@ -300,6 +300,8 @@ let agregar = () => {
     $(".disabledno").removeAttr("disabled");
     $(".foc").attr("class", "form-line foc focused");
     $(".grilla_det1").attr("style", "display:none");
+    $(".tblcheq").attr("style", "display:none");
+    $(".tbltarj").attr("style", "display:none");
     habilitarBotones2(true);
     getCodDet();
     window.scroll(0, -100);
@@ -364,7 +366,7 @@ function grabar2() {
             ven_cod: $("#ven_cod").val(),
             cobr_cod: $("#cobr_cod").val(),
             cobrdet_cod: $("#cobrdet_cod").val(),
-            cobrdet_monto: $("#cobrdet_monto").val(),
+            cobrdet_monto: $("#cobrdet_monto").val() ? $("#cobrdet_monto").val() : 0,
             cobrdet_nrocuota: $("#cobrdet_nrocuota").val(),
             forcob_cod: $("#forcob_cod").val(),
             cobrcheq_num: $("#cobrcheq_num").val() ? $("#cobrcheq_num").val() : "----",
@@ -373,8 +375,8 @@ function grabar2() {
             cobrtarj_transaccion: $("#cobrtarj_transaccion").val() ? $("#cobrtarj_transaccion").val() : "-----",
             redpag_cod: $("#redpag_cod").val() ? $("#redpag_cod").val() : 0,
             operacion_det: $("#operacion_det").val(),
-            cobrcheq_monto: $("#cobrcheq_monto").val(),
-            cobrtarj_monto: $("#cobrtarj_monto").val(),
+            cobrcheq_monto: $("#cobrcheq_monto").val() ? $("#cobrcheq_monto").val() : 0,
+            cobrtarj_monto: $("#cobrtarj_monto").val() ? $("#cobrtarj_monto").val() : 0,
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
 .done(function (respuesta) {
@@ -430,7 +432,7 @@ function ctrlMontoCuota() {
             cobrdet_monto: $("#cobrdet_monto").val(),
             ven_montocuota: $("#ven_montocuota").val(),
             forcob_cod: $("#forcob_cod").val(),
-            cuencob_montotal: $("#cuencob_montotal").val(),
+            cuencob_monto: $("#cuencob_monto").val(),
             operacion_det: $("#operacion_det").val(),
             case: "2"
         }
@@ -515,9 +517,7 @@ let controlVacio2 = () => {
     } else if ($("#forcob_cod").val() == "") {
         condicion = "i";
     } else if ($("#forcob_cod").val() == "3") {
-        if ($("#cobrtarj_cod").val() == "") {
-            condicion = "i";
-        } else if ($("#cobrtarj_num").val() == "") {
+        if ($("#cobrtarj_num").val() == "") {
             condicion = "i";
         } else if ($("#cobrtarj_monto").val() == "") {
             condicion = "i";
@@ -539,9 +539,7 @@ let controlVacio2 = () => {
             condicion = "i";
         }
     } else if ($("#forcob_cod").val() == "1") {
-        if ($("#cobrcheq_cod").val() == "") {
-            condicion = "i";
-        } else if ($("#cobrcheq_num").val() == "") {
+        if ($("#cobrcheq_num").val() == "") {
             condicion = "i";
         } else if ($("#cobrcheq_monto").val() == "") {
             condicion = "i";
@@ -581,6 +579,13 @@ let seleccionarFila2 = (objetoJSON) => {
         $("#" + propiedad).val(objetoJSON[propiedad]);
     });
     $(".foc").attr("class", "form-line foc focused");
+    if ($("#forcob_cod").val() == 1) {
+        $(".tblcheq").attr("style", "");
+        $(".tbltarj").attr("style", "display:none;");
+    } else if ($("#forcob_cod").val() == 3) {
+        $(".tbltarj").attr("style", "");
+        $(".tblcheq").attr("style", "display:none;");
+    }
 };
 
 //funcion listar
@@ -595,11 +600,11 @@ let listar2 = () => {
             let tabla = "";
             for (objeto of respuesta) {;
                 tabla += "<tr onclick='seleccionarFila2(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>"+ objeto.ven_cod +"</td>";
+                    tabla += "<td style='text-align:right;'>"+ objeto.ven_cod +"</td>";
                     tabla += "<td>"+ objeto.ven_nrofac +"</td>";
                     tabla += "<td>"+ objeto.cliente +"</td>";
-                    tabla += "<td>"+ objeto.cobrdet_nrocuota +"</td>";
-                    tabla += "<td>"+ objeto.cobrdet_monto +"</td>";
+                    tabla += "<td style='text-align:right;'>"+ objeto.cobrdet_nrocuota +"</td>";
+                    tabla += "<td style='text-align:right;'>"+ new Intl.NumberFormat('us-US').format(objeto.cobrdet_monto)  +"</td>";
                     tabla += "<td>"+ objeto.forcob_descri +"</td>";
                 tabla += "</tr>";
             }
@@ -620,6 +625,7 @@ let seleccionarFila = (objetoJSON) => {
     $(".focus").attr("class", "form-line focus focused");
     $(".tbldet").removeAttr("style", "display:none;");
     listar2();
+    getForcob();
 };
 
 //funcion listar

@@ -11,7 +11,17 @@ $conexion = $objConexion->getConexion();
 //Consultamos si existe la variable operacion
 if (isset($_POST['operacion_det'])) {
 
-    $monto = (float)$_POST['cobrdet_monto'] + (float)$_POST['cobrcheq_monto'] + (float)$_POST['cobrtarj_monto'];
+    switch ($_POST['forcob_cod']) {
+        case 1: 
+            $monto = (float)$_POST['cobrcheq_monto'];
+            break;
+        case 2:
+            $monto = (float)$_POST['cobrdet_monto'];
+            break;
+        case 3: 
+            $monto = (float)$_POST['cobrtarj_monto'];
+            break;
+    }
 
     $cobrdet_monto = str_replace(",", ".", $monto);
 
