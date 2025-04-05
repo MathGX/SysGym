@@ -300,8 +300,7 @@ let agregar = () => {
     $(".disabledno").removeAttr("disabled");
     $(".foc").attr("class", "form-line foc focused");
     $(".grilla_det1").attr("style", "display:none");
-    $(".tblcheq").attr("style", "display:none");
-    $(".tbltarj").attr("style", "display:none");
+    $(".abono").attr("style", "display:none");
     habilitarBotones2(true);
     getCodDet();
     window.scroll(0, -100);
