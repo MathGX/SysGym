@@ -579,13 +579,7 @@ let seleccionarFila2 = (objetoJSON) => {
         $("#" + propiedad).val(objetoJSON[propiedad]);
     });
     $(".foc").attr("class", "form-line foc focused");
-    if ($("#forcob_cod").val() == 1) {
-        $(".tblcheq").attr("style", "");
-        $(".tbltarj").attr("style", "display:none;");
-    } else if ($("#forcob_cod").val() == 3) {
-        $(".tbltarj").attr("style", "");
-        $(".tblcheq").attr("style", "display:none;");
-    }
+    $(".abono").attr("style", "");
 };
 
 //funcion listar
