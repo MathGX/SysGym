@@ -2,29 +2,22 @@
 session_start();
 $u = $_SESSION['usuarios'];
 
+//Establecemos el retorno del documento en formato json
+header("Content-type: application/json; charset=utf-8");
+
 $fechaActual = date('d-m-Y');
 
 $letras = new NumberFormatter('es', NumberFormatter::SPELLOUT);
 
 ob_start();
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RECIBO DE PAGO</title>
-</head>
-<?php
 require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 
 //Creamos la instancia de la clase Conexion
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
+//datos de la empresa
 $sqlEmp = "select
 e.emp_razonsocial,
 e.emp_ruc,
@@ -41,26 +34,36 @@ where s.emp_cod = {$u['emp_cod']} and s.suc_cod = {$u['suc_cod']}";
 $resEmp = pg_query($conexion, $sqlEmp);
 $datosEmp = pg_fetch_all($resEmp);
 
+//datos del cobro
+$cobr_cod = $_POST['cobr_cod'];
 
-$cobr_cod = $_GET['cobr_cod'];
-
-$sql = "select
+$sqlCobro = "select
     cd.cobr_cod codigo,
     sum(cd.cobrdet_monto) monto,
     to_char(to_date(max(cc.cobr_fecha),'dd-mm-yyyy'),'DD \"de\" TMMonth \"de\" YYYY') fecha,
     cd.cliente cliente,
+    cd.per_email email,
     cd.cobrdet_nrocuota||'/'||cd.cuencob_cuotas cuotas,
     cd.ven_nrofac factura
 from v_cobros_det cd
     join v_cobros_cab cc on cd.cobr_cod = cc.cobr_cod
 where cd.cobr_cod = $cobr_cod
-group by 1,4,5,6;";
+group by 1,4,5,6,7;";
 
 
-$resultado = pg_query($conexion, $sql);
+$resultado = pg_query($conexion, $sqlCobro);
 $datos = pg_fetch_all($resultado);
 
+//medios de pago
+$sqlForma = "select 
+	vcd.forcob_descri,
+	vcd.cobrdet_monto 
+from v_cobros_det vcd
+where vcd.cobr_cod = $cobr_cod;";
 
+
+$resForma = pg_query($conexion, $sqlForma);
+$datosForma = pg_fetch_all($resForma);
 ?>
 
 <body>
@@ -216,11 +219,103 @@ $dompdf->setPaper('A4', 'landscape', 'default', [
 // Renderizar el contenido HTML a PDF
 $dompdf->render();
 
-// Generar el archivo PDF y guardarlo en el servidor o descargarlo
-$dompdf->stream(' Recibo Nro '.$cobr_cod, array("Attachment" => false));
-
 // Obtener el contenido del PDF como string
 $pdfOutput = $dompdf->output(); // Guardar en variable
 
+//------------------------------------------------------------------ CORREO -----------------------------------------------------------------------
+foreach ($datos as $correo) {
+    $monto = $correo['monto'];
+    $fecha = $correo['fecha'];
+    $cliente = $correo['cliente'];
+    $correoElectronico = $correo['email'];
+    $cuota = $correo['cuotas'];
+    $factura = $correo['factura'];
+}
+
+// Configurar PHPMailer
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// Crear una instancia de PHPMailer
+$mail = new PHPMailer(true);
+
+try {
+    // Configuración del servidor SMTP
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'orbus.gym0@gmail.com'; // Tu dirección de correo
+    $mail->Password = 'ahop dcgg wdze uloy'; // La contraseña de aplicación
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Habilitar SSL
+    $mail->Port = 465; // Puerto para SSL
+
+    // Remitente y destinatario
+    $mail->setFrom('orbus.gym0@gmail.com', 'Orbus Gym');
+    $mail->addAddress($correoElectronico, $cliente);      // Destinatario
+
+    // Adjuntar el PDF generado desde la variable
+    $mail->addStringAttachment($pdfOutput, 'Recibo de pago nro '.$cobr_cod.'pdf', 'base64', 'application/pdf');
+
+    // Contenido del correo
+    $mail->isHTML(true);
+    $mail->Subject = 'Recibo de Pago Nro. '.$cobr_cod; //asunto del correo
+    $mail->Body = '<html lang="es">
+                    <body>
+                        <p>Estimado/a '.$cliente.'</p>
+
+                        <p>
+                            Por medio de la presente, confirmamos
+                            la recepcion de su pago según los siguientes detalles:
+                        </p>
+
+                        <h3>Detalles del pago:</h3>
+                        <p>
+                            <strong>Número de Recibo:</strong> '.$cobr_cod.'<br />
+                            <strong>Fecha:</strong> '.$fecha.'<br />
+                            <strong>Cliente:</strong> '.$cliente.'<br />
+                            <strong>Total abonado:</strong> '.number_format($monto,0,',','.').'
+                        </p>
+
+                        <h3>Condiciones de pago:</h3>
+                            <ul>';
+                            foreach ($datosForma as $forma) {
+                                $mail->Body .= '<li> <strong>'.$forma['forcob_descri'].':</strong> Gs. '.number_format($forma['cobrdet_monto'], 0, ',', '.').'</li>';
+                            }
+
+                            $mail->Body .= '
+                            </ul>
+                        <p>
+                            Si necesitan más información o tienen alguna
+                            pregunta, no duden en contactarse.
+                        </p>
+
+                        <p>Gracias por su colaboración.</p>
+
+                        <p>
+                            Saludos cordiales,<br />
+                            '.$u['per_nombres'].' '.$u['per_apellidos'].'<br />
+                            '.$u['perf_descri'].'<br />
+                            '.$u['emp_razonsocial'].'<br />
+                            '.$u['suc_telefono'].'<br />
+                            orbus.gym0@gmail.com
+                        </p>
+                    </body>';
+
+    //Enviar el correo
+    $mail->send();
+
+    $response = array(
+        "mensaje" => "Correo enviado con éxito!",
+        "tipo" => "success"
+    );
+    echo json_encode($response);
+
+} catch (PHPMailerException $e) {
+    $response = array(
+        "mensaje" => "Error al enviar el correo electrónico: " . $e->getMessage(),
+        "tipo" => "error"
+    );
+    echo json_encode($response);
+}
 
 ?>

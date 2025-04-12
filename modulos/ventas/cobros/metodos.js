@@ -238,6 +238,30 @@ let reporteCobro = () => {
     }
 }
 
+let enviarDoc = () => {
+    if ($("#cobr_cod").val() == '') {
+        swal({
+            title: "RESPUESTA!!",
+            text: "SELECCIONE UN REGISTRO",
+            type: "error",
+        });
+    } else {
+        $.ajax({
+            method: "POST",
+            url: "/SysGym/others/mail/envioReciboVenta.php",
+            data: { 
+                cobr_cod: $("#cobr_cod").val()
+            }
+        }).done(function (respuesta) {
+            swal({
+                title: "RESPUESTA!!",
+                text: respuesta.mensaje,
+                type: respuesta.tipo,
+            });
+        })
+    }
+}
+
 /*--------------------------------------------METODOS DEL DETALLE---------------------------------------------------------*/
 
 //funcion habilitar inputs

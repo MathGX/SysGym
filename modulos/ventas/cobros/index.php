@@ -167,6 +167,10 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">print</i>
                                     <span>IMPRIMIR</span>
                                 </button>
+                                <button type="button" style="width:12.5%;" class="btn bg-blue waves-effect btnOperacion1" onclick="enviarDoc()">
+                                    <i class="material-icons">email</i>
+                                    <span>ENVIAR</span>
+                                </button>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
