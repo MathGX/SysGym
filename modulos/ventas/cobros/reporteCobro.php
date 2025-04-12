@@ -147,7 +147,7 @@ $datos = pg_fetch_all($resultado);
                     <div style="font-size:30px; font-weight:bold;">RECIBO DE PAGO</div>
                 </div>
                 <div class="titulo_der">
-                    <div style="font-size:24px; font-weight:bold; margin-bottom:5px;">N° <?php echo $cabecera['codigo'];?></div>
+                    <div style="font-size:30px; font-weight:bold; margin-bottom:5px;">N° <?php echo $cabecera['codigo'];?></div>
                     <span style="font-size:24px; font-weight:bold; background-color:#d3d3d3; padding:5px; border-radius:10px; margin-bottom:5px;">Gs. <?php echo number_format($cabecera['monto'],0,',','.')?></span>
                     <div style="font-size:20px; margin:10px;"><?php echo $emp['ciudad'].', '.$cabecera['fecha'];?></div>
                 </div>
