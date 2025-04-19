@@ -237,7 +237,7 @@ let habilitarBotones2 = (operacion_det) => {
 //funcion agregar
 let agregar = () => {
     $("#operacion_det").val(1);
-    $(".disabledno").removeAttr("disabled");
+    $(".disabledno2").removeAttr("disabled");
     $(".foc").attr("class", "form-line foc focused");
     habilitarBotones2(true);
     window.scroll(0, -100);

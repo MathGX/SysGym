@@ -28,7 +28,7 @@ $u = $_SESSION['usuarios'];
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>REDES DE PAGO</title>
+    <title>CONFIGURACIONES</title>
     <!--Se icluyen los estilos CSS ingresando desde la carpeta raíz hacia el importCSS-->
     <?php include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importCSS.php"; ?>
 </head>
@@ -45,7 +45,7 @@ $u = $_SESSION['usuarios'];
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                FORMULARIO DE REDES DE PAGO<small>Registrar las de redes de pago</small>
+                                FORMULARIO DE CONFIGURACIONES<small>Registrar las configuraciones</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -58,7 +58,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="redpag_cod" class="form-control" disabled>
+                                            <input type="text" id="conf_cod" class="form-control" readonly>
                                             <label class="form-label">Código</label>
                                         </div>
                                     </div>
@@ -67,16 +67,25 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="redpag_descri" class="form-control disabledno" disabled>
+                                            <input type="text" id="conf_validacion" class="form-control disabledno" disabled>
+                                            <label class="form-label">Validacion</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="conf_descri" class="form-control disabledno" disabled>
                                             <label class="form-label">Descripción</label>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="redpag_estado" class="form-control" disabled>
+                                            <input type="text" id="conf_estado" class="form-control" disabled>
                                             <label class="form-label">Estado</label>
                                         </div>
                                     </div>
@@ -128,7 +137,7 @@ $u = $_SESSION['usuarios'];
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                LISTADO DE TIPOS DE DOCUMENTO<small>Redes de pago habilitadas</small>
+                                LISTADO DE CONFIGURACIONES<small>Configuraciones habilitadas</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -137,7 +146,8 @@ $u = $_SESSION['usuarios'];
                                     <thead>
                                         <tr>
                                             <th>CÓDIGO</th>
-                                            <th>RED DE PAGO</th>
+                                            <th>VALIDACION</th>
+                                            <th>DESCRIPCION DE LA VALIDACION</th>
                                             <th>ESTADO</th>
                                         </tr>
                                     </thead>

@@ -1,4 +1,15 @@
 
+// document
+//   .getElementById("notven_codigo")
+//   .addEventListener("keydown", function (e) {
+//     e.preventDefault(); // Bloquea edición por teclado
+//   });
+
+// // Opcional: Bloquear cambios vía consola
+// Object.defineProperty(document.getElementById("notven_codigo"), "value", {
+//   writable: false,
+// });
+
 let datusUsuarios = () => {
     $.ajax({
         method: "POST",
@@ -472,6 +483,7 @@ let controlVacio2 = () => {
 const itemServicio = () => {
     if ($('#tipitem_cod').val() == '1') {
         $('#notvendet_cantidad').val(0);
+        $('#notvendet_precio').removeAttr('disabled');
     }
 }
 
@@ -590,6 +602,18 @@ let seleccionarFila = (objetoJSON) => {
     $(".focus").attr("class", "form-line focus focused");
     $(".tbldet").removeAttr("style", "display:none;");
     listar2();
+    //validar si es nota de debito para mostrar el input de deposito
+    if ($("#tipcomp_cod").val() == 2) {
+        $(".depo").removeAttr("style", "display:none;");
+    } else {
+        $(".depo").attr("style", "display:none;");
+    }
+    //validar si es nota de remision para evitar modificar la cantidad de items
+    if ($("#tipcomp_cod").val() == 3) {
+        $("#notvendet_cantidad").attr("readonly","");
+    } else {
+        $("#notvendet_cantidad").removeAttr("readonly");
+    }
 };
 
 //funcion listar
@@ -648,54 +672,60 @@ listar();
 
 /*---------------------------------------------------- AUTOCOMPLETADOS ----------------------------------------------------*/
 
-//funcion para seleccionar Concepto
-function getConcepto () {
+
+//_________________________________capturamos los datos de la tabla Deposito en un JSON a través de POST para listarlo_________________________________
+function getDeposito() {
     $.ajax({
-        //Enviamos datos para poder filtrar
         method: "POST",
-        url: "/SysGym/modulos/ventas/nota_venta/listas/listaConcepto.php",
+        url: "/SysGym/modulos/ventas/nota_venta/listas/listaDeposito.php",
         data: {
-            tipcomp_cod: $("#tipcomp_cod").val()
+            dep_descri:$("#dep_descri").val(),
+            suc_cod:$("#suc_cod").val(),
+            emp_cod:$("#emp_cod").val(),
         }
-    }) //Cargamos la lista
-        .done(function (lista) {
-            let fila = "";
-            //recorremos el array de objetos
-            $.each(lista, function (i, objeto) {
-                fila +=
-                    "<li class='list-group-item' onclick='seleccionConcepto(" + JSON.stringify(objeto) + ")'>" + objeto.notven_concepto + "</li>";
+        //en base al JSON traído desde el listaDeposito arrojamos un resultado
+    }).done(function(lista) {
+        //el JSON de respuesta es mostrado en una lista
+        let fila = "";
+        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{    
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionDeposito("+JSON.stringify(item)+")'>"+item.dep_descri+"</li>";
             });
-            //cargamos la lista
-            $("#ulConcepto").html(fila);
-            //hacemos visible la lista
-            $("#listaConcepto").attr("style", "display: block; position:absolute; z-index: 3000;");
-        })
-        .fail(function (a, b, c) {
-            swal("ERROR", c, "error");
-        });
-};
+        }
+        //enviamos a los input correspondientes de el conjunto de filas
+        $("#ulDeposito").html(fila);
+        //le damos un estilo a la lista de Deposito
+        $("#listaDeposito").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+    }).fail(function (a,b,c) {
+        swal("ERROR",c,"error");
+    })
+}
 
-//funcion selecccionar Concepto
-function seleccionConcepto (datos) {
-    //Enviamos los datos a su respectivo input
-    Object.keys(datos).forEach((key) => {
-        $("#" + key).val(datos[key]);
+//seleccionamos el deposito por su key y enviamos el dato al input correspondiente
+function seleccionDeposito (datos) {
+    Object.keys(datos).forEach(key =>{
+        $("#"+key).val(datos[key]);
     });
-    /* Vaciamos y ocultamos la lista */
-    $("#ulConcepto").html();
-    $("#listaConcepto").attr("style", "display: none;");
-    $(".focus").attr("class", "form-line focus focused");
-};
+    $("#ulDeposito").html();
+    $("#listaDeposito").attr("style", "display:none;");
+    $(".foc").attr("class", "form-line foc focused");
+    $(".disa").removeAttr("disabled");
 
-//capturamos los datos de la tabla items en un JSON a través de POST para listarlo
+}
+
+//________________________________capturamos los datos de la tabla items en un JSON a través de POST para listarlo________________________________
 function getItems() {
     $.ajax({
         method: "POST",
         url: "/SysGym/modulos/ventas/nota_venta/listas/listaItems.php",
         data: {
+            itm_descri:$("#itm_descri").val(),
             tipcomp_cod: $("#tipcomp_cod").val(),
             ven_cod: $("#ven_cod").val(),
-            itm_descri:$("#itm_descri").val()
+            dep_cod: $("#dep_cod").val(),
         }
         //en base al JSON traído desde el listaItems arrojamos un resultado
     }).done(function(lista) {
@@ -712,7 +742,7 @@ function getItems() {
         //enviamos a los input correspondientes de el conjunto de filas
         $("#ulItems").html(fila);
         //le damos un estilo a la lista de items
-        $("#listaItems").attr("style", "display:block; position:absolute; z-index:3000;");
+        $("#listaItems").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");
     })
@@ -723,13 +753,18 @@ function seleccionItems (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
+    if ($("#tipcomp_cod").val() == 3) {
+        $("#notvendet_cantidad").attr("readonly","");
+    } else {
+        $("#notvendet_cantidad").removeAttr("readonly");
+    }
     $("#ulItems").html();
     $("#listaItems").attr("style", "display:none;");
     $(".foc").attr("class", "form-line foc focused");
     itemServicio();
 }
 
-//capturamos los datos de la tabla Nota en un JSON a través de POST para listarlo
+//________________________________capturamos los datos de la tabla Nota en un JSON a través de POST para listarlo________________________________
 function getNota() {
     $.ajax({
         method: "POST",
@@ -752,7 +787,7 @@ function getNota() {
         //enviamos a los input correspondientes de el conjunto de filas
         $("#ulNota").html(fila);
         //le damos un estilo a la lista de Nota
-        $("#listaNota").attr("style", "display:block; position:absolute; z-index:3000;");
+        $("#listaNota").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");
     })
@@ -766,12 +801,10 @@ function seleccionNota (datos) {
     $("#ulNota").html();
     $("#listaNota").attr("style", "display:none;");
     $(".focus").attr("class", "form-line focus focused");
-    getConcepto();
-    $(".ven").val('');
     $("#per_nrodoc").removeAttr("disabled");
 }
 
-//capturamos los datos de la tabla venta_cab en un JSON a través de POST para listarlo
+//________________________________capturamos los datos de la tabla venta_cab en un JSON a través de POST para listarlo________________________________
 function getVentas() {
     $.ajax({
         method: "POST",
@@ -796,7 +829,7 @@ function getVentas() {
         //enviamos a los input correspondientes de el conjunto de filas
         $("#ulVentas").html(fila);
         //le damos un estilo a la lista de Entidad Adherida
-        $("#listaVentas").attr("style", "display:block; position:absolute; z-index:3000;");
+        $("#listaVentas").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");
     })

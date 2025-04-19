@@ -71,7 +71,7 @@ let nuevo = () => {
     limpiarCab();
     $("#operacion_cab").val(1);
     $("#transaccion").val('INSERCION');
-    $(".disabledno").removeAttr("disabled");
+    $(".disabledno2").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
     $("#notacom_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
@@ -525,6 +525,7 @@ let controlVacio2 = () => {
 const itemServicio = () => {
     if ($('#tipitem_cod').val() == '1') {
         $('#notacomdet_cantidad').val(0);
+        $('#notacomdet_precio').removeAttr('disabled');
     }
 }
 
@@ -616,10 +617,17 @@ let seleccionarFila = (objetoJSON) => {
     $(".tbldet").removeAttr("style", "display:none;");
     datusUsuarios();
     listar2();
+    //validar si es nota de debito para mostrar el input de deposito
     if ($("#tipcomp_cod").val() == 2) {
         $(".depo").removeAttr("style", "display:none;");
     } else {
         $(".depo").attr("style", "display:none;");
+    }
+    //validar si es nota de remision para evitar modificar la cantidad de items
+    if ($("#tipcomp_cod").val() == 3) {
+        $("#notacomdet_cantidad").attr("readonly","");
+    } else {
+        $("#notacomdet_cantidad").removeAttr("readonly");
     }
 };
 
@@ -738,7 +746,7 @@ function seleccionConcepto (datos) {
 function getDeposito() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/modulos/compras/compras/listas/listaDeposito.php",
+        url: "/SysGym/modulos/compras/nota_compra/listas/listaDeposito.php",
         data: {
             dep_descri:$("#dep_descri").val(),
             suc_cod:$("#suc_cod").val(),
@@ -813,6 +821,11 @@ function seleccionItems (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
+    if ($("#tipcomp_cod").val() == 3) {
+        $("#notacomdet_cantidad").attr("readonly","");
+    } else {
+        $("#notacomdet_cantidad").removeAttr("readonly");
+    }
     $("#ulItems").html();
     $("#listaItems").attr("style", "display:none;");
     $(".foc").attr("class", "form-line foc focused");

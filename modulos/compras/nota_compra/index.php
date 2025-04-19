@@ -114,7 +114,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus focused">
-                                            <input type="text" id="notacom_fecha" class="form-control disabledno" disabled>
+                                            <input type="text" id="notacom_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -237,7 +237,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
                                             <input type="hidden" id="tipimp_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disabledno2" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Item</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:scroll;"></ul>
@@ -250,7 +250,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="dep_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="dep_descri" disabled onkeyup="getDeposito()">
+                                            <input type="text" class="form-control disabledno2" id="dep_descri" disabled onkeyup="getDeposito()">
                                             <label class="form-label">Depósito</label>
                                             <div id="listaDeposito" style="display: none;">
                                                 <ul class="list-group" id="ulDeposito" style="height:60px; overflow:auto;"></ul>
@@ -262,7 +262,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="number" id="notacomdet_cantidad" class="form-control disabledno" disabled onkeyup="cantItem()" onchange="cantItem()">
+                                            <input type="number" id="notacomdet_cantidad" class="form-control disabledno2" disabled onkeyup="cantItem()" onchange="cantItem()">
                                             <label class="form-label">Cantidad</label>
                                         </div>
                                     </div>
@@ -280,7 +280,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="number" id="notacomdet_precio" class="form-control disabledno" disabled>
+                                            <input type="number" id="notacomdet_precio" class="form-control" disabled>
                                             <label class="form-label">Precio</label>
                                         </div>
                                     </div>

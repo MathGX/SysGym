@@ -446,6 +446,9 @@ if(isset($_SESSION['numApcier'])){
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/gui_perfiles/index.php">GUI por perfil</a>
                                 </li>
+                                <li>
+                                    <a href="/SysGym/referenciales/seguridad/configuraciones/index.php">Configuraciones</a>
+                                </li>
                             </ul>
                         </li>
                     <?php } ?>

@@ -600,20 +600,20 @@ begin --iniciar
 			redpagcod, 
 			upper(redpagdescri), 
 			'ACTIVO');
-			raise notice 'EL TIPO DE DOCUMENTO FUE REGISTRADO CON EXITO';
+			raise notice 'LA RED DE PAGO FUE REGISTRADA CON EXITO';
 		elseif operacion = 2 then -- realizamos un update 
 			UPDATE public.red_pago 
 			SET redpag_descri=upper(redpagdescri), 
 			redpag_estado='ACTIVO'
 			WHERE redpag_cod=redpagcod;
-			raise notice 'EL TIPO DE DOCUMENTO FUE MODIFICADO CON EXITO';
+			raise notice 'LA RED DE PAGO FUE MODIFICADA CON EXITO';
 		end if;
 	end if;
 	if operacion = 3 then -- realizamos un update 
 		update red_pago
 		set redpag_estado = 'INACTIVO'
 		WHERE redpag_cod = redpagcod ;
-		raise notice 'EL TIPO DE DOCUMENTO FUE BORRADO CON EXITO';
+		raise notice 'LA RED DE PAGO FUE BORRADA CON EXITO';
 	end if;
 	--se selecciona la ultima auditoria
 	select coalesce(redpag_audit,'') into redpagaudit
@@ -1142,7 +1142,8 @@ operacion integer)
 RETURNS void
 AS $$
 declare
-	venestado varchar := (select ven_estado from ventas_cab where ven_cod = vencod); --> estado de ventas_cab
+	venestado varchar := (select ven_estado from ventas_cab where ven_cod =(
+						select ven_cod from cobros_det where cobr_cod = cobrcod group by ven_cod)); --> estado de ventas_cab
 	cobdet record; --> variable de tipo record para recorrer cobros detalle
 begin 
 	if operacion = 1 then
@@ -1159,7 +1160,7 @@ begin
 			tipcomp_cod)
 		VALUES(
 			cobrcod,
-			cobrfecha,
+			current_timestamp,
 			'ACTIVO',
 			cajcod,
 			succod,
@@ -1206,7 +1207,7 @@ cobrdetnrocuota integer,
 forcobcod integer, 
 cobrcheqnum varchar,
 entcod integer,
-usucod varchar,
+usucod integer	,
 cobrtarjtransaccion varchar,
 redpagcod integer,
 operacion integer)
@@ -1224,7 +1225,7 @@ begin
 			end if;
 		elsif forcobcod = 2 then --> se valida que no se repita la misma venta
 			perform * from cobros_det
-			where cobr_cod = cobrcod and ven_cod = vencod;
+			where cobr_cod = cobrcod and ven_cod = vencod and forcob_cod = forcobcod;
 		    if found then
 				raise exception 'efectivo';
 			end if;
@@ -1234,29 +1235,28 @@ begin
 		    if found then
 				raise exception 'tarjeta';
 			end if;
-		else
-			-- aqui hacemos un insert
-		    INSERT INTO cobros_det 
-			    (ven_cod,
-			    cobr_cod,
-			    cobrdet_cod, 
-			    cobrdet_monto, 
-			    cobrdet_nrocuota,
-			    forcob_cod)
-		    VALUES(
-			    vencod,
-			    cobrcod,
-			    cobrdetcod,
-			    cobrdetmonto,
-			    cobrdetnrocuota,
-			    forcobcod);
-		    -- ACTUALIZA CUENTAS A COBRAR (RESTA)
-			UPDATE cuentas_cobrar  
-				set cuencob_saldo = cuencob_saldo - cobrdetmonto,
-				tipcomp_cod = 5
-			where ven_cod = vencod;
-			raise notice 'EL DETALLE FUE REGISTADO CON EXITO';
 		end if;
+		-- aqui hacemos un insert
+	    INSERT INTO cobros_det 
+		    (ven_cod,
+		    cobr_cod,
+		    cobrdet_cod, 
+		    cobrdet_monto, 
+		    cobrdet_nrocuota,
+		    forcob_cod)
+	    VALUES(
+		    vencod,
+		    cobrcod,
+		    cobrdetcod,
+		    cobrdetmonto,
+		    cobrdetnrocuota,
+		    forcobcod);
+	    -- ACTUALIZA CUENTAS A COBRAR (RESTA)
+		UPDATE cuentas_cobrar  
+			set cuencob_saldo = cuencob_saldo - cobrdetmonto,
+			tipcomp_cod = 5
+		where ven_cod = vencod;
+		raise notice 'EL DETALLE FUE REGISTADO CON EXITO';
     elsif operacion = 2 then
     	if forcobcod = 1 then --> aqui hacemos un delete de cobro cheque
 			delete from cobro_cheque 
@@ -1622,12 +1622,18 @@ order by vd.ven_cod;
 --v_cobros_cab (COBROS CABECERA)
 create or replace view v_cobros_cab as
 select 
-cc.*,
-to_char(cc.cobr_fecha, 'dd/mm/yyyy') cobr_fecha2,
-u.usu_login,
+cc.cobr_cod,
+to_char(cc.cobr_fecha, 'dd/mm/yyyy hh24:mm:ss') cobr_fecha,
+cc.cobr_estado,
+cc.suc_cod,
 s.suc_descri,
+cc.emp_cod,
 e.emp_razonsocial,
-c.caj_descri 
+cc.usu_cod,
+u.usu_login,
+cc.apcier_cod,
+c.caj_descri,
+cc.tipcomp_cod
 from cobros_cab cc 
 join apertura_cierre ac on ac.apcier_cod = cc.apcier_cod and ac.caj_cod = cc.caj_cod 
 	join caja c on c.caj_cod = ac.caj_cod 
@@ -1647,6 +1653,7 @@ vc.ven_montocuota,
 vc.ven_intefecha,
 p.per_nombres||' '||p.per_apellidos as cliente,
 p.per_nrodoc,
+p.per_email,
 cd.cobrdet_cod,
 cd.cobrdet_monto,
 cd.cobrdet_nrocuota,
@@ -1690,7 +1697,6 @@ left join cobro_tarjeta ct on ct.ven_cod = cd.ven_cod and ct.cobr_cod = cd.cobr_
 left join cobro_cheque cc3 on cc3.ven_cod = cd.ven_cod and cc3.cobr_cod = cd.cobr_cod and cc3.cobrdet_cod = cd.cobrdet_cod
 	left join entidad_emisora ee2 on ee2.ent_cod = cc3.ent_cod 
 order by cd.cobrdet_cod;
-
 
 
 -----------------------------------------------------------TRIGGERS----------------------------------------------------------
@@ -2016,7 +2022,11 @@ begin
         values (
 			case 
 				TG_OP when 'INSERT' then 'ALTA'
-				else 'BAJA'
+				else 
+					case 
+						new.ven_estado when 'ANULADO' then 'BAJA'
+						else 'MODIFICACION'
+					end
 			end,
 			new.ven_cod, 
 			new.ven_fecha,
@@ -2038,6 +2048,7 @@ begin
 end; 
 $$
 language plpgsql;
+
 
 create trigger tg_ventas_cab_auditoria
 after insert or update on ventas_cab

@@ -12,12 +12,22 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$tipcomp_descri = $_POST['tipcomp_descri'];
+$dep_descri = $_POST['dep_descri'];
+$suc_cod = $_POST['suc_cod'];
+$emp_cod = $_POST['emp_cod'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
-$sql = "select * from tipo_comprobante tp
-        where tp.tipcomp_descri ilike '%$tipcomp_descri%' and tp.tipcomp_cod in (1,2,3)
-        order by tp.tipcomp_descri;";
+$sql = "select 
+        d.dep_cod,
+        d.dep_descri 
+        from depositos d 
+        join sucursales s on s.suc_cod = d.dep_cod and s.emp_cod = d.emp_cod 
+                join empresa e on e.emp_cod = s.emp_cod 
+        where s.suc_cod = $suc_cod 
+                and e.emp_cod = $emp_cod 
+                and d.dep_descri ilike '%$dep_descri%' 
+                and d.dep_estado = 'ACTIVO'
+        order by d.dep_descri;";
         
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);

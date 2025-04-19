@@ -588,3 +588,71 @@ begin --iniciar
 end--finalizar
 $$
 language plpgsql;
+
+--sp_abm_configuraciones (CONFIGURACIONES)
+CREATE OR REPLACE FUNCTION sp_abm_configuraciones
+(confcod integer, 
+confvalidacion varchar, 
+confdescri varchar, 
+confestado varchar,
+operacion integer,
+usucod integer,
+usulogin varchar,
+transaccion varchar)
+RETURNS void
+AS $$
+declare confaudit text;
+begin --iniciar
+	--se designan validaciones
+	if operacion in (1,2) then
+		perform * from configuraciones
+		where conf_descri = upper(confdescri) and conf_cod != confcod;
+		if found then
+			raise exception '1';
+		elseif operacion = 1 then --realizamos un insert
+			INSERT INTO public.configuraciones
+			(conf_cod, 
+			conf_validacion,
+			conf_descri, 
+			conf_estado)
+			VALUES(
+			confcod, 
+			confvalidacion,
+			upper(confdescri), 
+			'ACTIVO');
+			raise notice 'LA CONFIGURACION FUE REGISTRADA CON EXITO';
+		elseif operacion = 2 then -- realizamos un update 
+			UPDATE public.configuraciones 
+				SET conf_validacion = confvalidacion,
+				conf_descri = upper(confdescri), 
+				conf_estado='ACTIVO'
+			WHERE conf_cod = confcod;
+			raise notice 'LA CONFIGURACION FUE MODIFICADA CON EXITO';
+		end if;
+	end if;
+	if operacion = 3 then -- realizamos un uconfiguraciones		
+		update configuraciones
+			set conf_estado = 'INACTIVO'
+		WHERE conf_cod = confcod ;
+		raise notice 'LA CONFIGURACION FUE BORRADA CON EXITO';
+	end if;
+	--se selecciona la ultima auditoria
+	select coalesce(conf_audit,'') into confaudit
+	from configuraciones
+	where conf_cod = confcod;
+
+	--se actualiza la auditoria
+	update configuraciones
+    set conf_audit = confaudit||' '||json_build_object(
+        'usu_cod',usucod,
+		'usu_login',usulogin,
+        'fecha y hora',to_char(current_timestamp,'dd/mm/yyyy hh24:mi:ss'),
+        'transaccion',upper(transaccion),
+		'conf_validacion',confvalidacion, 
+		'conf_descri',upper(confdescri), 
+		'conf_estado',upper(confestado)
+    )||','
+    WHERE conf_cod = confcod;
+end--finalizar
+$$
+language plpgsql;

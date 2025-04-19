@@ -47,8 +47,8 @@ if ($tipcomp_cod == "1" || $tipcomp_cod == "3") {
         i.uni_cod,
         um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri
         from items i 
-        join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
-        join unidad_medida um on um.uni_cod = i.uni_cod 
+                join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
+                join unidad_medida um on um.uni_cod = i.uni_cod 
         where itm_descri ilike '%$itm_descri%' and i.itm_estado ilike 'ACTIVO'
         order by i.itm_descri;";
 }
