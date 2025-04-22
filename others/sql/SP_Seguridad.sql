@@ -656,3 +656,82 @@ begin --iniciar
 end--finalizar
 $$
 language plpgsql;
+
+--sp_abm_suc_config (CONFIGURACIONES SUCURSALES)
+CREATE OR REPLACE FUNCTION sp_abm_suc_config
+(suconfcod integer,
+succod integer,
+empcod integer, 
+confcod integer, 
+suconfestado varchar,
+operacion integer,
+usucod integer,
+usulogin varchar,
+transaccion varchar,
+emprazonsocial varchar,
+sucdescri varchar,
+confvalidacion varchar)
+RETURNS void
+AS $$
+declare suconfaudit text;
+begin --iniciar
+	--se designan validaciones
+	if operacion in (1,2) then
+		perform * from suc_config
+		where (suc_cod = succod and emp_cod = empcod and conf_cod = confcod) and suconf_cod != suconfcod;
+		if found then
+			raise exception '1';
+		elseif operacion = 1 then --realizamos un insert
+			INSERT INTO public.suc_config 
+				(suconf_cod,
+				suc_cod, 
+				emp_cod, 
+				conf_cod,
+				suconf_estado)
+			VALUES(
+				suconfcod,
+				succod,
+				empcod,
+				confcod,
+				'ACTIVO');
+			raise notice 'CONFIGURACION PARA LA SUCURSAL ASIGNADA CON EXITO';
+		elseif operacion = 2 then -- realizamos un update 
+			UPDATE  public.suc_config
+				SET suc_cod = succod, 
+				emp_cod = empcod,
+				conf_cod = confcod,
+				suconf_estado='ACTIVO'
+			WHERE suconf_cod = suconfcod;
+			raise notice 'CONFIGURACION PARA LA SUCURSAL MODIFICADA CON EXITO';
+		end if;
+	end if;
+	if operacion = 3 then -- realizamos un update 
+		update suc_config 
+			set suconf_estado = 'INACTIVO'
+		WHERE suconf_cod = suconfcod;
+		raise notice 'CONFIGURACION PARA LA SUCURSAL BORRADA CON EXITO';
+	end if;
+	--se selecciona la ultima auditoria
+	select coalesce(suconf_audit,'') into suconfaudit
+	from suc_config
+	where suconf_cod = suconfcod;
+
+	--se actualiza la auditoria
+	update suc_config
+    set suconf_audit = suconfaudit||' '||json_build_object(
+        'usu_cod',usucod,
+		'usu_login',usulogin,
+        'fecha y hora',to_char(current_timestamp,'dd/mm/yyyy hh24:mi:ss'),
+        'transaccion',upper(transaccion),
+        'suc_cod',succod,
+		'suc_descri',upper(sucdescri), 
+        'emp_cod',empcod,
+		'emp_razonsocial',upper(emprazonsocial), 
+        'conf_cod',confcod,
+		'conf_validacion',upper(confvalidacion), 
+		'suconf_estado',upper(suconfestado)
+    )||','
+    WHERE suconf_cod = suconfcod;
+end--finalizar
+$$
+language plpgsql;
