@@ -810,9 +810,7 @@ function getVentas() {
         method: "POST",
         url: "/SysGym/modulos/ventas/nota_venta/listas/listaVentas.php",
         data: {
-            tipcomp_cod:  $("#tipcomp_cod").val(),
-            per_nrodoc: $("#per_nrodoc").val(),
-            ven_cod:$("#ven_cod").val()
+            per_nrodoc: $("#per_nrodoc").val()
         }
         //en base al JSON traído desde el listaVentas arrojamos un resultado
     }).done(function(lista) {
