@@ -258,7 +258,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-6">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="comi_cod" value="0">
@@ -316,7 +316,7 @@ $u = $_SESSION['usuarios'];
                                 <?php } ?>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="controlVacio2()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>

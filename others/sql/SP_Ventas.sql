@@ -2275,7 +2275,7 @@ as $$
 			end if;
 		elsif new.tipcomp_cod in (1, 2) then
 			usu_cod_new = (select usu_cod from nota_venta_cab 
-							where ven_cod = new.ven_cod and tipcomp_cod = new.tipcomp_cod and notven_estado = 'ACTIVO');
+							where ven_cod = new.ven_cod and tipcomp_cod = new.tipcomp_cod order by notven_cod desc limit 1);
 		end if;
 		-- Si la operacion es insertar o modificar un registro
 	    if (TG_OP  in ('INSERT','UPDATE')) then

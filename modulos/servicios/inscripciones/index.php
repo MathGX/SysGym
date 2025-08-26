@@ -125,7 +125,7 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line focus">
                                         <input type="hidden" id="cli_cod" value="0">
                                             <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getClientes()">
-                                            <label class="form-label">C.I. del cliente</label>
+                                            <label class="form-label">Nro. Doc. Cliente</label>
                                             <div id="listaClientes" style="display: none;">
                                                 <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>
                                             </div>
@@ -142,8 +142,26 @@ $u = $_SESSION['usuarios'];
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc focused">
+                                            <input type="time" id="insdet_horainicio" class="form-control disabledno" disabled>
+                                            <label class="form-label">Desde</label>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc focused">
+                                            <input type="time" id="insdet_horafinal" class="form-control disabledno" disabled>
+                                            <label class="form-label">Hasta</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="ins_estado" class="form-control" disabled>
@@ -167,18 +185,6 @@ $u = $_SESSION['usuarios'];
                                         <span>ANULAR</span>
                                     </button>
                                 <?php } ?>
-                                <?php if($u['mod_descri'] == 'SERVICIOS') {?>
-                                    <button type="button" class="btn bg-light-blue waves-effect btnOperacion1" style="width:12.5%;" onclick="persona()">
-                                        <i class="material-icons">person</i>
-                                        <span>AGG PERSONA</span>
-                                    </button>
-                                <?php } ?>
-                                <?php if($u['mod_descri'] == 'SERVICIOS') {?>
-                                    <button type="button" class="btn bg-light-blue waves-effect btnOperacion1" style="width:12.5%;" onclick="cliente()">
-                                        <i class="material-icons">person</i>
-                                        <span>AGG CLIENTE</span>
-                                    </button>
-                                <?php } ?>
                                 <button type="button" class="btn bg-pink waves-effect btnOperacion2" style="width:12.5%; display:none;" onclick="controlVacio()">
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
@@ -196,7 +202,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-12 tbldet" style="display: none;">
+                <div class="col-lg-12 <!--  -->" style="display: none;">
                     <div class="card">
                     <!-- formulario de detalles de INSCRIPCIONES -->
                         <div class="header bg-indigo">
@@ -220,24 +226,6 @@ $u = $_SESSION['usuarios'];
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="col-sm-4">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc focused">
-                                            <input type="time" id="insdet_horainicio" class="form-control disabledno" disabled>
-                                            <label class="form-label">Desde</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-4">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc focused">
-                                            <input type="time" id="insdet_horafinal" class="form-control disabledno" disabled>
-                                            <label class="form-label">Hasta</label>
-                                        </div>
-                                    </div>
-                                </div>
 
                             </div>
 
@@ -257,7 +245,7 @@ $u = $_SESSION['usuarios'];
                                 <?php } ?>
                                 <button type="button" style="width:12.5%; display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="controlVacio2()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style="width:12.5%; display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>

@@ -19,7 +19,7 @@ $sql = "select
         ppc.presprov_cod,
         ppc.pro_cod,
         ppc.tiprov_cod,
-        p.pro_razonsocial||' - '||tp.tiprov_descripcion as pro_razonsocial,
+        p.pro_razonsocial||' - '||tp.tiprov_descripcion||': PRESUP. '||ppc.presprov_cod as pro_razonsocial ,
         p.pro_email,
         pp.pedcom_cod
         from presupuesto_prov_cab ppc 

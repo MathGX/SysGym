@@ -162,14 +162,14 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-2">
+                                <!-- <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" class="form-control disabledno" id="pedven_cod" disabled>
                                             <label class="form-label">Pedido Nro.</label>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
@@ -234,6 +234,10 @@ $u = $_SESSION['usuarios'];
                                         <span>ANULAR</span>
                                     </button>
                                 <?php } ?>
+                                <button type="button" style="width:12.5%;" class="btn bg-blue waves-effect btnOperacion1" onclick="docOrden()">
+                                    <i class="material-icons">print</i>
+                                    <span>IMPRIMIR</span>
+                                </button>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
@@ -296,7 +300,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" id="vendet_cantidad" class="form-control" disabled>
@@ -314,11 +318,20 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" id="vendet_precio" class="form-control" disabled>
                                             <label class="form-label">Precio Unit.</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc">
+                                            <input type="text" id="vendet_cantidad" class="form-control" disabled>
+                                            <label class="form-label">Promoción</label>
                                         </div>
                                     </div>
                                 </div>
@@ -341,7 +354,7 @@ $u = $_SESSION['usuarios'];
                                 <?php } ?>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="controlVacio2()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>

@@ -9,17 +9,41 @@ que las clases estén dentro de la misma carpeta*/
 //importar la clase conexion.php
 require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 
+// Importar la función para capturar el país, región y ciudad de la IP
+include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importPHP.php"; 
+
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
-
 
 // Obtener los valores de la solicitud AJAX
 $acc_usu = $_POST['acc_usu'];
 $acc_obs = $_POST['acc_obs'];
+$acc_ip = file_get_contents('https://api.ipify.org');
 
-// Generar la consulta SQL para insertar los datos en la tabla 'acceso'
-$sql = "INSERT INTO acceso (acc_cod, acc_usu, acc_fecha, acc_hora, acc_obs) 
-        VALUES ((SELECT COALESCE(MAX(acc_cod), 0) + 1 FROM acceso), '$acc_usu', current_date, current_time, '$acc_obs')";
+// Llamar a la función para capturar el país, región y ciudad de la IP
+list($acc_pais_ip, $acc_region_ip, $acc_ciudad_ip) = capturarPaisIP($acc_ip);
+
+// generar la consulta sql para insertar los datos en la tabla 'acceso'
+$sql = "insert into acceso 
+            (acc_cod, 
+            acc_usu, 
+            acc_fecha, 
+            acc_hora, 
+            acc_obs,
+            acc_ip,
+            acc_pais_ip,
+            acc_region_ip,
+            acc_ciudad_ip) 
+        values 
+            ((select coalesce(max(acc_cod), 0) + 1 from acceso), 
+            '$acc_usu', 
+            current_date, 
+            current_time, 
+            '$acc_obs',
+            '$acc_ip',
+            upper('$acc_pais_ip'),
+            upper('$acc_region_ip'),
+            upper('$acc_ciudad_ip'))";
 
 // Ejecutar la consulta
 $resultado = pg_query($conexion, $sql);

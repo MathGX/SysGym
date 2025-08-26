@@ -1,3 +1,4 @@
+
 let datusUsuarios = () => {
     $.ajax({
         method: "POST",
@@ -24,8 +25,7 @@ let formatoFecha = (fecha) => {
 }
 
 let ahora = new Date();
-$("#ajinv_fecha").val(formatoFecha(ahora));
-
+$("#ins_fecha").val(formatoFecha(ahora));
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 
 //funcion habilitar inputs
@@ -40,37 +40,51 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
+let limpiarCab = () =>{
+    $(".tblcab input").each(function(){
+        $(this).val('');
+    });
+    $(".tblcab .body #ins_fecha").each(function(){
+        $(this).val(formatoFecha(ahora));
+    });
+    $(".tblcab .header .focus").each(function() {
+        $(this).attr("class", "form-line focus")
+    });
+    $(".tblcab .body .focus").each(function() {
+        $(this).attr("class","form-line focus" )
+    });
+}
+
 let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
         data: {consulCod: 1}
     }).done(function (respuesta){
-        $("#ajinv_cod").val(respuesta.codigo);
+        $("#ins_cod").val(respuesta.codigo);
     });
 }
 
 //funcion nuevo
 let nuevo = () => {
+    limpiarCab();
     $("#operacion_cab").val(1);
     $("#transaccion").val('INSERCION');
-    $(".focus").attr("class", "form-line focus focused");
     $(".disabledno").removeAttr("disabled");
-    $("#ajinv_tipoajuste").val("");
-    $("#ajinv_estado").val('ACTIVO');
+    $(".focus").attr("class", "form-line focus focused");
+    $("#ins_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
-    habilitarBotones(true);
     getCod();
+    habilitarBotones(true);
     datusUsuarios();
-    $("#ajinv_fecha").val(formatoFecha(ahora));
     window.scroll(0, -100);
 };
 
 //anular anular
 let anular = () => {
-    $("#transaccion").val('BORRADO');
-    $("#ajinv_estado").val('ANULADO');
     $("#operacion_cab").val(2);
+    $("#transaccion").val('BORRADO');
+    $("#ins_estado").val('ANULADO');
     habilitarBotones(true);
     window.scroll(0, -100);
 };
@@ -92,17 +106,19 @@ let grabar = () => {
         method: "POST",
         url: "controlador.php",
         data: {
-            ajinv_cod: $("#ajinv_cod").val(),
-            ajinv_fecha: $("#ajinv_fecha").val(),
-            ajinv_tipoajuste: $("#ajinv_tipoajuste").val(),
-            ajinv_estado: $("#ajinv_estado").val(),
+            ins_cod: $("#ins_cod").val(),
+            ins_fecha: $("#ins_fecha").val(),
+            ins_estado: $("#ins_estado").val(),
+            usu_cod: $("#usu_cod").val(),
             suc_cod: $("#suc_cod").val(),
             emp_cod: $("#emp_cod").val(),
-            usu_cod: $("#usu_cod").val(),
+            cli_cod: $("#cli_cod").val(),
             operacion_cab: $("#operacion_cab").val(),
+            usu_login: $("#usu_login").val(),
             suc_descri: $("#suc_descri").val(),
             emp_razonsocial: $("#emp_razonsocial").val(),
-            usu_login: $("#usu_login").val(),
+            per_nrodoc: $("#per_nrodoc").val(),
+            cliente: $("#cliente").val(),
             transaccion: $("#transaccion").val()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
@@ -178,7 +194,7 @@ let confirmar = () => {
 let controlVacio = () => {
     let condicion = "c";
 
-    if ($("#ajinv_cod").val() == "") {
+    if ($("#ins_cod").val() == "") {
         condicion = "i";
     } else if ($("#usu_login").val() == "") {
         condicion = "i";
@@ -186,11 +202,13 @@ let controlVacio = () => {
         condicion = "i";
     } else if ($("#emp_razonsocial").val() == "") {
         condicion = "i";
-    } else if ($("#ajinv_fecha").val() == "") {
+    } else if ($("#ins_fecha").val() == "") {
         condicion = "i";
-    } else if ($("#ajinv_tipoajuste").val() == "") {
+    } else if ($("#per_nrodoc").val() == "") {
         condicion = "i";
-    } else if ($("#ajinv_estado").val() == "") {
+    } else if ($("#cliente").val() == "") {
+        condicion = "i";
+    } else if ($("#ins_estado").val() == "") {
         condicion = "i";
     }
 
@@ -237,7 +255,8 @@ let habilitarBotones2 = (operacion_det) => {
 //funcion agregar
 let agregar = () => {
     $("#operacion_det").val(1);
-    $(".disabledno2").removeAttr("disabled");
+    $("#dia_cod, #dia_descri, #insdet_horainicio, #insdet_horafinal").val('');
+    $(".disabledno").removeAttr("disabled");
     $(".foc").attr("class", "form-line foc focused");
     habilitarBotones2(true);
     window.scroll(0, -100);
@@ -256,16 +275,10 @@ function grabar2() {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            itm_cod: $("#itm_cod").val(),
-            tipitem_cod: $("#tipitem_cod").val(),
-            dep_cod: $("#dep_cod").val(),
-            suc_cod: $("#suc_cod").val(),
-            emp_cod: $("#emp_cod").val(),
-            ajinv_cod: $("#ajinv_cod").val(),
-            ajinvdet_motivo: $("#ajinvdet_motivo").val(),           
-            ajinvdet_cantidad: $("#ajinvdet_cantidad").val(),           
-            ajinvdet_precio: $("#ajinvdet_precio").val(),           
-            ajinv_tipoajuste: $("#ajinv_tipoajuste").val(),
+            ins_cod: $("#ins_cod").val(),
+            dia_cod: $("#dia_cod").val(),           
+            insdet_horainicio: $("#insdet_horainicio").val(),
+            insdet_horafinal: $("#insdet_horafinal").val(),
             operacion_det: $("#operacion_det").val(),
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
@@ -341,19 +354,13 @@ let confirmar2 = () => {
 let controlVacio2 = () => {
     let condicion = "c";
 
-    if ($("#ajinv_cod").val() == "") {
+    if ($("#ins_cod").val() == "") {
         condicion = "i";
-    } else if ($("#itm_descri").val() == "") {
+    } else if ($("#dia_descri").val() == "") {
         condicion = "i";
-    } else if ($("#dep_descri").val() == "") {
+    } else if ($("#insdet_horainicio").val() == "") {
         condicion = "i";
-    } else if ($("#ajinvdet_cantidad").val() == "") {
-        condicion = "i";
-    } else if ($("#uni_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#ajinvdet_precio").val() == "") {
-        condicion = "i";
-    } else if ($("#ajinvdet_motivo").val() == "") {
+    } else if ($("#insdet_horafinal").val() == "") {
         condicion = "i";
     }
 
@@ -367,6 +374,14 @@ let controlVacio2 = () => {
         confirmar2();
     }
 };
+
+const persona = () => {
+    window.location = "/SysGym/referenciales/servicios/personas"
+}
+
+const cliente = () => {
+    window.location = "/SysGym/referenciales/ventas/clientes"
+}
 
 /*---------------------------------------------------- LISTAR Y SELECCION DE CABECERA Y DETALLE ----------------------------------------------------*/
 
@@ -385,18 +400,15 @@ let listar2 = () => {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            ajinv_cod: $("#ajinv_cod").val(),
+            ins_cod: $("#ins_cod").val(),
         }
     }).done(function (respuesta) {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila2(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>" + objeto.itm_descri + "</td>";
-                    tabla += "<td>" + objeto.dep_descri + "</td>";
-                    tabla += "<td>" + objeto.ajinvdet_cantidad + "</td>";
-                    tabla += "<td>" + objeto.uni_descri + "</td>";
-                    tabla += "<td>" + new Intl.NumberFormat('us-US').format(objeto.ajinvdet_precio) + "</td>";
-                    tabla += "<td>" + objeto.ajinvdet_motivo + "</td>";
+                    tabla += "<td>" + objeto.dia_descri + "</td>";
+                    tabla += "<td>" + objeto.insdet_horainicio + "</td>";
+                    tabla += "<td>" + objeto.insdet_horafinal + "</td>";
                 tabla += "</tr>";
             }
             $("#grilla_det").html(tabla);
@@ -415,8 +427,8 @@ let seleccionarFila = (objetoJSON) => {
 
     $(".focus").attr("class", "form-line focus focused");
     $(".tbldet").removeAttr("style", "display:none;");
-    datusUsuarios();
     listar2();
+    datusUsuarios();
 };
 
 //funcion listar
@@ -428,12 +440,13 @@ let listar = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>" + objeto.ajinv_cod + "</td>";
-                    tabla += "<td>" + objeto.ajinv_fecha + "</td>";
-                    tabla += "<td>" + objeto.suc_descri + "</td>";
+                    tabla += "<td>" + objeto.ins_cod + "</td>";
+                    tabla += "<td>" + objeto.ins_fecha + "</td>";
                     tabla += "<td>" + objeto.usu_login + "</td>";
-                    tabla += "<td>" + objeto.ajinv_tipoajuste + "</td>";
-                    tabla += "<td>" + objeto.ajinv_estado + "</td>";
+                    tabla += "<td>" + objeto.suc_descri + "</td>";
+                    tabla += "<td>" + objeto.cliente + "</td>";
+                    tabla += "<td>" + objeto.per_telefono + "</td>";
+                    tabla += "<td>" + objeto.ins_estado + "</td>";
                 tabla += "</tr>";
             }
             $("#grilla_cab").html(tabla);
@@ -448,61 +461,54 @@ listar();
 
 /*---------------------------------------------------- AUTOCOMPLETADOS ----------------------------------------------------*/
 
-//capturamos los datos de la tabla Deposito en un JSON a través de POST para listarlo
-function getDeposito() {
+//capturamos los datos de la tabla Clientes en un JSON a través de POST para listarlo
+function getClientes() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/modulos/compras/ajuste_inventario/listas/listaDeposito.php",
+        url: "/SysGym/modulos/servicios/inscripciones/listas/listaClientes.php",
         data: {
-            dep_descri:$("#dep_descri").val(),
-            suc_cod:$("#suc_cod").val(),
-            emp_cod:$("#emp_cod").val(),
+            per_nrodoc:$("#per_nrodoc").val(),
+            cliente:$("#cliente").val()
         }
-        //en base al JSON traído desde el listaDeposito arrojamos un resultado
+        //en base al JSON traído desde el listaClientes arrojamos un resultado
     }).done(function(lista) {
         //el JSON de respuesta es mostrado en una lista
         var fila = "";
-        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
         if(lista.true == true){
             fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
-        }else{    
+        }else{
             $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionDeposito("+JSON.stringify(item)+")'>"+item.dep_descri+"</li>";
+                fila += "<li class='list-group-item' onclick='seleccionClientes("+JSON.stringify(item)+")'>"+item.cliente+"</li>";
             });
         }
         //enviamos a los input correspondientes de el conjunto de filas
-        $("#ulDeposito").html(fila);
-        //le damos un estilo a la lista de Deposito
-        $("#listaDeposito").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+        $("#ulClientes").html(fila);
+        //le damos un estilo a la lista de GUI
+        $("#listaClientes").attr("style", "display:block; position:absolute; width:100%;");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");
     })
 }
 
-//seleccionamos el deposito por su key y enviamos el dato al input correspondiente
-function seleccionDeposito (datos) {
+//seleccionamos el funcionario por su key y enviamos el dato al input correspondiente
+function seleccionClientes (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
-    $("#ulDeposito").html();
-    $("#listaDeposito").attr("style", "display:none;");
-    $(".foc").attr("class", "form-line foc focused");
-    $(".disa").removeAttr("disabled");
-
+    $("#ulClientes").html();
+    $("#listaClientes").attr("style", "display:none;");
+    $(".focus").attr("class", "form-line focus focused");
 }
 
-//capturamos los datos de la tabla items en un JSON a través de POST para listarlo
-function getItems() {
+//capturamos los datos de la tabla Dias en un JSON a través de POST para listarlo
+function getDias() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/modulos/compras/ajuste_inventario/listas/listaItems.php",
+        url: "/SysGym/modulos/servicios/inscripciones/listas/listaDias.php",
         data: {
-            itm_descri:$("#itm_descri").val(),
-            dep_cod:$("#dep_cod").val(),
-            suc_cod:$("#suc_cod").val(),
-            emp_cod:$("#emp_cod").val(),
+            dia_descri:$("#dia_descri").val()
         }
-        //en base al JSON traído desde el listaItems arrojamos un resultado
+        //en base al JSON traído desde el listaDias arrojamos un resultado
     }).done(function(lista) {
         //el JSON de respuesta es mostrado en una lista
         var fila = "";
@@ -511,66 +517,25 @@ function getItems() {
             fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
         }else{    
             $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionItems("+JSON.stringify(item)+")'>"+item.itm_descri+"</li>";
+                fila += "<li class='list-group-item' onclick='seleccionDias("+JSON.stringify(item)+")'>"+item.dia_descri+"</li>";
             });
         }
         //enviamos a los input correspondientes de el conjunto de filas
-        $("#ulItems").html(fila);
-        //le damos un estilo a la lista de items
-        $("#listaItems").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+        $("#ulDias").html(fila);
+        //le damos un estilo a la lista de Dias
+        $("#listaDias").attr("style", "display:block; position:absolute; width:100%;");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");
     })
 }
 
 //seleccionamos el item por su key y enviamos el dato al input correspondiente
-function seleccionItems (datos) {
+function seleccionDias (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
-    $("#ulItems").html();
-    $("#listaItems").attr("style", "display:none;");
+    $("#ulDias").html();
+    $("#listaDias").attr("style", "display:none;");
     $(".foc").attr("class", "form-line foc focused");
 }
 
-//funcion para seleccionar Ajuste
-let getAjuste = () => {
-    $.ajax({
-        //Enviamos datos para poder filtrar
-        method: "POST",
-        url: "/SysGym/modulos/compras/ajuste_inventario/listas/listaAjuste.php",
-        data: {
-            ajinv_tipoajuste:$("#ajinv_tipoajuste").val()
-        }
-    }) //Cargamos la lista
-        .done(function (lista) {
-            let fila = "";
-            //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
-            if(lista.true == true){
-                fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
-            }else{    
-                $.each(lista,function(i, item) {
-                    fila += "<li class='list-group-item' onclick='seleccionAjuste("+JSON.stringify(item)+")'>"+item.ajinv_tipoajuste+"</li>";
-                });
-            }
-            //cargamos la lista
-            $("#ulAjuste").html(fila);
-            //hacemos visible la lista
-            $("#listaAjuste").attr("style", "display: block; position:absolute; z-index:3000; width:100%;");
-        })
-        .fail(function (a, b, c) {
-            swal("ERROR", c, "error");
-        });
-};
-
-//funcion selecccionar Ajuste
-let seleccionAjuste = (datos) => {
-    //Enviamos los datos a su respectivo input
-    Object.keys(datos).forEach((key) => {
-        $("#" + key).val(datos[key]);
-    });
-    /* Vaciamos y ocultamos la lista */
-    $("#ulAjuste").html();
-    $("#listaAjuste").attr("style", "display: none;");
-    $(".focus").attr("class", "form-line focus focused");
-};

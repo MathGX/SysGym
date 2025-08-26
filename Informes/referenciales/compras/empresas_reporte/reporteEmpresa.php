@@ -30,7 +30,6 @@ $hasta = $_GET['hasta'];
 
 
 $sql = "select * from empresa 
-        where emp_cod between $desde and $hasta
         order by emp_cod;";
 
 $resultado = pg_query($conexion, $sql);

@@ -37,7 +37,7 @@ session_start();
                                     <div class="form-group form-float">
                                         <div class="form-line mod focused">
                                             <input type="text" id="tabla" class="form-control" onclick="getTabla()">
-                                            <label class="form-label">Tabla</label>
+                                            <label class="form-label">Reporte</label>
                                             <div id="listaTabla" style="display: none;">
                                                 <ul class="list-group" id="ulTabla" style="height: 60px; width: 250px; overflow: scroll;"></ul>
                                             </div>

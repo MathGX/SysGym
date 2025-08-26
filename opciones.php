@@ -447,10 +447,10 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/referenciales/seguridad/gui_perfiles/index.php">GUI por perfil</a>
                                 </li>
                                 <li>
-                                    <a href="/SysGym/referenciales/seguridad/configuraciones/index.php">Configuraciones</a>
+                                    <a href="/SysGym/referenciales/seguridad/configuraciones/index.php">Configuraciones de Interfaz</a>
                                 </li>
                                 <li>
-                                    <a href="/SysGym/referenciales/seguridad/suc_config/index.php">Configuraciones por Sucursal</a>
+                                    <a href="/SysGym/referenciales/seguridad/suc_config/index.php">Configuraciones de Interfaz por Sucursal</a>
                                 </li>
                             </ul>
                         </li>
@@ -576,7 +576,7 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/referenciales/ventas/tipo_comprobante/index.php">Tipo de Comprobante</a>
                                 </li>
                                 <li>
-                                    <a href="/SysGym/referenciales/ventas/facturas/index.php">Facturas de Venta</a>
+                                    <a href="/SysGym/referenciales/ventas/timbrados/index.php">Timbrados</a>
                                 </li>
                             </ul>
                         </li>
@@ -621,7 +621,7 @@ if(isset($_SESSION['numApcier'])){
                                 <?php } ?>
                                 <?php if ($AJUSTES_INVENTARIO == true) { ?>
                                 <li>
-                                    <a href="/SysGym/modulos/compras/ajuste_inventario/index.php">Ajustes de inventario</a>
+                                    <a href="/SysGym/modulos/compras/ajuste_stock/index.php">Ajustes de stock</a>
                                 </li>
                                 <?php } ?>
                                 <?php if ($NOTAS_COMPRAS == true) { ?>
@@ -640,6 +640,16 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Servicios</span>
                             </a>
                             <ul class="ml-menu">
+                                <?php if ($INSCRIPCIONES == true) { ?>
+                                <li>
+                                    <a href="/SysGym/modulos/servicios/cupos/index.php">Cupos</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($INSCRIPCIONES == true) { ?>
+                                <li>
+                                    <a href="/SysGym/modulos/servicios/promociones/index.php">Promociones</a>
+                                </li>
+                                <?php } ?>
                                 <?php if ($INSCRIPCIONES == true) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/inscripciones/index.php">Inscripciones</a>
@@ -675,6 +685,11 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/modulos/servicios/asistencias/index.php">Asistencias</a>
                                 </li>
                                 <?php } ?>
+                                <?php if ($ASISTENCIAS == true) { ?>
+                                <li>
+                                    <a href="/SysGym/modulos/servicios/reclamos/index.php">Reclamos</a>
+                                </li>
+                                <?php } ?>
                                 <?php if ($SALIDAS == true) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/salidas/index.php">Salidas</a>
@@ -693,7 +708,7 @@ if(isset($_SESSION['numApcier'])){
                             <ul class="ml-menu">
                                 <?php if ($APERTURA_CIERRE_CAJA == true) { ?>
                                 <li>
-                                    <a href="/SysGym/modulos/ventas/apertura_cierre/index.php">Apertura y cierre de caja</a>
+                                    <a href="/SysGym/modulos/ventas/apertura_cierre/index.php">Apertura, Arqueo de Control y Cierre de Caja</a>
                                 </li>
                                 <?php } ?>
                                 <?php if ($PEDIDOS_VENTAS == true) { ?>
@@ -750,22 +765,22 @@ if(isset($_SESSION['numApcier'])){
                             <ul class="ml-menu">
                                 <?php if ($INF_SEGURIDAD == true) { ?>
                                 <li>
-                                    <a href="/SysGym/Informes/referenciales/seguridad/index.php">Seguridad</a>
+                                    <a href="/SysGym/Informes/referenciales/seguridad/index.php"> Seguridad </a>
                                 </li>
                                 <?php } ?>
                                 <?php if ($INF_REF_COMPRAS == true) { ?>
                                 <li>
-                                    <a href="/SysGym/Informes/referenciales/compras/index.php">Ref. compras</a>
+                                    <a href="/SysGym/Informes/referenciales/compras/index.php"> Ref. Compras </a>
                                 </li>
                                 <?php } ?>
                                 <?php if ($INF_REF_SERVICIOS == true) { ?>
                                 <li>
-                                    <a href="/SysGym/Informes/referenciales/servicios/index.php">Ref. servicios</a>
+                                    <a href="/SysGym/Informes/referenciales/servicios/index.php"> Ref. Servicios </a>
                                 </li>
                                 <?php } ?>
                                 <?php if ($INF_REF_VENTAS == true) { ?>
                                 <li>
-                                    <a href="/SysGym/Informes/referenciales/ventas/index.php">Ref. ventas</a>
+                                    <a href="/SysGym/Informes/referenciales/ventas/index.php"> Ref. Ventas </a>
                                 </li>
                                 <?php } ?>
                             </ul>
@@ -780,7 +795,17 @@ if(isset($_SESSION['numApcier'])){
                             <ul class="ml-menu">
                                 <?php if ($INF_MOV_COMPRAS == true) { ?>
                                 <li>
-                                    <a href="/SysGym/Informes/modulos/compras/index.php">Compras</a>
+                                    <a href="/SysGym/Informes/modulos/compras/index.php"> Compras </a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($INF_MOV_COMPRAS == true) { ?>
+                                <li>
+                                    <a href="/SysGym/Informes/modulos/servicios/index.php"> Servicios </a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($INF_MOV_COMPRAS == true) { ?>
+                                <li>
+                                    <a href="/SysGym/Informes/modulos/ventas/index.php"> Ventas </a>
                                 </li>
                                 <?php } ?>
                             </ul>

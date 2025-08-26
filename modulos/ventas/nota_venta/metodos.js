@@ -52,6 +52,16 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
+let getCod = () => {
+    $.ajax({
+        method: "POST",
+        url: "controlador.php",
+        data: {consulCod: 1}
+    }).done(function (respuesta){
+        $("#notven_cod").val(respuesta.codigo);
+    });
+}
+
 let limpiarCab = () =>{
     $(".tblcab input").each(function(){
         $(this).val('');
@@ -76,6 +86,7 @@ let nuevo = () => {
     $("#notven_cod").val(0);
     $("#notven_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
+    getCod();
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);
@@ -198,11 +209,15 @@ let controlVacio = () => {
 
     if ($("#notven_cod").val() == "") {
         condicion = "i";
-    } else if ($("#usu_login").val() == "") {
+    } else if ($("#emp_razonsocial").val() == "") {
         condicion = "i";
     } else if ($("#suc_descri").val() == "") {
         condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
+    } else if ($("#usu_login").val() == "") {
+        condicion = "i";
+    } else if ($("#notven_fecha").val() == "") {
+        condicion = "i";
+    } else if ($("#tipcomp_cod").val() == "") {
         condicion = "i";
     } else if ($("#per_nrodoc").val() == "") {
         condicion = "i";
@@ -214,11 +229,9 @@ let controlVacio = () => {
         condicion = "i";
     } else if ($("#cliente").val() == "") {
         condicion = "i";
-    } else if ($("#tipcomp_cod").val() == "") {
-        condicion = "i";
     } else if ($("#notven_nronota").val() == "") {
         condicion = "i";
-    } else if ($("#notven_fecha").val() == "") {
+    } else if ($("#notven_concepto").val() == "") {
         condicion = "i";
     } else if ($("#notven_estado").val() == "") {
         condicion = "i";
@@ -523,7 +536,7 @@ let listar2 = () => {
                 } else {
                     impuesto10 = parseFloat (objeto.iva10)
                 }
-                totalExe += parseFloat(objeto.excenta);
+                totalExe += parseFloat(objeto.exenta);
                 totalI5 += parseFloat(objeto.iva5);
                 totalI10 += parseFloat(impuesto10);
                 tabla += "<tr onclick='seleccionarFila2(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
@@ -537,7 +550,7 @@ let listar2 = () => {
                         tabla += objeto.notvendet_precio;
                     tabla += "</td>";
                     tabla += "<td>";
-                        tabla += objeto.excenta;
+                        tabla += objeto.exenta;
                     tabla += "</td>";
                     tabla += "<td>";
                         tabla += objeto.iva5;

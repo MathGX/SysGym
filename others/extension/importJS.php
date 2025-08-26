@@ -366,7 +366,7 @@ function oculSeccGUI() {
                 $(".acc1").attr("style", "display:none");
                 $(".acc2").attr("style", "display:none");
                 $(".acc3").removeAttr("style", "display:none");
-                $(".msg").html("<b>Actualice contraseña de acceso <br> (Mínimo 8 caracteres entre mayúsculas, minúsculas, números y caracteres especiales)</b>");
+                $(".msg").html("<b>Actualice contraseña de acceso <br> (Mínimo 16 caracteres entre mayúsculas, minúsculas, números y caracteres especiales)</b>");
                 $("#boton_recuperar").val('2');
                 $(".alert_fail").attr("class", "alert_fail alert bg-pink alert-dismissible hidden");
 
@@ -420,8 +420,8 @@ function oculSeccGUI() {
         let mensajeError = "";
 
         // Validación de la contraseña
-        if (pass1.length < 8) {
-            mensajeError = "La contraseña debe tener al menos 8 caracteres";
+        if (pass1.length < 16) {
+            mensajeError = "La contraseña debe tener al menos 16 caracteres";
         } else if (!/[A-Z]/.test(pass1)) {
             mensajeError = "La contraseña debe tener al menos una letra mayúscula";
         } else if (!/[a-z]/.test(pass1)) {

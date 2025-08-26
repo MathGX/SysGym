@@ -27,7 +27,7 @@ $datos = pg_fetch_all($resultado);
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>FACTURAS DE VENTAS</title>
+    <title>timbrados</title>
     <!--Se icluyen los estilos CSS ingresando desde la carpeta raíz hacia el importCSS-->
     <?php include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importCSS.php"; ?>
 </head>
@@ -40,11 +40,11 @@ $datos = pg_fetch_all($resultado);
             <div class="row clearfix">
 
                 <div class="col-lg-12">
-                    <!-- formulario de facturas -->
+                    <!-- formulario de timbrados -->
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                FORMULARIO DE FACTURAS DE VENTAS<small>Registrar datos de facturas para cada sucursal</small>
+                                FORMULARIO DE TIMBRADOS<small>Registrar datos de documentos contables para cada sucursal</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -97,7 +97,7 @@ $datos = pg_fetch_all($resultado);
 
                             </div>
                             
-                            <!-- botones del formulario de facturas -->
+                            <!-- botones del formulario de timbrados -->
                             <div class="icon-and-text-button-demo">
                                 <?php foreach ($datos as $key => $boton) { ?>
                                     <?php if (($boton['permi_descri'] == 'AGREGAR') && ($boton['asigusu_estado'] == 'ACTIVO')) { ?>
@@ -127,11 +127,11 @@ $datos = pg_fetch_all($resultado);
                 </div>
 
                 <div class="col-lg-12 tbl" style="display: block;">
-                    <!-- grilla del formulario facturas -->
+                    <!-- grilla del formulario timbrados -->
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                LISTADO DE FACTURAS<small>Listado de últimas facturas emitidas por caja y sucursal</small>
+                                LISTADO DE TIMBRADOS<small>Listado de últimos documentos fiscales emitidos por caja y sucursal</small>
                             </h2>
                         </div>
                         <div class="body">

@@ -5,15 +5,23 @@ header('Content-type: application/json; charset=utf-8');
 //importar la clase conexion.php
 require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 
+// Importar la función para capturar el país, región y ciudad de la IP
+include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importPHP.php"; 
+
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
 $actpas_usu = $_POST['actpas_usu'];
 $actpas_clave = $_POST['actpas_clave'];
-$actpas_fecha = $_POST['actpas_fecha'];
-$actpas_hora = $_POST['actpas_hora'];
+// $actpas_fecha = $_POST['actpas_fecha'];
+// $actpas_hora = $_POST['actpas_hora'];
 $actpas_obs = $_POST['actpas_obs'];
+$actpas_ip = file_get_contents('https://api.ipify.org');
 $correo = $_POST['correo'];
+
+// Llamar a la función para capturar el país, región y ciudad de la IP
+list($actpas_pais_ip, $actpas_region_ip, $actpas_ciudad_ip) = capturarPaisIP($actpas_ip);
+
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -26,15 +34,23 @@ $sql = "insert into actualizar_pass_user (
             actpas_fecha, 
             actpas_hora, 
             actpas_obs,
-            actpas_intentos) 
+            actpas_intentos,
+            actpas_ip,
+            actpas_pais_ip,
+            actpas_region_ip,
+            actpas_ciudad_ip) 
         values (
             (select coalesce(max(actpas_cod), 0) + 1 from actualizar_pass_user), 
             '$actpas_usu', 
             '$actpas_clave',
-            '$actpas_fecha', 
-            '$actpas_hora', 
+            current_date, 
+            current_time, 
             '$actpas_obs',
-            0)";
+            0,
+            '$actpas_ip',
+            upper('$actpas_pais_ip'),
+            upper('$actpas_region_ip'),
+            upper('$actpas_ciudad_ip'))";
 
 // Ejecutar la consulta
 $resultado = pg_query($conexion, $sql);

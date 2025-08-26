@@ -172,7 +172,7 @@ listar();
 function getCajas() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/referenciales/ventas/facturas/listas/listaCajas.php",
+        url: "/SysGym/referenciales/ventas/timbrados/listas/listaCajas.php",
         data: {
             caj_descri:$("#caj_descri").val()
         }
@@ -210,7 +210,7 @@ function seleccionCajas (datos) {
 function getSucursales() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/referenciales/ventas/facturas/listas/listaSucursales.php",
+        url: "/SysGym/referenciales/ventas/timbrados/listas/listaSucursales.php",
         data: {
             emp_cod:$("#emp_cod").val(),
             suc_descri:$("#suc_descri").val()

@@ -71,7 +71,7 @@ let nuevo = () => {
     limpiarCab();
     $("#operacion_cab").val(1);
     $("#transaccion").val('INSERCION');
-    $(".disabledno2").removeAttr("disabled");
+    $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
     $("#notacom_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");

@@ -47,7 +47,7 @@ $u = $_SESSION['usuarios'];
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>AJUSTES DE INVENTARIO</title>
+    <title>AJUSTES DE STOCK</title>
     <!--Se icluyen los estilos CSS ingresando desde la carpeta raíz hacia el importCSS-->
     <?php include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importCSS.php"; ?>
 </head>
@@ -60,11 +60,11 @@ $u = $_SESSION['usuarios'];
             <div class="row clearfix">
 
             <div class="col-lg-12">
-                    <!-- formulario de ajuste de inventario cabecera -->
+                    <!-- formulario de ajuste de stock cabecera -->
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                FORMULARIO DE AJUSTES DE INVENTARIO <small>Registro de actualizaciones en el stock de items</small>
+                                FORMULARIO DE AJUSTES DE STOCK <small>Registro de actualizaciones en el stock de items</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -141,7 +141,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                            <!-- botones del formulario de  ajuste de inventario cabecera-->
+                            <!-- botones del formulario de  ajuste de stock cabecera-->
                             </div>
                             <div class="icon-and-text-button-demo">
                                 <?php if ($botNuevo == true) { ?>
@@ -266,7 +266,7 @@ $u = $_SESSION['usuarios'];
                                 <?php } ?>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="controlVacio2()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>

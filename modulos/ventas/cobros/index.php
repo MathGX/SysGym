@@ -123,7 +123,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="cobr_fecha" class="form-control" disabled>
-                                            <label class="form-label">Fecha</label>
+                                            <label class="form-label">Fecha y Hora</label>
                                         </div>
                                     </div>
                                 </div>
@@ -208,13 +208,23 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getVentas()">
-                                            <label class="form-label">C.I.</label>
+                                            <label class="form-label">Nro. Doc.</label>
                                             <div id="listaVentas" style="display: none;">
                                                 <ul class="list-group" id="ulVentas" style="height:60px; overflow:auto;"></ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc">
+                                            <input type="text" class="form-control" id="cliente" disabled>
+                                            <label class="form-label">Cliente</label>
+                                        </div>
+                                    </div>
+                                </div>
+
 
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
@@ -242,16 +252,6 @@ $u = $_SESSION['usuarios'];
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-sm-3">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc">
-                                            <input type="text" class="form-control" id="cliente" disabled>
-                                            <label class="form-label">Cliente</label>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
@@ -383,14 +383,14 @@ $u = $_SESSION['usuarios'];
                                                     </div>
                                                 </div>
 
-                                                <div class="col-sm-4">
+                                                <!-- <div class="col-sm-4">
                                                     <div class="form-group form-float">
                                                         <div class="form-line foc">
                                                             <input type="text" class="form-control disabledno" id="cobrtarj_num" disabled>
                                                             <label class="form-label">Tarjeta Nro.</label>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                                 
                                                 <div class="col-sm-4">
                                                     <div class="form-group form-float">
@@ -405,7 +405,7 @@ $u = $_SESSION['usuarios'];
                                                     <div class="form-group form-float">
                                                         <div class="form-line foc">
                                                             <input type="number" id="cobrtarj_monto" class="form-control disabledno" disabled>
-                                                            <label class="form-label">Monto</label>
+                                                            <label class="form-label">Monto de la Transacción</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -441,7 +441,7 @@ $u = $_SESSION['usuarios'];
                                                     <div class="form-group form-float">
                                                         <div class="form-line foc">
                                                             <input type="number" id="cobrcheq_monto" class="form-control disabledno" disabled>
-                                                            <label class="form-label">Monto</label>
+                                                            <label class="form-label">Monto del Cheque</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -458,7 +458,7 @@ $u = $_SESSION['usuarios'];
                                                     </div>
                                                 </div>
 
-                                                <div class="col-sm-7">
+                                                <div class="col-sm-6">
                                                     <div class="form-group form-float">
                                                         <div class="form-line foc">
                                                             <input type="hidden" id="ent_cod" value="0">
@@ -471,7 +471,16 @@ $u = $_SESSION['usuarios'];
                                                     </div>
                                                 </div>
 
-                                                <div class="col-sm-5">
+                                                <div class="col-sm-3">
+                                                    <div class="form-group form-float">
+                                                        <div class="form-line focused">
+                                                            <input type="date" id="cobrcheq_fechaven" class="form-control disabledno" disabled>
+                                                            <label class="form-label">Fecha de Emisión</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-3">
                                                     <div class="form-group form-float">
                                                         <div class="form-line focused">
                                                             <input type="date" id="cobrcheq_fechaven" class="form-control disabledno" disabled>

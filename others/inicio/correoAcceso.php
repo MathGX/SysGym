@@ -5,6 +5,9 @@ header('Content-type: application/json; charset=utf-8');
 //importar la clase conexion.php
 require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 
+// Importar la función para capturar el país, región y ciudad de la IP
+include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importPHP.php"; 
+
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
@@ -13,7 +16,11 @@ $accon_clave = $_POST['accon_clave'];
 $accon_fecha = $_POST['accon_fecha'];
 // $accon_hora = $_POST['accon_hora'];
 $accon_obs = $_POST['accon_obs'];
+$accon_ip = file_get_contents('https://api.ipify.org');
 $correo = $_POST['correo'];
+
+// Llamar a la función para capturar el país, región y ciudad de la IP
+list($accon_pais_ip, $accon_region_ip, $accon_ciudad_ip) = capturarPaisIP($accon_ip);
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -27,7 +34,11 @@ $sql = "insert into acceso_control (
             accon_fecha, 
             accon_hora, 
             accon_obs,
-            accon_intentos) 
+            accon_intentos,
+            accon_ip,
+            accon_pais_ip,
+            accon_region_ip,
+            accon_ciudad_ip) 
         values (
             (select coalesce(max(accon_cod), 0) + 1 from acceso_control), 
             '$accon_usu', 
@@ -35,7 +46,11 @@ $sql = "insert into acceso_control (
             '$accon_fecha', 
             current_time, 
             '$accon_obs',
-            0)";
+            0,
+            '$accon_ip',
+            upper('$accon_pais_ip'),
+            upper('$accon_region_ip'),
+            upper('$accon_ciudad_ip'))";
 
 // Ejecutar la consulta
 $resultado = pg_query($conexion, $sql);

@@ -414,6 +414,7 @@ let listar2 = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila2(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
+                    tabla += "<td>" + '28/12/2024' + "</td>";
                     tabla += "<td>" + objeto.param_descri + "</td>";
                     tabla += "<td style='text-align:right;'>" + objeto.evodet_registro_ant + "</td>";
                     tabla += "<td style='text-align:right;'>" + objeto.evodet_registro_act + "</td>";

@@ -96,11 +96,20 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="pro_timbrado" class="form-control disabledno" disabled>
                                             <label class="form-label">Timbrado</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus focused">
+                                            <input type="date" id="pro_timb_fec_venc" class="form-control disabledno" disabled>
+                                            <label class="form-label">Vencimiento Timbrado</label>
                                         </div>
                                     </div>
                                 </div>
@@ -114,7 +123,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="pro_telefono" class="form-control disabledno" disabled>
@@ -168,7 +177,7 @@ $u = $_SESSION['usuarios'];
                                 } ?>
                                 <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>

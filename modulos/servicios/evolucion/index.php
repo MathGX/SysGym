@@ -118,7 +118,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="evo_fecha" class="form-control" disabled>
+                                            <input type="text" id="evo_fecha" class="form-control" disabled >
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -200,7 +200,16 @@ $u = $_SESSION['usuarios'];
                             <input type="hidden" id="operacion_det" value="0">
                             <div class="row clearfix">
 
-                                <div class="col-sm-5">
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc">
+                                            <input type="text" id="evo_fecha" class="form-control" disabled>
+                                            <label class="form-label">Fecha Actualización</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="param_cod" value="0">
@@ -259,12 +268,6 @@ $u = $_SESSION['usuarios'];
                                         <span>AGREGAR</span>
                                     </button>
                                 <?php } ?>
-                                <?php if ( $botModificar == true) { ?>
-                                    <button type="button" class="btn bg-indigo waves-effect btnOperacion3" style="width:12.5%;" onclick="modificar()">
-                                        <i class="material-icons">edit</i>
-                                        <span>MODIFICAR</span>
-                                    </button>
-                                <?php } ?>
                                 <?php if ( $botEliminar == true) { ?>
                                     <button type="button" class="btn bg-indigo waves-effect btnOperacion3" style="width:12.5%;" onclick="eliminar()">
                                         <i class="material-icons">delete</i>
@@ -273,7 +276,7 @@ $u = $_SESSION['usuarios'];
                                 <?php } ?>
                                 <button type="button" style="width:12.5%; display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="controlVacio2()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style="width:12.5%; display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>
@@ -286,6 +289,7 @@ $u = $_SESSION['usuarios'];
                                 <table class="table table-hover table-borderer table-striped">
                                     <thead>
                                         <tr>
+                                            <th>ACTUALIZACION</th>
                                             <th>PARAMETRO</th>
                                             <th style="text-align:right;">REGISTRO ANT.</th>
                                             <th style="text-align:right;">REGISTRO ACT.</th>

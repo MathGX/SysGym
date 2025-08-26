@@ -26,7 +26,7 @@ $datos = pg_fetch_all($resultado);
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>CONFIGURACIONES POR SUCURSAL</title>
+    <title>CONFIGURACIONES DE INTERFAZ POR SUCURSAL</title>
     <!--Se icluyen los estilos CSS ingresando desde la carpeta raíz hacia el importCSS-->
     <?php include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importCSS.php"; ?>
 </head>
@@ -43,7 +43,7 @@ $datos = pg_fetch_all($resultado);
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                FORMULARIO DE CONFIGURACIONES POR SUCURSAL<small>Registrar las configuraciones para cada sucursal</small>
+                                FORMULARIO DE CONFIGURACIONES POR SUCURSAL<small>Registrar las configuraciones de Interfaz para cada sucursal</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -56,7 +56,7 @@ $datos = pg_fetch_all($resultado);
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="suconf_cod" class="form-control" value="0" disabled>
+                                            <input type="text" id="suconf_cod" class="form-control" disabled>
                                             <label class="form-label">Código</label>
                                         </div>
                                     </div>
@@ -156,7 +156,7 @@ $datos = pg_fetch_all($resultado);
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                LISTADO DE CONFIGURACIONES DE CADA SUCURSAL <small>Listado de las sucursales y sus configuraciones</small>
+                                LISTADO DE CONFIGURACIONES DE INTERFAZ DE CADA SUCURSAL <small>Listado de las sucursales y sus configuraciones de interfaz</small>
                             </h2>
                         </div>
                         <div class="body">

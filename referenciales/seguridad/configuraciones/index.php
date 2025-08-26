@@ -28,7 +28,7 @@ $u = $_SESSION['usuarios'];
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>CONFIGURACIONES</title>
+    <title>CONFIGURACIONES DE INTERFAZ</title>
     <!--Se icluyen los estilos CSS ingresando desde la carpeta raíz hacia el importCSS-->
     <?php include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importCSS.php"; ?>
 </head>
@@ -45,7 +45,7 @@ $u = $_SESSION['usuarios'];
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                FORMULARIO DE CONFIGURACIONES<small>Registrar las configuraciones</small>
+                                FORMULARIO DE CONFIGURACIONES DE INTERFAZ<small>Registrar las configuraciones de interfaz</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -137,7 +137,7 @@ $u = $_SESSION['usuarios'];
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                LISTADO DE CONFIGURACIONES<small>Configuraciones habilitadas</small>
+                                LISTADO DE CONFIGURACIONES DE INTERFAZ<small>Configuraciones habilitadas para las interfaces</small>
                             </h2>
                         </div>
                         <div class="body">

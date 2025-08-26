@@ -118,7 +118,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="tipimp_cod" value="0">
@@ -131,7 +131,25 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="itm_estado" class="form-control" disabled>
+                                            <label class="form-label">Stock Máximo</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="itm_estado" class="form-control" disabled>
+                                            <label class="form-label">Stock Mínimo</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="itm_estado" class="form-control" disabled>
@@ -167,7 +185,7 @@ $u = $_SESSION['usuarios'];
                                 <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2"
                                     onclick="controlVacio()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2"
                                     onclick="cancelar()">
@@ -203,6 +221,8 @@ $u = $_SESSION['usuarios'];
                                             <th>COSTO</th>
                                             <th>PRECIO</th>
                                             <th>IMPUESTO</th>
+                                            <th>STOCK MAX.</th>
+                                            <th>STOCK MIN.</th>
                                             <th>ESTADO</th>
                                         </tr>
                                     </thead>

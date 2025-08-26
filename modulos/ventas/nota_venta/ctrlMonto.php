@@ -1,4 +1,4 @@
-<?php
+$acc_ip = file_get_contents('https://api.ipify.org');<?php
 
 //Establecemos el retorno del documento en formato json
 header("Content-type: application/json; charset=utf-8");

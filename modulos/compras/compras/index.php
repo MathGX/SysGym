@@ -129,6 +129,15 @@ $u = $_SESSION['usuarios'];
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus focused">
+                                            <input type="date" id="com_fecha_fac" class="form-control" disabled>
+                                            <label class="form-label">Fecha Factura</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
@@ -153,8 +162,17 @@ $u = $_SESSION['usuarios'];
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus focused">
+                                            <input type="date" id="pro_timb_fec_venc" class="form-control disabledno" disabled>
+                                            <label class="form-label">Vencimiento Timbrado</label>
+                                        </div>
+                                    </div>
+                                </div>
                                 
-                                <div class="col-sm-1">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" class="form-control" id="ordcom_cod" disabled>
@@ -328,7 +346,7 @@ $u = $_SESSION['usuarios'];
                                 <?php } ?>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="controlVacio2()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>
