@@ -28,101 +28,21 @@ $sql = "select
 $resultado = pg_query($conexion, $sql);
 $guis = pg_fetch_all($resultado);
 
-//variables de permisos/interfaz
-$REF_USUARIOS = false;
-$REF_ASIGNACION_PERMISO_USUARIOS = false;
-$REF_MODULOS = false;
-$REF_PERMISOS = false;
-$REF_PERFILES = false;
-$REF_GUI = false;
-$REF_PERFILES_PERMISOS = false;
-$REF_GUI_PERFILES = false;
-$REF_CONFIGURACIONES = false;
-$REF_SUC_CONFIG = false;
-$REF_COMPRAS = false;
-$PEDIDOS_COMPRA = false;
-$PRESUPUESTOS_PROVEEDOR = false;
-$ORDENES_COMPRA = false;
-$COMPRAS = false;
-$NOTAS_COMPRAS = false;
-$AJUSTES_INVENTARIO = false;
-$REF_SERVICIOS = false;
-$INSCRIPCIONES = false;
-$MEDICIONES = false;
-$RUTINAS = false;
-$PLANES_ALIMENTICIOS = false;
-$PRESUPUESTO_PREPARACION = false;
-$EVOLUCION = false;
-$ASISTENCIAS = false;
-$SALIDAS = false;
-$REF_VENTAS = false;
-$APERTURA_CIERRE_CAJA = false;
-$PEDIDOS_VENTAS = false;
-$VENTAS = false;
-$COBRANZAS = false;
-$NOTAS_VENTAS = false;
-$INF_REF_COMPRAS = false;
-$INF_MOV_COMPRAS = false;
-$INF_REF_SERVICIOS = false;
-$INF_MOV_SERVICIOS = false;
-$INF_REF_VENTAS = false;
-$INF_MOV_VENTAS = false;
-$INF_REF_SEGURIDAD = false;
-
-//array que contiene los permisos/interfaz del sistema
+//Array que contiene los permisos/interfaz del sistema
 $interfaz = [
-    'REF_USUARIOS' => 'REF_USUARIOS',
-    'REF_ASIGNACION_PERMISO_USUARIOS' => 'REF_ASIGNACION_PERMISO_USUARIOS',
-    'REF_MODULOS' => 'REF_MODULOS',
-    'REF_PERMISOS' => 'REF_PERMISOS',
-    'REF_PERFILES' => 'REF_PERFILES',
-    'REF_GUI' => 'REF_GUI',
-    'REF_PERFILES_PERMISOS' => 'REF_PERFILES_PERMISOS',
-    'REF_GUI_PERFILES' => 'REF_GUI_PERFILES',
-    'REF_CONFIGURACIONES' => 'REF_CONFIGURACIONES',
-    'REF_SUC_CONFIG' => 'REF_SUC_CONFIG',
-    'REF_COMPRAS' => 'REF_COMPRAS',
-    'PEDIDOS_COMPRA' => 'PEDIDOS_COMPRA',
-    'PRESUPUESTOS_PROVEEDOR' => 'PRESUPUESTOS_PROVEEDOR',
-    'ORDENES_COMPRA' => 'ORDENES_COMPRA',
-    'COMPRAS' => 'COMPRAS',
-    'NOTAS_COMPRAS' => 'NOTAS_COMPRAS',
-    'AJUSTES_INVENTARIO' => 'AJUSTES_INVENTARIO',
-    'REF_SERVICIOS' => 'REF_SERVICIOS',
-    'INSCRIPCIONES' => 'INSCRIPCIONES',
-    'MEDICIONES' => 'MEDICIONES',
-    'RUTINAS' => 'RUTINAS',
-    'PLANES_ALIMENTICIOS' => 'PLANES_ALIMENTICIOS',
-    'PRESUPUESTO_PREPARACION' => 'PRESUPUESTO_PREPARACION',
-    'EVOLUCION' => 'EVOLUCION',
-    'ASISTENCIAS' => 'ASISTENCIAS',
-    'SALIDAS' => 'SALIDAS',
-    'REF_VENTAS' => 'REF_VENTAS',
-    'APERTURA_CIERRE_CAJA' => 'APERTURA_CIERRE_CAJA',
-    'PEDIDOS_VENTAS' => 'PEDIDOS_VENTAS',
-    'VENTAS' => 'VENTAS',
-    'COBRANZAS' => 'COBRANZAS',
-    'NOTAS_VENTAS' => 'NOTAS_VENTAS',
-    'INF_REF_COMPRAS' => 'INF_REF_COMPRAS',
-    'INF_MOV_COMPRAS' => 'INF_MOV_COMPRAS',
-    'INF_REF_SERVICIOS' => 'INF_REF_SERVICIOS',
-    'INF_MOV_SERVICIOS' => 'INF_MOV_SERVICIOS',
-    'INF_REF_VENTAS' => 'INF_REF_VENTAS',
-    'INF_MOV_VENTAS' => 'INF_MOV_VENTAS',
-    'INF_REF_SEGURIDAD' => 'INF_REF_SEGURIDAD'
+    'REF_USUARIOS', 'REF_ASIGNACION_PERMISO_USUARIOS', 'REF_MODULOS', 'REF_PERMISOS', 'REF_PERFILES',
+    'REF_GUI', 'REF_PERFILES_PERMISOS', 'REF_GUI_PERFILES', 'REF_CONFIGURACIONES', 'REF_SUC_CONFIG',
+    'REF_COMPRAS', 'PEDIDOS_COMPRA', 'PRESUPUESTOS_PROVEEDOR', 'ORDENES_COMPRA', 'COMPRAS', 'NOTAS_COMPRAS',
+    'AJUSTES_INVENTARIO', 'REF_SERVICIOS', 'INSCRIPCIONES', 'MEDICIONES', 'RUTINAS', 'PLANES_ALIMENTICIOS',
+    'PRESUPUESTO_PREPARACION', 'EVOLUCION', 'ASISTENCIAS', 'SALIDAS', 'REF_VENTAS', 'APERTURA_CIERRE_CAJA',
+    'PEDIDOS_VENTAS', 'VENTAS', 'COBRANZAS', 'NOTAS_VENTAS', 'INF_REF_COMPRAS', 'INF_MOV_COMPRAS',
+    'INF_REF_SERVICIOS', 'INF_MOV_SERVICIOS', 'INF_REF_VENTAS', 'INF_MOV_VENTAS', 'INF_REF_SEGURIDAD'
 ];
 
-//Recorrer el array $guis, que contiene los permisos/interfaz del usuario.
-foreach ($guis as $gui){
-    //se verifica que la descripción del GUI exista en el array de interfaz y que el estado del permiso sea ACTIVO
-    if ((array_key_exists("gui_descri", $gui)) && ($gui['guiperf_estado'] == 'ACTIVO')) {
-        //se asigna a la variable el valor del array interfaz
-        $interfazVal = strval($interfaz[$gui['gui_descri']]);
-        //se cambia el valor de la variable a true
-        $$interfazVal = true;
-    }
-}
+//Inicializamos las variables de permisos/interfaz en false
+$accesoInterfaz = array_fill_keys($interfaz, false);
 
+//variables que indican si existen GUI activos por tipo
 $refActiva = false;
 $movActiva = false;
 $infActiva = false;
@@ -139,66 +59,54 @@ $guiMovVentas = [];
 $guiInfReferenciales = [];
 $guiInfMovimientos = [];
 
-// Verificar si alguna variable que comienza con 'REF_' es true
-foreach (get_defined_vars() as $varName => $varValue) {
-    //se verifica si la variable comienza con 'REF_' y su valor es true
-    if (strpos($varName, 'REF_') === 0 && $varValue === true) {
-        //si es así, se activa la variable de referencia
-        $refActiva = true;
-        //se recorre el array de permisos/interfaz del usuario
-        foreach ($guis as $gui) {
-            //se verifica a qué módulo pertenece el GUI activo y se guarda en el array correspondiente
-            if ($varName == $gui['gui_descri'] ) {
-                if ($gui['modulo_gui'] == '1') {
-                    array_push($guiRefSeguridad, $varName);
-                } else if ($gui['modulo_gui'] == '2') {
-                    array_push($guiRefCompra, $varName);
-                } else if ($gui['modulo_gui'] == '3') {
-                    array_push($guiRefServicios, $varName);
-                } else if ($gui['modulo_gui'] == '4') {
-                    array_push($guiRefVentas, $varName);
-                }
+//Recorrer el array $guis, que contiene los permisos/interfaz del usuario.
+foreach ($guis as $gui) {
+    $nombre = $gui['gui_descri'];
+    $estado = $gui['guiperf_estado'];
+    $modulo = $gui['modulo_gui'];
+
+    if (in_array($nombre, $interfaz) && $estado === 'ACTIVO') {
+        $accesoInterfaz[$nombre] = true;
+
+        // Separa los GUI por tipo
+        //Referenciales
+        if (strpos($nombre, 'REF_') === 0) {
+            $refActiva = true;
+            switch ($modulo) {
+                case '1': $guiRefSeguridad[] = $nombre; break;
+                case '2': $guiRefCompra[] = $nombre; break;
+                case '3': $guiRefServicios[] = $nombre; break;
+                case '4': $guiRefVentas[] = $nombre; break;
             }
-        }
-    } else if (strpos($varName, 'INF_REF_') === 0 && $varValue === true) {
-        //si es así, se activa la variable de referencia
-        $infActiva = true;
-        //se recorre el array de permisos/interfaz del usuario
-        foreach ($guis as $gui) {
-            //se verifica a qué módulo pertenece el GUI activo y se guarda en el array correspondiente
-            if ($varName == $gui['gui_descri'] ) {
-                array_push($guiInfReferenciales, $varName);
-            }
-        }
-    } else if (strpos($varName, 'INF_MOV_') === 0 && $varValue === true) {
-        //si es así, se activa la variable de referencia
-        $infActiva = true;
-        //se recorre el array de permisos/interfaz del usuario
-        foreach ($guis as $gui) {
-            //se verifica a qué módulo pertenece el GUI activo y se guarda en el array correspondiente
-            if ($varName == $gui['gui_descri'] ) {
-                array_push($guiInfMovimientos, $varName);
-            }
-        }
-    } else {
-        //si es así, se activa la variable de referencia
-        $movActiva = true;
-        //se recorre el array de permisos/interfaz del usuario
-        foreach ($guis as $gui) {
-            //se verifica a qué módulo pertenece el GUI activo y se guarda en el array correspondiente
-            if ($varName == $gui['gui_descri'] ) {
-                if ($gui['modulo_gui'] == '2') {
-                    array_push($guiMovCompras, $varName);
-                } else if ($gui['modulo_gui'] == '3') {
-                    array_push($guiMovServicios, $varName);
-                } else if ($gui['modulo_gui'] == '4') {
-                    array_push($guiMovVentas, $varName);
-                }
+        //Informes referenciales
+        } elseif (strpos($nombre, 'INF_REF_') === 0) {
+            $infActiva = true;
+            $guiInfReferenciales[] = $nombre;
+        //Informes movimientos
+        } elseif (strpos($nombre, 'INF_MOV_') === 0) {
+            $infActiva = true;
+            $guiInfMovimientos[] = $nombre;
+        //Movimientos
+        } else {
+            $movActiva = true;
+            switch ($modulo) {
+                case '2': $guiMovCompras[] = $nombre; break;
+                case '3': $guiMovServicios[] = $nombre; break;
+                case '4': $guiMovVentas[] = $nombre; break;
             }
         }
     }
 }
-
+// print_r($guiRefSeguridad);
+// print_r($guiRefCompra);
+// print_r($guiRefServicios);
+// print_r($guiRefVentas);
+// print_r($guiMovCompras);
+// print_r($guiMovServicios);
+// print_r($guiMovVentas);
+// print_r($guiInfReferenciales);
+// print_r($guiInfMovimientos);
+//print_r($accesoInterfaz);
 
 //Array que contiene los datos de la apertura de caja
 $apertura = ['apcier_cod' => 0,
@@ -702,32 +610,32 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Compras</span>
                             </a>
                             <ul class="ml-menu">
-                                <?php if ($PEDIDOS_COMPRA == true) { ?>
+                                <?php if($accesoInterfaz['PEDIDOS_COMPRA']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/compras/pedidos_compra/index.php">Pedidos de Compra</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($PRESUPUESTOS_PROVEEDOR == true) { ?>
+                                <?php if ($accesoInterfaz['PRESUPUESTOS_PROVEEDOR']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/compras/presupuesto_proveedor/index.php">Presupuestos de Proveedores</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($ORDENES_COMPRA == true) { ?>
+                                <?php if ($accesoInterfaz['ORDENES_COMPRA']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/compras/orden_compra/index.php">Ordenes de Compra</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($COMPRAS == true) { ?>
+                                <?php if ($accesoInterfaz['COMPRAS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/compras/compras/index.php">Compras</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($AJUSTES_INVENTARIO == true) { ?>
+                                <?php if ($accesoInterfaz['AJUSTES_INVENTARIO']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/compras/ajuste_stock/index.php">Ajustes de stock</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($NOTAS_COMPRAS == true) { ?>
+                                <?php if ($accesoInterfaz['NOTAS_COMPRAS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/compras/nota_compra/index.php">Notas de compra</a>
                                 </li>
@@ -743,57 +651,57 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Servicios</span>
                             </a>
                             <ul class="ml-menu">
-                                <?php if ($INSCRIPCIONES == true) { ?>
+                                <?php if ($accesoInterfaz['INSCRIPCIONES']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/cupos/index.php">Cupos</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($INSCRIPCIONES == true) { ?>
+                                <?php if ($accesoInterfaz['INSCRIPCIONES']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/promociones/index.php">Promociones</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($INSCRIPCIONES == true) { ?>
+                                <?php if ($accesoInterfaz['INSCRIPCIONES']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/inscripciones/index.php">Inscripciones</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($PRESUPUESTO_PREPARACION == true) { ?>
+                                <?php if ($accesoInterfaz['PRESUPUESTO_PREPARACION']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/presupuesto_preparacion/index.php">Presupuesto de Preparación</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($MEDICIONES == true) { ?>
+                                <?php if ($accesoInterfaz['MEDICIONES']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/mediciones/index.php">Mediciones</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($RUTINAS == true) { ?>
+                                <?php if ($accesoInterfaz['RUTINAS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/rutinas/index.php">Rutinas</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($PLANES_ALIMENTICIOS == true) { ?>
+                                <?php if ($accesoInterfaz['PLANES_ALIMENTICIOS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/plan_alimenticio/index.php">Planes Alimenticios</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($EVOLUCION == true) { ?>
+                                <?php if ($accesoInterfaz['EVOLUCION']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/evolucion/index.php">Evolucion</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($ASISTENCIAS == true) { ?>
+                                <?php if ($accesoInterfaz['ASISTENCIAS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/asistencias/index.php">Asistencias</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($ASISTENCIAS == true) { ?>
+                                <?php if ($accesoInterfaz['ASISTENCIAS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/reclamos/index.php">Reclamos</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($SALIDAS == true) { ?>
+                                <?php if ($accesoInterfaz['SALIDAS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/servicios/salidas/index.php">Salidas</a>
                                 </li>
@@ -809,18 +717,18 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Ventas</span>
                             </a>
                             <ul class="ml-menu">
-                                <?php if ($APERTURA_CIERRE_CAJA == true) { ?>
+                                <?php if ($accesoInterfaz['APERTURA_CIERRE_CAJA']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/ventas/apertura_cierre/index.php">Apertura, Arqueo de Control y Cierre de Caja</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($PEDIDOS_VENTAS == true) { ?>
+                                <?php if ($accesoInterfaz['PEDIDOS_VENTAS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/ventas/pedidos_venta/index.php">Pedidos de Venta</a>
                                 </li>
                                 <?php } ?>
                                 <?php 
-                                if (($VENTAS == true) && (($apertura['apcier_estado'] === 'ABIERTA') || ($u['perf_descri'] == 'ADMINISTRADOR'))) { ?>
+                                if (($accesoInterfaz['VENTAS']) && (($apertura['apcier_estado'] === 'ABIERTA') || ($u['perf_descri'] == 'ADMINISTRADOR'))) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/ventas/ventas/index.php">Ventas</a>
                                     <ul class="ml-menu">
@@ -833,13 +741,13 @@ if(isset($_SESSION['numApcier'])){
                                     </ul>
                                 </li>
                                 <?php } ?>
-                                <?php if (($COBRANZAS == true) && (($apertura['apcier_estado'] === 'ABIERTA') || ($u['perf_descri'] == 'ADMINISTRADOR'))) { ?>
+                                <?php if (($accesoInterfaz['COBRANZAS']) && (($apertura['apcier_estado'] === 'ABIERTA') || ($u['perf_descri'] == 'ADMINISTRADOR'))) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/ventas/cobros/index.php">Cobranzas</a>
                                 </li>
                                 <?php } ?>
                                 <?php 
-                                if ($NOTAS_VENTAS == true) { ?>
+                                if ($accesoInterfaz['NOTAS_VENTAS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/ventas/nota_venta/index.php">Notas de Venta</a>
                                 </li>
@@ -868,22 +776,22 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Referenciales</span>
                             </a>
                             <ul class="ml-menu">
-                                <?php if ($INF_REF_SEGURIDAD == true) { ?>
+                                <?php if ($accesoInterfaz['INF_REF_SEGURIDAD']) { ?>
                                 <li>
                                     <a href="/SysGym/Informes/referenciales/seguridad/index.php"> Ref. Seguridad </a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($INF_REF_COMPRAS == true) { ?>
+                                <?php if ($accesoInterfaz['INF_REF_COMPRAS']) { ?>
                                 <li>
                                     <a href="/SysGym/Informes/referenciales/compras/index.php"> Ref. Compras </a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($INF_REF_SERVICIOS == true) { ?>
+                                <?php if ($accesoInterfaz['INF_REF_SERVICIOS']) { ?>
                                 <li>
                                     <a href="/SysGym/Informes/referenciales/servicios/index.php"> Ref. Servicios </a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($INF_REF_VENTAS == true) { ?>
+                                <?php if ($accesoInterfaz['INF_REF_VENTAS']) { ?>
                                 <li>
                                     <a href="/SysGym/Informes/referenciales/ventas/index.php"> Ref. Ventas </a>
                                 </li>
@@ -899,17 +807,17 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Modulos</span>
                             </a>
                             <ul class="ml-menu">
-                                <?php if ($INF_MOV_COMPRAS == true) { ?>
+                                <?php if ($accesoInterfaz['INF_MOV_COMPRAS']) { ?>
                                 <li>
                                     <a href="/SysGym/Informes/modulos/compras/index.php"> Compras </a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($INF_MOV_COMPRAS == true) { ?>
+                                <?php if ($accesoInterfaz['INF_MOV_COMPRAS']) { ?>
                                 <li>
                                     <a href="/SysGym/Informes/modulos/servicios/index.php"> Servicios </a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($INF_MOV_COMPRAS == true) { ?>
+                                <?php if ($accesoInterfaz['INF_MOV_COMPRAS']) { ?>
                                 <li>
                                     <a href="/SysGym/Informes/modulos/ventas/index.php"> Ventas </a>
                                 </li>
