@@ -16,19 +16,29 @@ $conexion = $objConexion->getConexion();
 $perfil = $u['perf_descri'];
 
 $sql = "select
-        p.perf_descri,
-        g.gui_descri,
-        gp.guiperf_estado
+            p.perf_descri,
+            g.gui_descri,
+            gp.guiperf_estado,
+            g.mod_cod modulo_gui
         from gui_perfiles gp
-        join perfiles p on p.perf_cod = gp.perf_cod
-        join gui g on g.gui_cod = gp.gui_cod
+            join perfiles p on p.perf_cod = gp.perf_cod
+            join gui g on g.gui_cod = gp.gui_cod
         where p.perf_descri ilike '%$perfil%'";
 
 $resultado = pg_query($conexion, $sql);
 $guis = pg_fetch_all($resultado);
 
-//
-$REF_SEGURIDAD = false;
+//variables de permisos/interfaz
+$REF_USUARIOS = false;
+$REF_ASIGNACION_PERMISO_USUARIOS = false;
+$REF_MODULOS = false;
+$REF_PERMISOS = false;
+$REF_PERFILES = false;
+$REF_GUI = false;
+$REF_PERFILES_PERMISOS = false;
+$REF_GUI_PERFILES = false;
+$REF_CONFIGURACIONES = false;
+$REF_SUC_CONFIG = false;
 $REF_COMPRAS = false;
 $PEDIDOS_COMPRA = false;
 $PRESUPUESTOS_PROVEEDOR = false;
@@ -57,10 +67,20 @@ $INF_REF_SERVICIOS = false;
 $INF_MOV_SERVICIOS = false;
 $INF_REF_VENTAS = false;
 $INF_MOV_VENTAS = false;
-$INF_SEGURIDAD = false;
+$INF_REF_SEGURIDAD = false;
 
+//array que contiene los permisos/interfaz del sistema
 $interfaz = [
-    'REF_SEGURIDAD' => 'REF_SEGURIDAD',
+    'REF_USUARIOS' => 'REF_USUARIOS',
+    'REF_ASIGNACION_PERMISO_USUARIOS' => 'REF_ASIGNACION_PERMISO_USUARIOS',
+    'REF_MODULOS' => 'REF_MODULOS',
+    'REF_PERMISOS' => 'REF_PERMISOS',
+    'REF_PERFILES' => 'REF_PERFILES',
+    'REF_GUI' => 'REF_GUI',
+    'REF_PERFILES_PERMISOS' => 'REF_PERFILES_PERMISOS',
+    'REF_GUI_PERFILES' => 'REF_GUI_PERFILES',
+    'REF_CONFIGURACIONES' => 'REF_CONFIGURACIONES',
+    'REF_SUC_CONFIG' => 'REF_SUC_CONFIG',
     'REF_COMPRAS' => 'REF_COMPRAS',
     'PEDIDOS_COMPRA' => 'PEDIDOS_COMPRA',
     'PRESUPUESTOS_PROVEEDOR' => 'PRESUPUESTOS_PROVEEDOR',
@@ -89,22 +109,104 @@ $interfaz = [
     'INF_MOV_SERVICIOS' => 'INF_MOV_SERVICIOS',
     'INF_REF_VENTAS' => 'INF_REF_VENTAS',
     'INF_MOV_VENTAS' => 'INF_MOV_VENTAS',
-    'INF_SEGURIDAD' => 'INF_SEGURIDAD'
+    'INF_REF_SEGURIDAD' => 'INF_REF_SEGURIDAD'
 ];
 
-//
+//Recorrer el array $guis, que contiene los permisos/interfaz del usuario.
 foreach ($guis as $gui){
+    //se verifica que la descripción del GUI exista en el array de interfaz y que el estado del permiso sea ACTIVO
     if ((array_key_exists("gui_descri", $gui)) && ($gui['guiperf_estado'] == 'ACTIVO')) {
+        //se asigna a la variable el valor del array interfaz
         $interfazVal = strval($interfaz[$gui['gui_descri']]);
+        //se cambia el valor de la variable a true
         $$interfazVal = true;
     }
 }
 
+$refActiva = false;
+$movActiva = false;
+$infActiva = false;
+//Arrays que contienen los GUI activos de las referenciales por módulo
+$guiRefSeguridad = [];
+$guiRefCompra = [];
+$guiRefServicios = [];
+$guiRefVentas = [];
+//Arrays que contienen los GUI activos de los movimientos por módulo
+$guiMovCompras = [];
+$guiMovServicios = [];
+$guiMovVentas = [];
+//Arrays que contienen los GUI activos de los informes
+$guiInfReferenciales = [];
+$guiInfMovimientos = [];
+
+// Verificar si alguna variable que comienza con 'REF_' es true
+foreach (get_defined_vars() as $varName => $varValue) {
+    //se verifica si la variable comienza con 'REF_' y su valor es true
+    if (strpos($varName, 'REF_') === 0 && $varValue === true) {
+        //si es así, se activa la variable de referencia
+        $refActiva = true;
+        //se recorre el array de permisos/interfaz del usuario
+        foreach ($guis as $gui) {
+            //se verifica a qué módulo pertenece el GUI activo y se guarda en el array correspondiente
+            if ($varName == $gui['gui_descri'] ) {
+                if ($gui['modulo_gui'] == '1') {
+                    array_push($guiRefSeguridad, $varName);
+                } else if ($gui['modulo_gui'] == '2') {
+                    array_push($guiRefCompra, $varName);
+                } else if ($gui['modulo_gui'] == '3') {
+                    array_push($guiRefServicios, $varName);
+                } else if ($gui['modulo_gui'] == '4') {
+                    array_push($guiRefVentas, $varName);
+                }
+            }
+        }
+    } else if (strpos($varName, 'INF_REF_') === 0 && $varValue === true) {
+        //si es así, se activa la variable de referencia
+        $infActiva = true;
+        //se recorre el array de permisos/interfaz del usuario
+        foreach ($guis as $gui) {
+            //se verifica a qué módulo pertenece el GUI activo y se guarda en el array correspondiente
+            if ($varName == $gui['gui_descri'] ) {
+                array_push($guiInfReferenciales, $varName);
+            }
+        }
+    } else if (strpos($varName, 'INF_MOV_') === 0 && $varValue === true) {
+        //si es así, se activa la variable de referencia
+        $infActiva = true;
+        //se recorre el array de permisos/interfaz del usuario
+        foreach ($guis as $gui) {
+            //se verifica a qué módulo pertenece el GUI activo y se guarda en el array correspondiente
+            if ($varName == $gui['gui_descri'] ) {
+                array_push($guiInfMovimientos, $varName);
+            }
+        }
+    } else {
+        //si es así, se activa la variable de referencia
+        $movActiva = true;
+        //se recorre el array de permisos/interfaz del usuario
+        foreach ($guis as $gui) {
+            //se verifica a qué módulo pertenece el GUI activo y se guarda en el array correspondiente
+            if ($varName == $gui['gui_descri'] ) {
+                if ($gui['modulo_gui'] == '2') {
+                    array_push($guiMovCompras, $varName);
+                } else if ($gui['modulo_gui'] == '3') {
+                    array_push($guiMovServicios, $varName);
+                } else if ($gui['modulo_gui'] == '4') {
+                    array_push($guiMovVentas, $varName);
+                }
+            }
+        }
+    }
+}
+
+
+//Array que contiene los datos de la apertura de caja
 $apertura = ['apcier_cod' => 0,
             'caj_cod' => 0,
             'caj_descri' => '',
             'apcier_estado' => ''];
 
+//Si existe una apertura de caja en la sesión, se carga en el array apertura
 if(isset($_SESSION['numApcier'])){
     $apertura = ['apcier_cod' => $_SESSION['numApcier']['codigo'],
                 'caj_cod' => $_SESSION['numApcier']['caja'],
@@ -407,7 +509,7 @@ if(isset($_SESSION['numApcier'])){
                         <span>INICIO</span>
                     </a>
                 </li>
-                <?php if ($u['mod_descri'] == 'SISTEMAS') { ?>
+                <?php if ($refActiva == true) { ?>
                 <!--OPCIONES DE REFERNCIALES-->
                 <li>
                     <a href="javascript:void(0);" class="menu-toggle">
@@ -415,7 +517,7 @@ if(isset($_SESSION['numApcier'])){
                         <span>REFERENCIALES</span>
                     </a>
                     <ul class="ml-menu">
-                    <?php if($REF_SEGURIDAD == true){?>
+                    <?php if(!empty($guiRefSeguridad)){?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">security</i>
@@ -455,7 +557,7 @@ if(isset($_SESSION['numApcier'])){
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if($REF_SERVICIOS == true){?>
+                    <?php if(!empty($guiRefServicios)){?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">fitness_center</i>
@@ -504,7 +606,7 @@ if(isset($_SESSION['numApcier'])){
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if($REF_COMPRAS == true){?>
+                    <?php if(!empty($guiRefCompra)){?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">add_shopping_cart</i>
@@ -541,7 +643,7 @@ if(isset($_SESSION['numApcier'])){
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if($REF_VENTAS == true){?>
+                    <?php if(!empty($guiRefVentas)){?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">shop</i>
@@ -586,13 +688,14 @@ if(isset($_SESSION['numApcier'])){
                 </li>
                 <?php } ?>
 
+                <?php if ($movActiva == true) { ?>
                 <li>
                     <a href="javascript:void(0);" class="menu-toggle">
                         <i class="material-icons">domain</i>
                         <span>MODULOS</span>
                     </a>
                     <ul class="ml-menu">
-                        <?php if (($u['mod_descri'] == 'COMPRAS') || ($u['perf_descri'] == 'ADMINISTRADOR')) { ?>
+                        <?php if (!empty($guiMovCompras)) { ?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">add_shopping_cart</i>
@@ -633,7 +736,7 @@ if(isset($_SESSION['numApcier'])){
                         </li>
                         <?php } ?>
 
-                        <?php if (($u['mod_descri'] == 'SERVICIOS') || ($u['perf_descri'] == 'ADMINISTRADOR')) { ?>
+                        <?php if (!empty($guiMovServicios)) { ?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">fitness_center</i>
@@ -699,7 +802,7 @@ if(isset($_SESSION['numApcier'])){
                         </li>
                         <?php } ?>
 
-                        <?php if (($u['mod_descri'] == 'VENTAS') || ($u['perf_descri'] == 'ADMINISTRADOR')) { ?>
+                        <?php if (!empty($guiMovVentas)) { ?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">shop</i>
@@ -749,23 +852,25 @@ if(isset($_SESSION['numApcier'])){
                     </ul>
 
                 </li>
+                <?php } ?>
 
+                <?php if ($infActiva == true) { ?>
                 <li>
                     <a href="javascript:void(0);" class="menu-toggle">
                         <i class="material-icons">library_books</i>
                         <span>REPORTES</span>
                     </a>
                     <ul class="ml-menu">
-                        <?php if ($u['mod_descri'] == 'SISTEMAS') { ?>
+                        <?php if (!empty($guiInfReferenciales)) { ?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">label</i>
                                 <span>Referenciales</span>
                             </a>
                             <ul class="ml-menu">
-                                <?php if ($INF_SEGURIDAD == true) { ?>
+                                <?php if ($INF_REF_SEGURIDAD == true) { ?>
                                 <li>
-                                    <a href="/SysGym/Informes/referenciales/seguridad/index.php"> Seguridad </a>
+                                    <a href="/SysGym/Informes/referenciales/seguridad/index.php"> Ref. Seguridad </a>
                                 </li>
                                 <?php } ?>
                                 <?php if ($INF_REF_COMPRAS == true) { ?>
@@ -787,6 +892,7 @@ if(isset($_SESSION['numApcier'])){
                         </li>
                         <?php } ?>
 
+                        <?php if (!empty($guiInfMovimientos)) { ?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">work</i>
@@ -810,8 +916,10 @@ if(isset($_SESSION['numApcier'])){
                                 <?php } ?>
                             </ul>
                         </li>
+                        <?php } ?>
                     </ul>
                 </li>
+                <?php } ?>
 
 
 
