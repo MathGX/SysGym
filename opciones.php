@@ -30,13 +30,29 @@ $guis = pg_fetch_all($resultado);
 
 //Array que contiene los permisos/interfaz del sistema
 $interfaz = [
+    //Referenciales de Seguridad
     'REF_USUARIOS', 'REF_ASIGNACION_PERMISO_USUARIOS', 'REF_MODULOS', 'REF_PERMISOS', 'REF_PERFILES',
     'REF_GUI', 'REF_PERFILES_PERMISOS', 'REF_GUI_PERFILES', 'REF_CONFIGURACIONES', 'REF_SUC_CONFIG',
-    'REF_COMPRAS', 'PEDIDOS_COMPRA', 'PRESUPUESTOS_PROVEEDOR', 'ORDENES_COMPRA', 'COMPRAS', 'NOTAS_COMPRAS',
-    'AJUSTES_INVENTARIO', 'REF_SERVICIOS', 'INSCRIPCIONES', 'MEDICIONES', 'RUTINAS', 'PLANES_ALIMENTICIOS',
-    'PRESUPUESTO_PREPARACION', 'EVOLUCION', 'ASISTENCIAS', 'SALIDAS', 'REF_VENTAS', 'APERTURA_CIERRE_CAJA',
-    'PEDIDOS_VENTAS', 'VENTAS', 'COBRANZAS', 'NOTAS_VENTAS', 'INF_REF_COMPRAS', 'INF_MOV_COMPRAS',
-    'INF_REF_SERVICIOS', 'INF_MOV_SERVICIOS', 'INF_REF_VENTAS', 'INF_MOV_VENTAS', 'INF_REF_SEGURIDAD'
+    //Referenciales de Compras
+    'REF_EMPRESAS', 'REF_SUCURSALES', 'REF_DEPOSITOS', 'REF_CIUDADES', 'REF_TIPO_IMPUESTO', 'REF_TIPO_ITEM',
+    'REF_ITEMS', 'REF_TIPO_PROVEEDOR', 'REF_PROVEEDORES', 
+    //Referenciales de Ventas
+    'REF_CLIENTES', 'REF_ENTIDAD_EMISORA', 'REF_MARCA_TARJETA', 'REF_ENTIDAD_ADHERIDA', 'REF_RED_PAGO', 
+    'REF_CAJA', 'REF_FORMA_COBRO', 'REF_TIPO_DOCUMENTO','REF_TIPO_COMPROBANTE', 'REF_TIMBRADOS',
+    //Referenciales de Servicios
+    'REF_PERSONAS', 'REF_CARGOS', 'REF_FUNCIONARIOS', 'REF_DIAS', 'REF_TIPO_EQUIPO', 'REF_EQUIPOS', 'REF_PARAMETROS_MEDICION', 
+    'REF_UNIDAD_MEDIDA', 'REF_EJERCICIOS', 'REF_TIPO_RUTINA', 'REF_TIPO_PLAN_ALIMENTICIO', 'REF_COMIDAS', 'REF_HORARIOS_COMIDA',
+    //Movimientos de Compras
+    'PEDIDOS_COMPRA', 'PRESUPUESTOS_PROVEEDOR', 'ORDENES_COMPRA', 'COMPRAS', 'NOTAS_COMPRAS', 'AJUSTES_INVENTARIO', 
+    //Movimientos de Servicios
+    'CUPOS_SERVICIOS', 'PROMOCIONES', 'INSCRIPCIONES','PRESUPUESTO_PREPARACION', 'MEDICIONES', 'RUTINAS', 
+    'PLANES_ALIMENTICIOS', 'EVOLUCION', 'ASISTENCIAS', 'RECLAMOS', 'SALIDAS', 
+    //Movimientos de Ventas
+    'APERTURA_CIERRE_CAJA', 'PEDIDOS_VENTAS', 'VENTAS', 'COBRANZAS', 'NOTAS_VENTAS', 
+    //Informes Referenciales
+    'INF_REF_COMPRAS', 'INF_REF_SERVICIOS', 'INF_REF_VENTAS','INF_REF_SEGURIDAD',
+    //Informes Movimientos
+    'INF_MOV_COMPRAS', 'INF_MOV_SERVICIOS', 'INF_MOV_VENTAS'
 ];
 
 //Inicializamos las variables de permisos/interfaz en false
@@ -73,10 +89,18 @@ foreach ($guis as $gui) {
         if (strpos($nombre, 'REF_') === 0) {
             $refActiva = true;
             switch ($modulo) {
-                case '1': $guiRefSeguridad[] = $nombre; break;
-                case '2': $guiRefCompra[] = $nombre; break;
-                case '3': $guiRefServicios[] = $nombre; break;
-                case '4': $guiRefVentas[] = $nombre; break;
+                case '1': 
+                    $guiRefSeguridad[] = $nombre; 
+                    break;
+                case '2': 
+                    $guiRefCompra[] = $nombre; 
+                    break;
+                case '3': 
+                    $guiRefServicios[] = $nombre; 
+                    break;
+                case '4': 
+                    $guiRefVentas[] = $nombre; 
+                    break;
             }
         //Informes referenciales
         } elseif (strpos($nombre, 'INF_REF_') === 0) {
@@ -90,9 +114,15 @@ foreach ($guis as $gui) {
         } else {
             $movActiva = true;
             switch ($modulo) {
-                case '2': $guiMovCompras[] = $nombre; break;
-                case '3': $guiMovServicios[] = $nombre; break;
-                case '4': $guiMovVentas[] = $nombre; break;
+                case '2': 
+                    $guiMovCompras[] = $nombre; 
+                    break;
+                case '3': 
+                    $guiMovServicios[] = $nombre; 
+                    break;
+                case '4': 
+                    $guiMovVentas[] = $nombre; 
+                    break;
             }
         }
     }
@@ -432,36 +462,56 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Ref. Seguridad</span>
                             </a>
                             <ul class="ml-menu">
+                                <?php if ($accesoInterfaz['REF_USUARIOS']){?>
                                 <li >
                                     <a href="/SysGym/referenciales/seguridad/usuarios/index.php">Usuarios</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_ASIGNACION_PERMISO_USUARIOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/asignacion_per_usu/index.php">Asignación de permisos</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_MODULOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/modulos/index.php">Modulos</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_PERMISOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/permisos/index.php">Permisos</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_PERFILES']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/perfiles/index.php">Perfiles</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_GUI']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/GUI/index.php">GUI</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_PERFILES_PERMISOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/perfiles_permisos/index.php">Permisos por perfil</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_GUI_PERFILES']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/gui_perfiles/index.php">GUI por perfil</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_CONFIGURACIONES']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/configuraciones/index.php">Configuraciones de Interfaz</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_SUC_CONFIG']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/seguridad/suc_config/index.php">Configuraciones de Interfaz por Sucursal</a>
                                 </li>
+                                <?php } ?>
                             </ul>
                         </li>
                     <?php } ?>
@@ -472,45 +522,71 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Ref. Servicios</span>
                             </a>
                             <ul class="ml-menu">
+                                <?php if ($accesoInterfaz['REF_PERSONAS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/personas/index.php">Personas</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_CARGOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/cargos/index.php">Cargos</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_FUNCIONARIOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/funcionarios/index.php">Funcionarios</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_DIAS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/dias/index.php">Días</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_EQUIPO']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/tipo_equipo/index.php">Tipos de Equipo</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_EQUIPOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/equipos/index.php">Equipos</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_PARAMETROS_MEDICION']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/parametros_medicion/index.php">Parámetros de medición</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_UNIDAD_MEDIDA']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/unidad_medida/index.php">Unidades de medida</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_EJERCICIOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/ejercicios/index.php">Ejercicios</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_RUTINA']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/tipo_rutina/index.php">Tipos de Rutina</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_PLAN_ALIMENTICIO']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/tipo_plan_alimenticio/index.php">Tipos de plan alimenticio</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_COMIDAS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/comidas/index.php">Comidas</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_HORARIOS_COMIDA']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/horarios_comida/index.php">Horarios de Comida</a>
                                 </li>
+                                <?php } ?>
                             </ul>
                         </li>
                     <?php } ?>
@@ -521,33 +597,51 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Ref. Compras</span>
                             </a>
                             <ul class="ml-menu">
+                                <?php if ($accesoInterfaz['REF_EMPRESAS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/compras/empresa/index.php">Empresas</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_SUCURSALES']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/compras/sucursales/index.php">Sucursales</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_DEPOSITOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/compras/depositos/index.php">Depósitos</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_CIUDADES']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/compras/ciudades/index.php">Ciudades</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_IMPUESTO']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/compras/tipo_impuesto/index.php">Tipos de impuesto</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_ITEM']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/compras/tipo_item/index.php">Tipos de item</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_ITEMS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/compras/items/index.php">Items</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_PROVEEDOR']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/compras/tipo_proveedor/index.php">Tipos de proveedor</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_PROVEEDORES']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/compras/proveedores/index.php">Proveedores</a>
                                 </li>
+                                <?php } ?>
                             </ul>
                         </li>
                     <?php } ?>
@@ -558,36 +652,56 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Ref. Ventas</span>
                             </a>
                             <ul class="ml-menu">
+                                <?php if ($accesoInterfaz['REF_CLIENTES']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/clientes/index.php">Clientes</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_ENTIDAD_EMISORA']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/entidad_emisora/index.php">Entidades Financieras Emisoras</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_MARCA_TARJETA']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/marca_tarjeta/index.php">Marcas de tarjeta</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_ENTIDAD_ADHERIDA']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/entidad_adherida/index.php">Entidades Adheridas</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_RED_PAGO']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/red_pago/index.php">Redes de pago</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_CAJA']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/caja/index.php">Cajas</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_FORMA_COBRO']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/forma_cobro/index.php">Formas de cobro</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_DOCUMENTO']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/tipo_documento/index.php">Tipo de Documento</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_COMPROBANTE']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/tipo_comprobante/index.php">Tipo de Comprobante</a>
                                 </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIMBRADOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/timbrados/index.php">Timbrados</a>
                                 </li>
+                                <?php } ?>
                             </ul>
                         </li>
                     <?php } ?>
