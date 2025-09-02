@@ -20,7 +20,7 @@ $sql = "select
         ti.tipitem_descri 
         from tipo_item ti 
         where ti.tipitem_estado ilike 'ACTIVO' and ti.tipitem_descri ilike '%$tipo%'
-        order by ti.tipitem_cod;";
+        order by ti.tipitem_descri;";
 
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);

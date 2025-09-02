@@ -11,13 +11,9 @@ $conexion = $objConexion->getConexion();
 //Consultamos si existe la variable operacion
 if (isset($_POST['operacion'])) {
 
-    //captura de datos desde el front-end
-    $descripcion = $_POST['tipimp_descri'];
-    $estado = $_POST['tipimp_estado'];
-
     //escapar los datos para que acepte comillas simples
-    $tipimp_descri = pg_escape_string($conexion, $descripcion);
-    $tipimp_estado = pg_escape_string($conexion, $estado);
+    $tipimp_descri = pg_escape_string($conexion, $_POST['tipimp_descri']);
+    $tipimp_estado = pg_escape_string($conexion, $_POST['tipimp_estado']);
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
     $sql = "select sp_abm_tipoImpuesto(

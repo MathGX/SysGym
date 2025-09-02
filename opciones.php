@@ -515,6 +515,61 @@ if(isset($_SESSION['numApcier'])){
                             </ul>
                         </li>
                     <?php } ?>
+                    <?php if(!empty($guiRefCompra)){?>
+                        <li>
+                            <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="material-icons">add_shopping_cart</i>
+                                <span>Ref. Compras</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <?php if ($accesoInterfaz['REF_EMPRESAS']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/empresa/index.php">Empresas</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_SUCURSALES']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/sucursales/index.php">Sucursales</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_DEPOSITOS']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/depositos/index.php">Depósitos</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_CIUDADES']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/ciudades/index.php">Ciudades</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_IMPUESTO']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/tipo_impuesto/index.php">Tipos de impuesto</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_ITEM']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/tipo_item/index.php">Tipos de item</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_ITEMS']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/items/index.php">Items</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_TIPO_PROVEEDOR']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/tipo_proveedor/index.php">Tipos de proveedor</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_PROVEEDORES']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/proveedores/index.php">Proveedores</a>
+                                </li>
+                                <?php } ?>
+                            </ul>
+                        </li>
+                    <?php } ?>
                     <?php if(!empty($guiRefServicios)){?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
@@ -585,61 +640,6 @@ if(isset($_SESSION['numApcier'])){
                                 <?php if ($accesoInterfaz['REF_HORARIOS_COMIDA']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/servicios/horarios_comida/index.php">Horarios de Comida</a>
-                                </li>
-                                <?php } ?>
-                            </ul>
-                        </li>
-                    <?php } ?>
-                    <?php if(!empty($guiRefCompra)){?>
-                        <li>
-                            <a href="javascript:void(0);" class="menu-toggle">
-                            <i class="material-icons">add_shopping_cart</i>
-                                <span>Ref. Compras</span>
-                            </a>
-                            <ul class="ml-menu">
-                                <?php if ($accesoInterfaz['REF_EMPRESAS']){?>
-                                <li>
-                                    <a href="/SysGym/referenciales/compras/empresa/index.php">Empresas</a>
-                                </li>
-                                <?php } ?>
-                                <?php if ($accesoInterfaz['REF_SUCURSALES']){?>
-                                <li>
-                                    <a href="/SysGym/referenciales/compras/sucursales/index.php">Sucursales</a>
-                                </li>
-                                <?php } ?>
-                                <?php if ($accesoInterfaz['REF_DEPOSITOS']){?>
-                                <li>
-                                    <a href="/SysGym/referenciales/compras/depositos/index.php">Depósitos</a>
-                                </li>
-                                <?php } ?>
-                                <?php if ($accesoInterfaz['REF_CIUDADES']){?>
-                                <li>
-                                    <a href="/SysGym/referenciales/compras/ciudades/index.php">Ciudades</a>
-                                </li>
-                                <?php } ?>
-                                <?php if ($accesoInterfaz['REF_TIPO_IMPUESTO']){?>
-                                <li>
-                                    <a href="/SysGym/referenciales/compras/tipo_impuesto/index.php">Tipos de impuesto</a>
-                                </li>
-                                <?php } ?>
-                                <?php if ($accesoInterfaz['REF_TIPO_ITEM']){?>
-                                <li>
-                                    <a href="/SysGym/referenciales/compras/tipo_item/index.php">Tipos de item</a>
-                                </li>
-                                <?php } ?>
-                                <?php if ($accesoInterfaz['REF_ITEMS']){?>
-                                <li>
-                                    <a href="/SysGym/referenciales/compras/items/index.php">Items</a>
-                                </li>
-                                <?php } ?>
-                                <?php if ($accesoInterfaz['REF_TIPO_PROVEEDOR']){?>
-                                <li>
-                                    <a href="/SysGym/referenciales/compras/tipo_proveedor/index.php">Tipos de proveedor</a>
-                                </li>
-                                <?php } ?>
-                                <?php if ($accesoInterfaz['REF_PROVEEDORES']){?>
-                                <li>
-                                    <a href="/SysGym/referenciales/compras/proveedores/index.php">Proveedores</a>
                                 </li>
                                 <?php } ?>
                             </ul>

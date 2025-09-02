@@ -69,7 +69,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="tiprov_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="tiprov_descripcion" disabled onkeyup="getTipoProv()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="tiprov_descripcion" disabled onkeyup="getTipoProv()">
                                             <label class="form-label">Tipo de proveedor</label>
                                             <div id="listaTipoProv" style="display: none;">
                                                 <ul class="list-group" id="ulTipoProv" style="height:60px; overflow:auto;"></ul>
@@ -81,7 +81,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="pro_razonsocial" class="form-control disabledno" disabled>
+                                            <input type="text" id="pro_razonsocial" class="form-control disabledno sinCarac" disabled>
                                             <label class="form-label">Razón Social</label>
                                         </div>
                                     </div>
@@ -90,7 +90,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="pro_ruc" class="form-control disabledno" disabled>
+                                            <input type="text" id="pro_ruc" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">RUC</label>
                                         </div>
                                     </div>
@@ -99,7 +99,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="pro_timbrado" class="form-control disabledno" disabled>
+                                            <input type="text" id="pro_timbrado" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Timbrado</label>
                                         </div>
                                     </div>
@@ -126,7 +126,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="pro_telefono" class="form-control disabledno" disabled>
+                                            <input type="text" id="pro_telefono" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Teléfono</label>
                                         </div>
                                     </div>
@@ -210,6 +210,7 @@ $u = $_SESSION['usuarios'];
                                             <th>RAZÓN SOCIAL</th>
                                             <th>RUC</th>
                                             <th>TIMBRADO</th>
+                                            <th>VENC. TIMBRADO</th>
                                             <th>DIRECCIÓN</th>
                                             <th>TELF.</th>
                                             <th>E-MAIL</th>

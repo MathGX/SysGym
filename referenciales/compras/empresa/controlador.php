@@ -11,17 +11,11 @@ $conexion = $objConexion->getConexion();
 //Consultamos si existe la variable operacion
 if (isset($_POST['operacion'])) {
 
-    //captura de datos desde el front-end
-    $razonsocial = $_POST['emp_razonsocial'];
-    $email = $_POST['emp_email'];
-    $actividad = $_POST['emp_actividad'];
-    $estado = $_POST['emp_estado'];
-
     //escapar los datos para que acepte comillas simples
-    $emp_razonsocial = pg_escape_string($conexion, $razonsocial);
-    $emp_email = pg_escape_string($conexion, $email);
-    $emp_actividad = pg_escape_string($conexion, $actividad);
-    $emp_estado = pg_escape_string($conexion, $estado);
+    $emp_razonsocial = pg_escape_string($conexion, $_POST['emp_razonsocial']);
+    $emp_email = pg_escape_string($conexion, $_POST['emp_email']);
+    $emp_actividad = pg_escape_string($conexion, $_POST['emp_actividad']);
+    $emp_estado = pg_escape_string($conexion, $_POST['emp_estado']);
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
     $sql = "select sp_abm_empresa(
@@ -33,6 +27,8 @@ if (isset($_POST['operacion'])) {
         '$emp_actividad',
         '$emp_estado',
         '{$_POST['emp_timbrado']}',
+        '{$_POST['emp_timb_fec_ini']}',
+        '{$_POST['emp_timb_fec_venc']}',
         {$_POST['operacion']},
         {$_POST['usu_cod']},
         '{$_POST['usu_login']}',
@@ -42,9 +38,14 @@ if (isset($_POST['operacion'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "codigo") !== false) {
         $response = array(
             "mensaje" => "ESTA EMPRESA YA EXISTE",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "fecha") !== false) {
+        $response = array(
+            "mensaje" => "LA FECHA DE VENCIMIENTO DE VIGENCIA DE TIMBRADO NO PUEDE SER MENOR A LA FECHA DE INICIO",
             "tipo" => "error"
         );
     } else {
@@ -67,14 +68,17 @@ if (isset($_POST['operacion'])) {
 } else {
     //Si el post no recibe la operacion realizamos una consulta
     $sql = "select 
-            e.emp_cod,
-            e.emp_razonsocial,
-            e.emp_ruc,
-            e.emp_timbrado,
-            e.emp_telefono,
-            e.emp_email,
-            e.emp_actividad,
-            e.emp_estado
+                e.emp_cod,
+                e.emp_razonsocial,
+                e.emp_ruc,
+                e.emp_timbrado,
+                to_date(to_char(e.emp_timb_fec_ini, 'dd/mm/yyyy'), 'dd/mm/yyyy') emp_timb_fec_ini,
+                to_date(to_char(e.emp_timb_fec_venc, 'dd/mm/yyyy'), 'dd/mm/yyyy') emp_timb_fec_venc,
+                e.emp_telefono,
+                e.emp_email,
+                e.emp_actividad,
+                e.emp_estado,
+                to_char(emp_timb_fec_ini, 'dd/mm/yyyy')||' - '||to_char(emp_timb_fec_venc, 'dd/mm/yyyy') vigencia
             from empresa e 
             order by e.emp_cod;";
     $resultado = pg_query($conexion, $sql);

@@ -11,19 +11,12 @@ $conexion = $objConexion->getConexion();
 //Consultamos si existe la variable operacion
 if (isset($_POST['operacion'])) {
 
-    //captura de datos desde el front-end
-    $descripcion = $_POST['dep_descri'];
-    $estado = $_POST['dep_estado'];
-    $ciudad = $_POST['ciu_descripcion'];
-    $empresa = $_POST['emp_razonsocial'];
-    $sucursal = $_POST['suc_descri'];
-
     //escapar los datos para que acepte comillas simples
-    $dep_descri = pg_escape_string($conexion, $descripcion);
-    $dep_estado = pg_escape_string($conexion, $estado);
-    $ciu_descripcion = pg_escape_string($conexion, $ciudad);
-    $emp_razonsocial = pg_escape_string($conexion, $empresa);
-    $suc_descri = pg_escape_string($conexion, $sucursal);
+    $dep_descri = pg_escape_string($conexion, $_POST['dep_descri']);
+    $dep_estado = pg_escape_string($conexion, $_POST['dep_estado']);
+    $ciu_descripcion = pg_escape_string($conexion, $_POST['ciu_descripcion']);
+    $emp_razonsocial = pg_escape_string($conexion, $_POST['emp_razonsocial']);
+    $suc_descri = pg_escape_string($conexion, $_POST['suc_descri']);
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
     $sql = "select sp_abm_depositos(

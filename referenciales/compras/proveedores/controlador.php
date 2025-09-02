@@ -11,19 +11,12 @@ $conexion = $objConexion->getConexion();
 //Consultamos si existe la variable operacion
 if (isset($_POST['operacion'])) {
 
-    //captura de datos desde el front-end
-    $razonsocial = $_POST['pro_razonsocial'];
-    $email = $_POST['pro_email'];
-    $direccion = $_POST['pro_direccion'];
-    $estado = $_POST['pro_estado'];
-    $tipo_proveedor = $_POST['tiprov_descripcion'];
-
     //escapar los datos para que acepte comillas simples
-    $pro_razonsocial = pg_escape_string($conexion, $razonsocial);
-    $pro_email = pg_escape_string($conexion, $email);
-    $pro_direccion = pg_escape_string($conexion, $direccion);
-    $pro_estado = pg_escape_string($conexion, $estado);
-    $tiprov_descripcion = pg_escape_string($conexion, $tipo_proveedor);
+    $pro_razonsocial = pg_escape_string($conexion, $_POST['pro_razonsocial']);
+    $pro_email = pg_escape_string($conexion, $_POST['pro_email']);
+    $pro_direccion = pg_escape_string($conexion, $_POST['pro_direccion']);
+    $pro_estado = pg_escape_string($conexion, $_POST['pro_estado'] );
+    $tiprov_descripcion = pg_escape_string($conexion, $_POST['tiprov_descripcion']);
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
     $sql = "select sp_abm_proveedores(
@@ -36,6 +29,7 @@ if (isset($_POST['operacion'])) {
         '$pro_email',
         '$pro_estado',
         '{$_POST['pro_timbrado']}',
+        '{$_POST['pro_timb_fec_venc']}',
         {$_POST['operacion']},
         {$_POST['usu_cod']},
         '{$_POST['usu_login']}',
@@ -46,7 +40,7 @@ if (isset($_POST['operacion'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_pro") !== false) {
         $response = array(
             "mensaje" => "ESTE PROVEEDOR YA EXISTE",
             "tipo" => "error"
@@ -71,16 +65,18 @@ if (isset($_POST['operacion'])) {
 } else {
     //Si el post no recibe la operacion realizamos una consulta
     $sql = "select 
-            p.pro_cod,
-            p.tiprov_cod, 
-            tp.tiprov_descripcion,
-            p.pro_razonsocial,
-            p.pro_ruc,
-            p.pro_timbrado,
-            p.pro_direccion,
-            p.pro_telefono,
-            p.pro_email,
-            p.pro_estado 
+                p.pro_cod,
+                p.tiprov_cod, 
+                tp.tiprov_descripcion,
+                p.pro_razonsocial,
+                p.pro_ruc,
+                p.pro_timbrado,
+                to_char(p.pro_timb_fec_venc ,'dd/mm/yyyy') pro_timb_fec_venc2,
+                p.pro_timb_fec_venc,
+                p.pro_direccion,
+                p.pro_telefono,
+                p.pro_email,
+                p.pro_estado 
             from proveedor p 
             join tipo_proveedor tp on tp.tiprov_cod = p.tiprov_cod
             order by pro_cod;";

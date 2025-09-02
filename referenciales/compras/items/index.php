@@ -69,7 +69,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="tipitem_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="tipitem_descri" disabled onkeyup="getTipoItem()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="tipitem_descri" disabled onkeyup="getTipoItem()">
                                             <label class="form-label">Tipo de Item</label>
                                             <div id="listaTipoItem" style="display: none;">
                                                 <ul class="list-group" id="ulTipoItem"  style="height:60px; overflow:auto;"></ul>
@@ -81,7 +81,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="itm_descri" class="form-control disabledno" disabled>
+                                            <input type="text" id="itm_descri" class="form-control disabledno sinCarac" disabled>
                                             <label class="form-label">Item</label>
                                         </div>
                                     </div>
@@ -91,7 +91,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="uni_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="uni_descri" disabled onkeyup="getUniMedida()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="uni_descri" disabled onkeyup="getUniMedida()">
                                             <label class="form-label">Unidad de Medida</label>
                                             <div id="listaUniMedida" style="display: none;">
                                                 <ul class="list-group" id="ulUniMedida"  style="height:60px; overflow:auto;"></ul>
@@ -103,7 +103,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="number" id="itm_costo" class="form-control disabledno" disabled>
+                                            <input type="text" id="itm_costo" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Costo</label>
                                         </div>
                                     </div>
@@ -112,8 +112,8 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="number" id="itm_precio" class="form-control disabledno" disabled>
-                                            <label class="form-label">Precio</label>
+                                            <input type="text" id="itm_precio" class="form-control disabledno soloNum" disabled>
+                                            <label class="form-label">Precio (% de Ganancia)</label>
                                         </div>
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="itm_estado" class="form-control" disabled>
+                                            <input type="text" id="itm_stock_min" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Stock Máximo</label>
                                         </div>
                                     </div>
@@ -143,7 +143,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="itm_estado" class="form-control" disabled>
+                                            <input type="text" id="itm_stock_max" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Stock Mínimo</label>
                                         </div>
                                     </div>

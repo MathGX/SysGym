@@ -10,6 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
+//funcion obtener codigo
 let getCod = () => {
     $.ajax({
         method: "POST",
@@ -151,28 +152,73 @@ let confirmar = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".disabledno").map(function() {
+        return this.id;
+    }).get();
+    
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if ($("#tipimp_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#tipimp_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#tipimp_estado").val() == "") {
-        condicion = "i";
-    }
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
 
-    if (condicion === "i") {
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
     } else {
         confirmar();
     }
 };
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    caracteres = /[°/\-'_¡!@#$^&*(),.¿?":{}|<>;~`]/;
+
+    //En caso de que el campo esté vacío
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+    //En caso de que el campo contenga caracteres especiales
+    } else if (caracteres.test($(idInput).val())) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede contener % como caracter.";
+    }
+    
+    //Si el mensaje no está vacío mostramos la alerta y limpiamos el campo
+    if (mensaje !== "") {
+        swal({
+            html: true,
+            title: "ATENCIÓN!!",
+            text: mensaje,
+            type: "error",
+        });
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método completarDatos al perder el foco de los inputs con clase .disabledno
+$(".disabledno").on("blur", function() {
+    //capturamos el id del input que perdió el foco
+    let idInput = "#" + $(this).attr("id");
+    //capturamos el texto de la etiqueta label asociada al input
+    let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+    //llamamos a la función pasarle el nombre del input y su id
+    completarDatos(nombreInput, idInput);
+});
 
 //funcion seleccionar Fila
 let seleccionarFila = (objetoJSON) => {
@@ -208,15 +254,9 @@ let listar = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>";
-                        tabla += objeto.tipimp_cod;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.tipimp_descri;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.tipimp_estado;
-                    tabla += "</td>";
+                    tabla += "<td>"+ objeto.tipimp_cod +"</td>";
+                    tabla += "<td>"+ objeto.tipimp_descri +"</td>";
+                    tabla += "<td>"+ objeto.tipimp_estado +"</td>";
                 tabla += "</tr>";
             }
             $("#grilla_datos").html(tabla);

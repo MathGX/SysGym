@@ -11,13 +11,9 @@ $conexion = $objConexion->getConexion();
 //Consultamos si existe la variable operacion
 if (isset($_POST['operacion'])) {
 
-    //captura de datos desde el front-end
-    $descripcion = $_POST['tipitem_descri'];
-    $estado = $_POST['tipitem_estado'];
-
     //escapar los datos para que acepte comillas simples
-    $tipitem_descri = pg_escape_string($conexion, $descripcion);
-    $tipitem_estado = pg_escape_string($conexion, $estado);
+    $tipitem_descri = pg_escape_string($conexion, $_POST['tipitem_descri']);
+    $tipitem_estado = pg_escape_string($conexion, $_POST['tipitem_estado']);
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
     $sql = "select sp_abm_tipoItem(

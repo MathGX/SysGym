@@ -26,7 +26,7 @@ let agregar = () => {
     $("#transaccion").val('INSERCION');
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
-    $("#emp_cod, #emp_razonsocial, #suc_cod, #suc_descri, #dep_descri, #ciu_cod, #ciu_descripcion").val("");
+    $(".disabledno").val("");
     $("#dep_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
     getCod();
@@ -157,28 +157,32 @@ let confirmar = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".disabledno").map(function() {
+        return this.id;
+    }).get();
+    
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if ($("#dep_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#dep_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#ciu_descripcion").val() == "") {
-        condicion = "i";
-    } else if ($("#dep_estado").val() == "") {
-        condicion = "i";
-    }
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
 
-    if (condicion === "i") {
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
     } else {
@@ -211,6 +215,96 @@ function formatoTabla() {
     });
 }
 
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede aceptar caracteres especiales.",
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
 //funcion listar
 let listar = () => {
     $.ajax({
@@ -220,24 +314,12 @@ let listar = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>";
-                        tabla += objeto.dep_cod;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.emp_razonsocial;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.suc_descri;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.dep_descri;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.ciu_descripcion;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.dep_estado;
-                    tabla += "</td>";
+                    tabla += "<td>"+ objeto.dep_cod +"</td>";
+                    tabla += "<td>"+ objeto.emp_razonsocial +"</td>";
+                    tabla += "<td>"+ objeto.suc_descri +"</td>";
+                    tabla += "<td>"+ objeto.dep_descri +"</td>";
+                    tabla += "<td>"+ objeto.ciu_descripcion +"</td>";
+                    tabla += "<td>"+ objeto.dep_estado +"</td>";
                 tabla += "</tr>";
             }
             $("#grilla_datos").html(tabla);
@@ -251,14 +333,15 @@ let listar = () => {
 listar();
 
 //capturamos los datos de la tabla sucursales en un JSON a través de POST para listarlo
-function getEmpresaSuc() {
+function getSucursalEmp() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/referenciales/compras/depositos/listas/listaEmpresaSuc.php",
+        url: "/SysGym/referenciales/compras/depositos/listas/listaSucursalEmp.php",
         data: {
-            emp_razonsocial:$("#emp_razonsocial").val()
+            emp_cod:$("#emp_cod").val(),
+            suc_descri:$("#suc_descri").val()
         }
-        //en base al JSON traído desde el listaEmpresaSuc arrojamos un resultado
+        //en base al JSON traído desde el listaSucursalEmp arrojamos un resultado
     }).done(function(lista) {
         //el JSON de respuesta es mostrado en una lista
         var fila = "";
@@ -267,44 +350,9 @@ function getEmpresaSuc() {
             fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
         }else{
             $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionEmpresaSuc("+JSON.stringify(item)+")'>"+item.emp_razonsocial+"</li>";
+                fila += "<li class='list-group-item' onclick='seleccionSucursalEmp("+JSON.stringify(item)+")'>"+item.suc_descri+"</li>";
             });
         }
-        //enviamos a los input correspondientes de el conjunto de filas
-        $("#ulEmpresaSuc").html(fila);
-        //le damos un estilo a la lista de EmpresaSuc
-        $("#listaEmpresaSuc").attr("style", "display:block; position:absolute; z-index:3000; width:100%");
-    }).fail(function (a,b,c) {
-        swal("ERROR",c,"error");
-    })
-}
-
-//seleccionamos la empresa por su key y enviamos el dato al input correspondiente
-function seleccionEmpresaSuc (datos) {
-    Object.keys(datos).forEach(key =>{
-        $("#"+key).val(datos[key]);
-    });
-    getSucursalEmp(datos);
-    $("#ulEmpresaSuc").html();
-    $("#listaEmpresaSuc").attr("style", "display:none;");
-    $(".focus").attr("class", "form-line focus focused");
-}
-
-//capturamos los datos de la tabla sucursales en un JSON a través de POST para listarlo
-function getSucursalEmp() {
-    $.ajax({
-        method: "POST",
-        url: "/SysGym/referenciales/compras/depositos/listas/listaSucursalEmp.php",
-        data: {
-            emp_razonsocial:$("#emp_razonsocial").val()
-        }
-        //en base al JSON traído desde el listaSucursalEmp arrojamos un resultado
-    }).done(function(lista) {
-        //el JSON de respuesta es mostrado en una lista
-        var fila = "";
-        $.each(lista,function(i, item) {
-            fila += "<li class='list-group-item' onclick='seleccionSucursalEmp("+JSON.stringify(item)+")'>"+item.suc_descri+"</li>";
-        });
         //enviamos a los input correspondientes de el conjunto de filas
         $("#ulSucursalEmp").html(fila);
         //le damos un estilo a la lista de SucursalEmp

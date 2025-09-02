@@ -10,6 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
+//funcion obtener codigo
 let getCod = () => {
     $.ajax({
         method: "POST",
@@ -26,7 +27,7 @@ let agregar = () => {
     $("#transaccion").val('INSERCION');
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
-    $("#emp_razonsocial, #emp_ruc, #emp_timbrado, #emp_telefono, #emp_email, #emp_actividad").val("");
+    $(".disabledno").val("");
     $("#emp_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
     getCod();
@@ -78,6 +79,9 @@ let grabar = () => {
             emp_actividad: $("#emp_actividad").val(),
             emp_estado: $("#emp_estado").val(),
             emp_timbrado: $("#emp_timbrado").val(),
+            emp_timb_fec_ini: $("#emp_timb_fec_ini").val(),
+            emp_timb_fec_venc: $("#emp_timb_fec_venc").val(),
+            //Campos para auditar
             operacion: $("#operacion").val(),
             usu_cod: $("#usu_cod").val(),
             usu_login: $("#usu_login").val(),
@@ -156,32 +160,32 @@ let confirmar = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".disabledno").map(function() {
+        return this.id;
+    }).get();
+    
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if ($("#emp_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_ruc").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_ruc").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_timbrado").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_email").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_actividad").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_estado").val() == "") {
-        condicion = "i";
-    }
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
 
-    if (condicion === "i") {
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
     } else {
@@ -214,6 +218,28 @@ function formatoTabla() {
     });
 }
 
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        swal({
+            html: true,
+            title: "ATENCIÓN!!",
+            text: "El campo <b>" + nombreInput + "</b> no puede quedar vacío.",
+            type: "error",
+        });
+    }
+}
+
+//ejecución del método completarDatos al perder el foco de los inputs con clase .disabledno
+$(".disabledno").on("blur", function() {
+    //capturamos el id del input que perdió el foco
+    let idInput = "#" + $(this).attr("id");
+    //capturamos el texto de la etiqueta label asociada al input
+    let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+    //llamamos a la función pasarle el nombre del input y su id
+    completarDatos(nombreInput, idInput);
+});
 
 //funcion listar
 let listar = () => {
@@ -228,6 +254,7 @@ let listar = () => {
                     tabla += "<td>" + objeto.emp_razonsocial + "</td>";
                     tabla += "<td>" + objeto.emp_ruc + "</td>";
                     tabla += "<td>" + objeto.emp_timbrado + "</td>";
+                    tabla += "<td>" + objeto.vigencia + "</td>";
                     tabla += "<td>" + objeto.emp_telefono + "</td>";
                     tabla += "<td>" + objeto.emp_email + "</td>";
                     tabla += "<td>" + objeto.emp_actividad + "</td>";

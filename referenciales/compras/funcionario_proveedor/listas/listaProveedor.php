@@ -12,17 +12,18 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$empresa = $_POST['emp_razonsocial'];
+$prov = $_POST['pro_razonsocial'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
-$sql = "select distinct
-        s.emp_cod ,
-        e.emp_razonsocial
-        from sucursales s
-        join empresa e on e.emp_cod = s.emp_cod
-        where emp_razonsocial ilike'%$empresa%' and emp_estado ilike 'ACTIVO'
-        order by e.emp_razonsocial;";
-
+$sql = "select 
+                p.pro_cod,
+                p.tiprov_cod,
+                p.pro_razonsocial||' - '||tp.tiprov_descripcion as pro_razonsocial
+        from proveedor p 
+                join tipo_proveedor tp on tp.tiprov_cod = p.tiprov_cod 
+        where p.pro_estado = 'ACTIVO' and (p.pro_razonsocial ilike '%$prov%' or p.pro_ruc ilike '%$prov%')
+        order by p.pro_razonsocial ;";
+        
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);
 //convertimos el resultado en un array asociativo
@@ -39,5 +40,6 @@ if (empty($datos)) {
 } else {
         echo json_encode($datos);
 }
+
 
 ?>

@@ -9,15 +9,15 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$sql = "select p.permi_descri,
+$sqlPermiso = "select p.permi_descri,
 apu.asigusu_estado 
 from asignacion_permiso_usuarios apu
 join permisos p on p.permi_cod = apu.permi_cod 
 where apu.usu_cod = $usu
 order by p.permi_cod;";
 
-$resultado = pg_query($conexion, $sql);
-$datos = pg_fetch_all($resultado);
+$resultadoPermiso = pg_query($conexion, $sqlPermiso);
+$datosPermiso = pg_fetch_all($resultadoPermiso);
 
 $u = $_SESSION['usuarios'];
 
@@ -94,6 +94,24 @@ $u = $_SESSION['usuarios'];
                                 
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
+                                        <div class="form-line focus focused">
+                                            <input type="date" id="emp_timb_fec_ini" class="form-control disabledno" disabled>
+                                            <label class="form-label">Incio Vigencia del Timbrado</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus focused">
+                                            <input type="date" id="emp_timb_fec_venc" class="form-control disabledno" disabled>
+                                            <label class="form-label">Vencim. Vigencia de Timbrado</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="emp_telefono" class="form-control disabledno" disabled>
                                             <label class="form-label">Teléfono</label>
@@ -132,7 +150,7 @@ $u = $_SESSION['usuarios'];
                             
                             <!-- botones del formulario de empresas -->
                             <div class="icon-and-text-button-demo">
-                                <?php foreach ($datos as $boton) { ?>
+                                <?php foreach ($datosPermiso as $boton) { ?>
                                     <?php if (($boton['permi_descri'] == 'AGREGAR') && ($boton['asigusu_estado'] == 'ACTIVO')) { ?>
                                         <button type="button" class="btn bg-indigo waves-effect btnOperacion1" onclick="agregar()">
                                             <i class="material-icons">file_upload</i>
@@ -154,7 +172,7 @@ $u = $_SESSION['usuarios'];
                                 } ?>
                                 <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>
@@ -186,6 +204,7 @@ $u = $_SESSION['usuarios'];
                                             <th>RAZÓN SOCIAL</th>
                                             <th>RUC</th>
                                             <th>TIMBRADO</th>
+                                            <th>VIGENCIA TIMBRADO</th>
                                             <th>TELÉFONO</th>
                                             <th>E-MAIL</th>
                                             <th>ACTIVIDAD</th>

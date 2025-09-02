@@ -428,7 +428,7 @@ function oculSeccGUI() {
             mensajeError = "La contraseña debe tener al menos una letra minúscula";
         } else if (!/[0-9]/.test(pass1)) {
             mensajeError = "La contraseña debe tener al menos un número";
-        } else if (!/[-'_¡!@#$%^&*(),.¿?":{}|<>]/.test(pass1)) {
+        } else if (!/[°/\-'_¡!@#$%^&*(),.¿?":{}|<>;~`]/.test(pass1)) {
             mensajeError = "La contraseña debe tener al menos un carácter especial (@ # $ %)";
         } else if (pass1 !== pass2) {
             mensajeError = "Las contraseñas no coinciden";

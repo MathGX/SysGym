@@ -63,16 +63,13 @@ $u = $_SESSION['usuarios'];
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="col-md-3">
+                                
+                                <div class="col-sm-3">
                                     <div class="form-group form-float">
-                                        <div class="form-line focus">
-                                            <input type="hidden" id="emp_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="emp_razonsocial" disabled onkeyup="getEmpresas()">
-                                            <label class="form-label">Empresa</label>
-                                            <div id="listaEmpresas" style="display: none;">
-                                                <ul class="list-group" id="ulEmpresas" style="height:60px; overflow:auto;"></ul>
-                                            </div>
+                                        <div class="form-line focused">
+                                            <input type="hidden" id="emp_cod" value="<?php echo $u['emp_cod']; ?> ">
+                                            <input type="text" id="emp_razonsocial" class="form-control" value="<?php echo $u['emp_razonsocial']; ?> " disabled>
+                                            <label class="form-label">Empresa</label> 
                                         </div>
                                     </div>
                                 </div>
@@ -80,7 +77,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="suc_descri" class="form-control disabledno" disabled>
+                                            <input type="text" id="suc_descri" class="form-control disabledno soloTxt" disabled>
                                             <label class="form-label">Sucursal</label>
                                         </div>
                                     </div>
@@ -89,7 +86,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="suc_telefono" class="form-control disabledno" disabled>
+                                            <input type="text" id="suc_telefono" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Teléfono</label>
                                         </div>
                                     </div>
@@ -99,7 +96,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="ciu_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="ciu_descripcion" disabled onkeyup="getCiudades()">
+                                            <input type="text" id="ciu_descripcion" class="form-control disabledno soloTxt" disabled onkeyup="getCiudades()">
                                             <label class="form-label">Ciudad</label>
                                             <div id="listaCiudades" style="display: none;">
                                                 <ul class="list-group" id="ulCiudades" style="height:60px; overflow:auto;"></ul>

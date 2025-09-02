@@ -42,11 +42,12 @@ join empresa e on e.emp_cod = s.emp_cod
 join modulos m on m.mod_cod = u.mod_cod 
 join personas p on p.per_cod = f.per_cod 
 join perfiles p2 on p2.perf_cod = u.perf_cod
-where usu_login = '$usuario' and usu_contrasena = md5('$contrasena') ;";
+where lower(usu_login) = lower('$usuario') and usu_contrasena = md5('$contrasena') ;";
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);
 //convertimos el resultado en un array asociativo
 $datos = pg_fetch_assoc($resultado);
+//si la consulta nos devuelve algo, guardamos el array en una variable de sesión
 if (!(!$datos)) {
     $_SESSION['usuarios'] = $datos;
 }

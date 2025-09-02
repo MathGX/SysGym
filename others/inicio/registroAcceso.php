@@ -36,7 +36,7 @@ $sql = "insert into acceso
             acc_ciudad_ip) 
         values 
             ((select coalesce(max(acc_cod), 0) + 1 from acceso), 
-            '$acc_usu', 
+            lower('$acc_usu'), 
             current_date, 
             current_time, 
             '$acc_obs',
@@ -50,9 +50,9 @@ $resultado = pg_query($conexion, $sql);
 
 // Comprobar si la consulta se ejecutó correctamente
 if ($resultado) {
-    echo json_encode(array("status" => "success", "message" => "Data inserted successfully"));
+    echo json_encode(array("status" => "success", "message" => "Datos insertados correctamente"));
 } else {
-    echo json_encode(array("status" => "error", "message" => "Error inserting data"));
+    echo json_encode(array("status" => "error", "message" => "Error al insertar los datos"));
 }
 
 // Cerrar la conexión a al base de datos

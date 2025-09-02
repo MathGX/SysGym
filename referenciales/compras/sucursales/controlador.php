@@ -11,21 +11,13 @@ $conexion = $objConexion->getConexion();
 //Consultamos si existe la variable operacion
 if (isset($_POST['operacion'])) {
 
-    //captura de datos desde el front-end
-    $descripcion = $_POST['suc_descri'];
-    $direccion = $_POST['suc_direccion'];
-    $email = $_POST['suc_email'];
-    $estado = $_POST['suc_estado'];
-    $empresa = $_POST['emp_razonsocial'];
-    $ciudad = $_POST['ciu_descripcion'];
-
     //escapar los datos para que acepte comillas simples
-    $suc_descri = pg_escape_string($conexion, $descripcion);
-    $suc_direccion = pg_escape_string($conexion, $direccion);
-    $suc_email = pg_escape_string($conexion, $email);
-    $suc_estado = pg_escape_string($conexion, $estado);
-    $emp_razonsocial = pg_escape_string($conexion, $empresa);
-    $ciu_descripcion = pg_escape_string($conexion, $ciudad);
+    $suc_descri = pg_escape_string($conexion, $_POST['suc_descri']);
+    $suc_direccion = pg_escape_string($conexion, $_POST['suc_direccion']);
+    $suc_email = pg_escape_string($conexion, $_POST['suc_email']);
+    $suc_estado = pg_escape_string($conexion, $_POST['suc_estado']);
+    $emp_razonsocial = pg_escape_string($conexion, $_POST['emp_razonsocial']);
+    $ciu_descripcion = pg_escape_string($conexion, $_POST['ciu_descripcion']);
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
     $sql = "select sp_abm_sucursales(

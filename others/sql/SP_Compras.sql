@@ -1,7 +1,7 @@
 -----------------------------------------------------------REFERENCIALES-----------------------------------------------------------
 
 --sp_abm_empresa (EMPRESA)
-CREATE OR REPLACE FUNCTION sp_abm_empresa
+create or replace function sp_abm_empresa
 (empcod integer, 
 emprazonsocial varchar, 
 empruc varchar,
@@ -10,12 +10,14 @@ empemail varchar,
 empactividad varchar,
 empestado varchar,
 emptimbrado varchar,
+emptimbfecini date,
+emptimbfecvenc date,
 operacion integer,
 usucod integer,
 usulogin varchar,
 transaccion varchar)
-RETURNS void
-AS $$
+returns void
+as $$
 declare empaudit text;
 begin --iniciar
 	--se designan validaciones
@@ -23,44 +25,53 @@ begin --iniciar
 		perform * from empresa
 		where (emp_razonsocial = upper(emprazonsocial) or emp_ruc = empruc) and emp_cod != empcod;
 		if found then
-			raise exception '1';
-		elseif operacion = 1 then --realizamos un insert
-			INSERT INTO public.empresa
-			(emp_cod, 
-			emp_razonsocial, 
-			emp_ruc,
-			emp_telefono,
-			emp_email,
-			emp_actividad,
-			emp_estado,
-			emp_timbrado)
-			VALUES(
-			empcod, 
-			upper(emprazonsocial),
-			empruc,
-			emptelefono,
-			empemail,
-			upper(empactividad),
-			'ACTIVO',
-			emptimbrado);
+			raise exception 'codigo';
+		elseif emptimbfecini >= emptimbfecvenc then
+			raise exception 'fecha';
+		end if;
+		if operacion = 1 then --realizamos un insert
+			insert into public.empresa
+				(emp_cod, 
+				emp_razonsocial, 
+				emp_ruc,
+				emp_telefono,
+				emp_email,
+				emp_actividad,
+				emp_estado,
+				emp_timbrado,
+				emp_timb_fec_ini,
+				emp_timb_fec_venc)
+			values(
+				empcod, 
+				upper(emprazonsocial),
+				empruc,
+				emptelefono,
+				empemail,
+				upper(empactividad),
+				'ACTIVO',
+				emptimbrado,
+				emptimbfecini,
+				emptimbfecvenc);
 			raise notice 'LA EMPRESA FUE REGISTRADA CON EXITO';
 		elseif operacion = 2 then -- realizamos un update 
-			UPDATE public.empresa 
-			SET emp_razonsocial = upper(emprazonsocial), 
-			emp_ruc = empruc,
-			emp_telefono = emptelefono,
-			emp_email = empemail,
-			emp_actividad = upper(empactividad),
-			emp_estado ='ACTIVO',
-			emp_timbrado = emptimbrado
-			WHERE emp_cod = empcod;
+			update public.empresa 
+				set emp_razonsocial = upper(emprazonsocial), 
+				emp_ruc = empruc,
+				emp_telefono = emptelefono,
+				emp_email = empemail,
+				emp_actividad = upper(empactividad),
+				emp_estado = upper('ACTIVO'),
+				emp_timbrado = emptimbrado,
+				emp_timb_fec_ini = emptimbfecini,
+				emp_timb_fec_venc = emptimbfecvenc
+			where emp_cod = empcod;
 			raise notice 'LA EMPRESA FUE MODIFICADA CON EXITO';
 		end if;
 	end if;
 	if operacion = 3 then -- realizamos un update 
 		update empresa
-		set emp_estado = 'INACTIVO'
-		WHERE emp_cod = empcod ;
+			set emp_estado = 'INACTIVO'
+		where emp_cod = empcod ;
 		raise notice 'LA EMPRESA FUE BORRADA CON EXITO';
 	end if;
 	--se selecciona la ultima auditoria
@@ -81,12 +92,15 @@ begin --iniciar
 		'emp_telefono', emptelefono, 
 		'emp_email', empemail,
 		'emp_actividad', upper(empactividad),
-		'emp_estado', upper(empestado)
+		'emp_estado', upper(empestado),
+        'emp_timb_fec_ini', to_char(emptimbfecini,'dd-mm-yyyy hh24:mi:ss'),
+        'emp_timb_fec_venc', to_char(emptimbfecvenc,'dd-mm-yyyy hh24:mi:ss')
     )||','
-    WHERE emp_cod = empcod;
+    where emp_cod = empcod;
 end--finalizar
 $$
 language plpgsql;
+
 
 
 
@@ -435,24 +449,24 @@ end--finalizar
 $$
 language plpgsql;
 
---sp_abm_proveedores (PROVEEDORES)
-CREATE OR REPLACE FUNCTION sp_abm_proveedores
-(procod integer, 
-tiprovcod integer, 
-prorazonsocial varchar,
-proruc varchar,
-prodireccion varchar,
-protelefono varchar,
-proemail varchar,
-proestado varchar,
-protimbrado varchar,
-operacion integer,
-usucod integer,
-usulogin varchar,
-transaccion varchar,
-tiprovdescripcion varchar)
-RETURNS void
-AS $$
+create or replace function sp_abm_proveedores
+	(procod integer, 
+	tiprovcod integer, 
+	prorazonsocial varchar,
+	proruc varchar,
+	prodireccion varchar,
+	protelefono varchar,
+	proemail varchar,
+	proestado varchar,
+	protimbrado varchar,
+	protimbfecvenc date,
+	operacion integer,
+	usucod integer,
+	usulogin varchar,
+	transaccion varchar,
+	tiprovdescripcion varchar)
+returns void
+as $$
 declare proaudit text;
 begin --iniciar
 	--se designan validaciones
@@ -460,47 +474,50 @@ begin --iniciar
 		perform * from proveedor
 		where (pro_razonsocial = upper(prorazonsocial) or pro_ruc = proruc) and pro_cod != procod;
 		if found then
-			raise exception '1';
+			raise exception 'err_pro';
 		elseif operacion = 1 then --realizamos un insert
-			INSERT INTO proveedor
-			(pro_cod, 
-			tiprov_cod,
-			pro_razonsocial, 
-			pro_ruc,
-			pro_direccion,
-			pro_telefono,
-			pro_email,
-			pro_estado,
-			pro_timbrado)
-			VALUES(
-			procod, 
-			tiprovcod,
-			upper(prorazonsocial),
-			proruc,
-			upper(prodireccion),
-			protelefono,
-			proemail,
-			'ACTIVO',
-			protimbrado);
+			insert into proveedor
+				(pro_cod, 
+				tiprov_cod,
+				pro_razonsocial, 
+				pro_ruc,
+				pro_direccion,
+				pro_telefono,
+				pro_email,
+				pro_estado,
+				pro_timbrado,
+				pro_timb_fec_venc)
+			values(
+				procod, 
+				tiprovcod,
+				upper(prorazonsocial),
+				proruc,
+				upper(prodireccion),
+				protelefono,
+				proemail,
+				'ACTIVO',
+				protimbrado,
+				protimbfecvenc);
 			raise notice 'EL PROVEEDOR FUE REGISTRADO CON EXITO';
 		elseif operacion = 2 then -- realizamos un update 
-			UPDATE proveedor
-			SET tiprov_cod = tiprovcod,
-			pro_razonsocial = upper(prorazonsocial), 
-			pro_ruc = proruc,
-			pro_direccion = upper(prodireccion),
-			pro_telefono = protelefono,
-			pro_email = proemail,
-			pro_estado ='ACTIVO',
-			pro_timbrado = protimbrado
-			WHERE pro_cod = procod;
+			update proveedor
+				set tiprov_cod = tiprovcod,
+				pro_razonsocial = upper(prorazonsocial), 
+				pro_ruc = proruc,
+				pro_direccion = upper(prodireccion),
+				pro_telefono = protelefono,
+				pro_email = proemail,
+				pro_estado ='ACTIVO',
+				pro_timbrado = protimbrado,
+				pro_timb_fec_venc = protimbfecvenc
+			where pro_cod = procod;
 			raise notice 'EL PROVEEDOR FUE MODIFICADO CON EXITO';
 		end if;
 	end if;
 	if operacion = 3 then -- realizamos un update 
 		update proveedor
 		set pro_estado = 'INACTIVO'
-		WHERE pro_cod = procod ;
+		where pro_cod = procod ;
 		raise notice 'EL PROVEEDOR FUE BORRADO CON EXITO';
 	end if;
 	--se selecciona la ultima auditoria
@@ -520,12 +537,13 @@ begin --iniciar
 		'pro_razonsocial', upper(prorazonsocial),
 		'pro_ruc', proruc,
 		'pro_timbrado', protimbrado,
+		'pro_timb_fec_venc', protimbfecvenc,
 		'pro_direccion', upper(prodireccion),
 		'pro_telefono', protelefono, 
 		'pro_email', proemail,
 		'pro_estado', upper(proestado)
     )||','
-    WHERE pro_cod = procod;
+    where pro_cod = procod;
 end--finalizar
 $$
 language plpgsql;

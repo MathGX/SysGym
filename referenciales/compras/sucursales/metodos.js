@@ -10,6 +10,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
+//funcion obtener codigo
 let getCod = () => {
     $.ajax({
         method: "POST",
@@ -26,7 +27,7 @@ let agregar = () => {
     $("#transaccion").val('INSERCION');
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
-    $("#emp_cod, #emp_razonsocial, #suc_descri, #suc_telefono, #ciu_cod, #ciu_descripcion, #suc_direccion, #suc_email").val("");
+    $(".disabledno").val("");
     $("#suc_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
     getCod();
@@ -158,33 +159,33 @@ let confirmar = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".disabledno").map(function() {
+        return this.id;
+    }).get();
+    
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if ($("#suc_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_telefono").val() == "") {
-        condicion = "i";
-    } else if ($("#ciu_descripcion").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_direccion").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_email").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_estado").val() == "") {
-        condicion = "i";
-    }
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
 
-    if (condicion === "i") {
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error"
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
+            type: "error",
         });
     } else {
         confirmar();
@@ -216,6 +217,99 @@ function formatoTabla() {
     });
 }
 
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`]/;
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numericos.",
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+
 //funcion listar
 let listar = () => {
     $.ajax({
@@ -225,30 +319,14 @@ let listar = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>";
-                        tabla += objeto.suc_cod;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.emp_razonsocial;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.suc_descri;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.suc_telefono;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.ciu_descripcion;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.suc_direccion;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.suc_email;
-                    tabla += "</td>";
-                    tabla += "<td>";
-                        tabla += objeto.suc_estado;
-                    tabla += "</td>";
+                    tabla += "<td>"+ objeto.suc_cod +"</td>";
+                    tabla += "<td>"+ objeto.emp_razonsocial +"</td>";
+                    tabla += "<td>"+ objeto.suc_descri +"</td>";
+                    tabla += "<td>"+ objeto.suc_telefono +"</td>";
+                    tabla += "<td>"+ objeto.ciu_descripcion +"</td>";
+                    tabla += "<td>"+ objeto.suc_direccion +"</td>";
+                    tabla += "<td>"+ objeto.suc_email +"</td>";
+                    tabla += "<td>"+ objeto.suc_estado +"</td>";
                 tabla += "</tr>";
             }
             $("#grilla_datos").html(tabla);
@@ -261,78 +339,34 @@ let listar = () => {
 
 listar();
 
-//capturamos los datos de la tabla Empresas en un JSON a través de POST para listarlo
-function getEmpresas() {
-    $.ajax({
-        method: "POST",
-        url: "/SysGym/referenciales/compras/sucursales/listas/listaEmpresas.php",
-        data: {
-            emp_razonsocial:$("#emp_razonsocial").val()
-        }
-        //en base al JSON traído desde el listaEmpresas arrojamos un resultado
-    }).done(function(lista) {
-        //el JSON de respuesta es mostrado en una lista
-        var fila = "";
-        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
-        if(lista.true == true){
-            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
-        }else{    
-            $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionEmpresas("+JSON.stringify(item)+")'>"+item.emp_razonsocial+"</li>";
-            });
-        }
-        //enviamos a los input correspondientes del conjunto de filas
-        $("#ulEmpresas").html(fila);
-        //le damos un estilo a la lista de Empresas
-        $("#listaEmpresas").attr("style", "display:block; position:absolute; z-index:3000; width:100%");
-    }).fail(function (a,b,c) {
-        swal("ERROR",c,"error");
-    })
-}
-
-//seleccionamos el modulo por su key y enviamos el dato al input correspondiente
-function seleccionEmpresas (datos) {
-    Object.keys(datos).forEach(key =>{
-        $("#"+key).val(datos[key]);
-    });
-    $("#ulEmpresas").html();
-    $("#listaEmpresas").attr("style", "display:none;");
-    $(".focus").attr("class", "form-line focus focused");
-}
-
 //capturamos los datos de la tabla Ciudad en un JSON a través de POST para listarlo
 function getCiudades() {
     $.ajax({
         method: "POST",
         url: "/SysGym/referenciales/compras/sucursales/listas/listaCiudades.php",
         data: {
-            ciu_descripcion:$("#ciu_descripcion").val()
+            ciu_descripcion: $("#ciu_descripcion").val()
         }
-        //en base al JSON traído desde el listaCiudades arrojamos un resultado
     }).done(function(lista) {
-        //el JSON de respuesta es mostrado en una lista
         var fila = "";
-        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
-        if(lista.true == true){
-            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
-        }else{
-            $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionCiudades("+JSON.stringify(item)+")'>"+item.ciu_descripcion+"</li>";
+        if (lista.true == true) {
+            fila = "<li class='list-group-item'>" + lista.fila + "</li>";
+        } else {
+            $.each(lista, function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionCiudades(" + JSON.stringify(item) + ")'>" + item.ciu_descripcion + "</li>";
             });
         }
-        //enviamos a los input correspondientes del conjunto de filas
         $("#ulCiudades").html(fila);
-        //le damos un estilo a la lista de Ciudades
         $("#listaCiudades").attr("style", "display:block; position:absolute; z-index:3000; width:100%");
-    }).fail(function (a,b,c) {
-        swal("ERROR",c,"error");
-    })
+    }).fail(function(a, b, c) {
+        swal("ERROR", c, "error");
+    });
 }
 
 //seleccionamos la Ciudad por su key y enviamos el dato al input correspondiente
 function seleccionCiudades (datos) {
-    Object.keys(datos).forEach(key =>{
-        $("#"+key).val(datos[key]);
+    Object.keys(datos).forEach(key => {
+        $("#" + key).val(datos[key]);
     });
     $("#ulCiudades").html();
     $("#listaCiudades").attr("style", "display:none;");
