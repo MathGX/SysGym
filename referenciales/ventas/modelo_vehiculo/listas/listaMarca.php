@@ -6,44 +6,37 @@ header('Content-type: application/json; charset=utf-8');
 es más recomendable y sí o sí se usa para llamar a otra clase, sin importar  
 que las clases estén dentro de la misma carpeta*/
 
-//iniciamos variables de sesión
-session_start();
-
 //importala clase conexion.php
 require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$u = $_SESSION['usuarios'];
-$perfil = $u['perf_cod'];
-$busquedaMenu = $_POST['busquedaMenu'];
+$marcve_descri = $_POST['marcve_descri'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
-$sqlAdmin = "select 
-                m.guidescri, 
-                m.url 
-                from v_gui_mov m 
-        where m.perf_cod = $perfil 
-                and m.guidescri ilike '%$busquedaMenu%'
-                and m.guiDescri != 'NER'
-        order by m.guidescri;";
-//consultamos a la base de datos y guardamos el resultado
-$respGui = pg_query($conexion, $sqlAdmin);
-//convertimos el resultado en un array asociativo
-$dateGui = pg_fetch_all($respGui);
+        $sql = "select 
+                ee.marcve_cod,
+                ee.marcve_descri
+                from marca_vehiculo ee
+                where ee.marcve_descri ilike ('%$marcve_descri%') and ee.marcve_estado ilike 'ACTIVO'
+                order by marcve_descri;";
 
+//consultamos a la base de datos y guardamos el resultado
+$resultado = pg_query($conexion, $sql);
+//convertimos el resultado en un array asociativo
+$datos = pg_fetch_all($resultado);
 //se consulta si el array asociativo está vacío, de ser así se envía un mensaje al front-end
-if (empty($dateGui)) {
+if (empty($datos)) {
         echo json_encode(
-                [
-                        "fila" => "No se encuentra la interfaz",
+                array(
+                        "fila" => "No se encuentra el dato",
                         "true" => true
-                ]
+                )
         );
         // si datos no está vacío convertimoas el array asociativo en json
 } else {
-        echo json_encode($dateGui);
+        echo json_encode($datos);
 }
 
 ?>

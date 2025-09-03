@@ -52,11 +52,11 @@ if (isset($_POST['operacion'])) {
 
 } else if (isset($_POST['consulCod']) == 1) {
     //Se obtiene el valor para asignar al codigo
-    $proCod = "select coalesce (max(funprov_cod),0)+1 as codigo from funcionario_proveedor;";
+    $funprovCod = "select coalesce (max(funprov_cod),0)+1 as codigo from funcionario_proveedor;";
 
-    $codigo = pg_query($conexion, $proCod);
-    $codigoProveedor = pg_fetch_assoc($codigo);
-    echo json_encode($codigoProveedor);
+    $codigo = pg_query($conexion, $funprovCod);
+    $codigoFunProveedor = pg_fetch_assoc($codigo);
+    echo json_encode($codigoFunProveedor);
 
 } else {
     //Si el post no recibe la operacion realizamos una consulta

@@ -730,6 +730,101 @@ language plpgsql;
 
 select sp_abm_items (1,1,'musculosa',50000,70000,'',1,1,2,'mcentu','modificacion','unidades','prenda','iva 10%');
 
+--sp_abm_funcionario_proveedor (FUNCIONARIO PROVEEDOR)
+create or replace function sp_abm_funcionario_proveedor(
+	funprovcod integer, 
+	funprovnombres varchar, 
+	funprovapellidos varchar,
+	funprovnrodoc varchar,
+	procod integer,
+	tiprovcod integer,
+	funprovestado varchar,
+	operacion integer,
+	usucod integer,
+	usulogin varchar,
+	transaccion varchar,
+	prorazonsocial varchar) returns void as 
+$$
+declare funprovaudit text;
+begin --iniciar
+	--se designan validaciones
+	if operacion in (1,2) then
+		if funprovnrodoc is null then
+			perform 1 from funcionario_proveedor
+			where funprov_nombres = funprovnombres 
+				and funprov_apellidos = funprovapellidos 
+				and pro_cod = procod 
+				and funprov_cod != funprovcod;
+		else
+			perform 1 from funcionario_proveedor
+			where funprov_nro_doc = funprovnrodoc
+				and pro_cod = procod 
+				and funprov_cod != funprovcod;
+		end if;
+		if found then
+			raise exception 'err_fun';
+		elseif operacion = 1 then --realizamos un insert
+			insert into funcionario_proveedor (
+				funprov_cod, 
+				funprov_nombres, 
+				funprov_apellidos,
+				funprov_nro_doc,
+				pro_cod,
+				tiprov_cod,
+				funprov_estado
+			) values (
+				funprovcod, 
+				upper(funprovnombres),
+				upper(funprovapellidos),
+				funprovnrodoc,
+				procod,
+				tiprovcod,
+				'ACTIVO');
+			RAISE NOTICE 'EL FUNCIONARIO DEL PROVEEDOR "%" FUE REGISTRADO EXITOSAMENTE', upper(prorazonsocial);
+		elseif operacion = 2 then -- realizamos un update 
+			update funcionario_proveedor  
+				set funprov_nombres = upper(funprovnombres), 
+				funprov_apellidos = upper(funprovapellidos),
+				funprov_nro_doc = funprovnrodoc,
+				pro_cod = procod,
+				tiprov_cod = tiprovcod,
+				funprov_estado='ACTIVO'
+			where funprov_cod=funprovcod;
+			raise notice 'EL FUNCIONARIO DEL PROVEEDOR "%" FUE MODIFICADO EXITOSAMENTE',upper(prorazonsocial);
+		end if;
+	end if;
+	if operacion = 3 then -- realizamos un update 
+		update funcionario_proveedor
+			set funprov_estado = 'INACTIVO'
+		where funprov_cod = funprovcod ;
+		raise notice 'EL FUNCIONARIO DEL PROVEEDOR "%" FUE BORRADO EXITOSAMENTE',upper(prorazonsocial);
+	end if;
+	--se selecciona la ultima auditoria
+	select coalesce(funprov_audit,'') into funprovaudit
+	from funcionario_proveedor
+	where funprov_cod = funprovcod;
+
+	--se actualiza la auditoria
+	update funcionario_proveedor
+    set funprov_audit = funprovaudit||' '||json_build_object(
+        'usu_cod', usucod,
+		'usu_login', usulogin,
+        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+        'transaccion', upper(transaccion),
+		'funprov_nombres', upper(funprovnombres), 
+		'funprov_apellidos', upper(funprovapellidos), 
+		'funprov_nro_doc', funprovnrodoc,
+		'pro_cod', procod,
+		'tiprov_cod', tiprovcod,
+		'pro_razonsocial', upper(prorazonsocial), 
+		'funprov_estado', upper(funprovestado)
+    )||','
+    where funprov_cod = funprovcod;
+end--finalizar
+$$
+language plpgsql;
+
+
 -----------------------------------------------------------MOVIMIENTOS-----------------------------------------------------------
 
 --sp_pedido_compra_cab (PEDIDO COMPRA CABECERA)

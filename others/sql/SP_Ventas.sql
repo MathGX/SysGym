@@ -2,16 +2,16 @@
 
 --sp_abm_tipoDocumento (TIPO_DOCUMENTO)
 CREATE OR REPLACE FUNCTION sp_abm_tipoDocumento
-(tipdoccod integer, 
-tipdocdescri varchar, 
-tipdocestado varchar,
-operacion integer,
-usucod integer,
-usulogin varchar,
-transaccion varchar)
-RETURNS void
-AS $$
-declare tipdocaudit text;
+	(tipdoccod integer, 
+	tipdocdescri varchar, 
+	tipdocestado varchar,
+	operacion integer,
+	usucod integer,
+	usulogin varchar,
+	transaccion varchar)
+	RETURNS void
+	AS $$
+	declare tipdocaudit text;
 begin --iniciar
 	--se designan validaciones
 	if operacion in (1,2) then
@@ -635,7 +635,153 @@ end--finalizar
 $$
 language plpgsql;
 
+--sp_abm_modelo_vehiculo (MODELO VEHICULO)
+create or replace function sp_abm_modelo_vehiculo (
+	modvecod integer, 
+	modvedescri varchar,
+	marcvecod integer,
+	modveestado varchar,
+	operacion integer,
+	usucod integer,
+	usulogin varchar,
+	marcvedescri varchar,
+	transaccion varchar) returns void as 
+$$
+declare modveaudit text;
+begin --iniciar
+	--se designan validaciones
+	if operacion in (1,2) then
+		perform * from modelo_vehiculo
+		where modve_descri = upper(modvedescri) 
+			and marcve_cod = marcvecod
+			and modve_cod != modvecod;
+		if found then
+			raise exception 'err_modelo';
+		-- realizamos un insert
+		elseif operacion = 1 then 
+			insert into modelo_vehiculo (
+				modve_cod, 
+				modve_descri,
+				marcve_cod,
+				modve_estado) 
+			values (
+				modvecod, 
+				upper(modvedescri), 
+				marcvecod,
+				'ACTIVO');
+			raise notice 'EL MODELO DE VEHICULO FUE REGISTRADO EXITOSAMENTE';
+		-- realizamos un update
+		elseif operacion = 2 then  
+			update modelo_vehiculo 
+				set modve_descri = upper(modvedescri), 
+				marcve_cod = marcvecod,
+				modve_estado = 'ACTIVO'
+			where modve_cod = modvecod;
+			raise notice 'EL MODELO DE VEHICULO FUE MODIFICADO EXITOSAMENTE';
+		end if;
+	end if;
+	-- realizamos un update
+	if operacion = 3 then  
+		update modelo_vehiculo
+			set modve_estado = 'INACTIVO'
+			where modve_cod = modvecod ;
+		raise notice 'EL MODELO DE VEHICULO FUE BORRADO EXITOSAMENTE';
+	end if;
+	--se selecciona la ultima auditoria
+	select coalesce(modve_audit,'') into modveaudit
+	from modelo_vehiculo
+	where modve_cod = modvecod;
 
+	--se actualiza la auditoria
+	update modelo_vehiculo
+    set modve_audit = modveaudit||' '||json_build_object(
+        'usu_cod', usucod,
+		'usu_login', usulogin,
+        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+        'transaccion', upper(transaccion),
+		'modve_descri', upper(modvedescri), 
+		'marcve_cod', marcve_cod, 
+		'marcve_descri', upper(marcvedescri), 
+		'modve_estado', upper(modveestado)
+    )||','
+    where modve_cod = modvecod;
+end--finalizar
+$$
+language plpgsql;
+
+--sp_abm_modelo_vehiculo (MODELO VEHICULO)
+create or replace function sp_abm_modelo_vehiculo (
+	modvecod integer, 
+	modvedescri varchar,
+	marcvecod integer,
+	modveestado varchar,
+	operacion integer,
+	usucod integer,
+	usulogin varchar,
+	marcvedescri varchar,
+	transaccion varchar) returns void as 
+$$
+declare modveaudit text;
+begin --iniciar
+	--se designan validaciones
+	if operacion in (1,2) then
+		perform * from modelo_vehiculo
+		where modve_descri = upper(modvedescri) 
+			and marcve_cod = marcvecod
+			and modve_cod != modvecod;
+		if found then
+			raise exception 'err_modelo';
+		-- realizamos un insert
+		elseif operacion = 1 then 
+			insert into modelo_vehiculo (
+				modve_cod, 
+				modve_descri,
+				marcve_cod,
+				modve_estado) 
+			values (
+				modvecod, 
+				upper(modvedescri), 
+				marcvecod,
+				'ACTIVO');
+			raise notice 'EL MODELO DE VEHICULO FUE REGISTRADO EXITOSAMENTE';
+		-- realizamos un update
+		elseif operacion = 2 then  
+			update modelo_vehiculo 
+				set modve_descri = upper(modvedescri), 
+				marcve_cod = marcvecod,
+				modve_estado = 'ACTIVO'
+			where modve_cod = modvecod;
+			raise notice 'EL MODELO DE VEHICULO FUE MODIFICADO EXITOSAMENTE';
+		end if;
+	end if;
+	-- realizamos un update
+	if operacion = 3 then  
+		update modelo_vehiculo
+			set modve_estado = 'INACTIVO'
+			where modve_cod = modvecod ;
+		raise notice 'EL MODELO DE VEHICULO FUE BORRADO EXITOSAMENTE';
+	end if;
+	--se selecciona la ultima auditoria
+	select coalesce(modve_audit,'') into modveaudit
+	from modelo_vehiculo
+	where modve_cod = modvecod;
+
+	--se actualiza la auditoria
+	update modelo_vehiculo
+    set modve_audit = modveaudit||' '||json_build_object(
+        'usu_cod', usucod,
+		'usu_login', usulogin,
+        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+        'transaccion', upper(transaccion),
+		'modve_descri', upper(modvedescri), 
+		'marcve_cod', marcve_cod, 
+		'marcve_descri', upper(marcvedescri), 
+		'modve_estado', upper(modveestado)
+    )||','
+    where modve_cod = modvecod;
+end--finalizar
+$$
+language plpgsql;
 -------------------------------MOVIMIENTOS-------------------------------
 
 --sp_pedido_venta_cab (PEDIDO VENTAS CABECERA)

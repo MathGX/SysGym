@@ -15,6 +15,16 @@ $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 $perfil = $u['perf_descri'];
 
+//Consulta para obtener las pantallas del sistema
+$sqlPantalla = "select g.gui_descri from gui g where g.gui_estado = 'ACTIVO';";
+//Se ejecuta la consulta y se guarda el resultado en la variable $resPantalla
+$resPantalla = pg_query($conexion, $sqlPantalla);
+//Se convierte el resultado en un array asociativo y se guarda en la variable $pantallaSys
+$pantallaSys = pg_fetch_all($resPantalla);
+
+//----------------------------------------------------------------------------------------------------------
+
+//Consulta para obtener los permisos/interfaz del usuario
 $sql = "select
             p.perf_descri,
             g.gui_descri,
@@ -24,36 +34,41 @@ $sql = "select
             join perfiles p on p.perf_cod = gp.perf_cod
             join gui g on g.gui_cod = gp.gui_cod
         where p.perf_descri ilike '%$perfil%'";
-
+//Se ejecuta la consulta y se guarda el resultado en la variable $resultado
 $resultado = pg_query($conexion, $sql);
+//Se convierte el resultado en un array asociativo y se guarda en la variable $guis
 $guis = pg_fetch_all($resultado);
 
 //Array que contiene los permisos/interfaz del sistema
-$interfaz = [
-    //Referenciales de Seguridad
-    'REF_USUARIOS', 'REF_ASIGNACION_PERMISO_USUARIOS', 'REF_MODULOS', 'REF_PERMISOS', 'REF_PERFILES',
-    'REF_GUI', 'REF_PERFILES_PERMISOS', 'REF_GUI_PERFILES', 'REF_CONFIGURACIONES', 'REF_SUC_CONFIG',
-    //Referenciales de Compras
-    'REF_EMPRESAS', 'REF_SUCURSALES', 'REF_DEPOSITOS', 'REF_CIUDADES', 'REF_TIPO_IMPUESTO', 'REF_TIPO_ITEM',
-    'REF_ITEMS', 'REF_TIPO_PROVEEDOR', 'REF_PROVEEDORES', 
-    //Referenciales de Ventas
-    'REF_CLIENTES', 'REF_ENTIDAD_EMISORA', 'REF_MARCA_TARJETA', 'REF_ENTIDAD_ADHERIDA', 'REF_RED_PAGO', 
-    'REF_CAJA', 'REF_FORMA_COBRO', 'REF_TIPO_DOCUMENTO','REF_TIPO_COMPROBANTE', 'REF_TIMBRADOS',
-    //Referenciales de Servicios
-    'REF_PERSONAS', 'REF_CARGOS', 'REF_FUNCIONARIOS', 'REF_DIAS', 'REF_TIPO_EQUIPO', 'REF_EQUIPOS', 'REF_PARAMETROS_MEDICION', 
-    'REF_UNIDAD_MEDIDA', 'REF_EJERCICIOS', 'REF_TIPO_RUTINA', 'REF_TIPO_PLAN_ALIMENTICIO', 'REF_COMIDAS', 'REF_HORARIOS_COMIDA',
-    //Movimientos de Compras
-    'PEDIDOS_COMPRA', 'PRESUPUESTOS_PROVEEDOR', 'ORDENES_COMPRA', 'COMPRAS', 'NOTAS_COMPRAS', 'AJUSTES_INVENTARIO', 
-    //Movimientos de Servicios
-    'CUPOS_SERVICIOS', 'PROMOCIONES', 'INSCRIPCIONES','PRESUPUESTO_PREPARACION', 'MEDICIONES', 'RUTINAS', 
-    'PLANES_ALIMENTICIOS', 'EVOLUCION', 'ASISTENCIAS', 'RECLAMOS', 'SALIDAS', 
-    //Movimientos de Ventas
-    'APERTURA_CIERRE_CAJA', 'PEDIDOS_VENTAS', 'VENTAS', 'COBRANZAS', 'NOTAS_VENTAS', 
-    //Informes Referenciales
-    'INF_REF_COMPRAS', 'INF_REF_SERVICIOS', 'INF_REF_VENTAS','INF_REF_SEGURIDAD',
-    //Informes Movimientos
-    'INF_MOV_COMPRAS', 'INF_MOV_SERVICIOS', 'INF_MOV_VENTAS'
-];
+$interfaz = [];
+foreach($pantallaSys as $pantalla) {
+    $interfaz[] = $pantalla['gui_descri'];
+}
+// $interfaz2 = [
+//     //Referenciales de Seguridad
+//     'REF_USUARIOS', 'REF_ASIGNACION_PERMISO_USUARIOS', 'REF_MODULOS', 'REF_PERMISOS', 'REF_PERFILES',
+//     'REF_GUI', 'REF_PERFILES_PERMISOS', 'REF_GUI_PERFILES', 'REF_CONFIGURACIONES', 'REF_SUC_CONFIG',
+//     //Referenciales de Compras
+//     'REF_EMPRESAS', 'REF_SUCURSALES', 'REF_DEPOSITOS', 'REF_CIUDADES', 'REF_TIPO_IMPUESTO', 'REF_TIPO_ITEM',
+//     'REF_ITEMS', 'REF_TIPO_PROVEEDOR', 'REF_PROVEEDORES', 'REF_FUNCIONARIO_PROVEEDOR', 
+//     //Referenciales de Ventas
+//     'REF_CLIENTES', 'REF_ENTIDAD_EMISORA', 'REF_MARCA_TARJETA', 'REF_ENTIDAD_ADHERIDA', 'REF_RED_PAGO', 
+//     'REF_CAJA', 'REF_FORMA_COBRO', 'REF_TIPO_DOCUMENTO','REF_TIPO_COMPROBANTE', 'REF_TIMBRADOS',
+//     //Referenciales de Servicios
+//     'REF_PERSONAS', 'REF_CARGOS', 'REF_FUNCIONARIOS', 'REF_DIAS', 'REF_TIPO_EQUIPO', 'REF_EQUIPOS', 'REF_PARAMETROS_MEDICION', 
+//     'REF_UNIDAD_MEDIDA', 'REF_EJERCICIOS', 'REF_TIPO_RUTINA', 'REF_TIPO_PLAN_ALIMENTICIO', 'REF_COMIDAS', 'REF_HORARIOS_COMIDA',
+//     //Movimientos de Compras
+//     'PEDIDOS_COMPRA', 'PRESUPUESTOS_PROVEEDOR', 'ORDENES_COMPRA', 'COMPRAS', 'NOTAS_COMPRAS', 'AJUSTES_INVENTARIO', 
+//     //Movimientos de Servicios
+//     'CUPOS_SERVICIOS', 'PROMOCIONES', 'INSCRIPCIONES','PRESUPUESTO_PREPARACION', 'MEDICIONES', 'RUTINAS', 
+//     'PLANES_ALIMENTICIOS', 'EVOLUCION', 'ASISTENCIAS', 'RECLAMOS', 'SALIDAS', 
+//     //Movimientos de Ventas
+//     'APERTURA_CIERRE_CAJA', 'PEDIDOS_VENTAS', 'VENTAS', 'COBRANZAS', 'NOTAS_VENTAS', 
+//     //Informes Referenciales
+//     'INF_REF_COMPRAS', 'INF_REF_SERVICIOS', 'INF_REF_VENTAS','INF_REF_SEGURIDAD',
+//     //Informes Movimientos
+//     'INF_MOV_COMPRAS', 'INF_MOV_SERVICIOS', 'INF_MOV_VENTAS'
+// ];
 
 //Inicializamos las variables de permisos/interfaz en false
 $accesoInterfaz = array_fill_keys($interfaz, false);
@@ -136,7 +151,7 @@ foreach ($guis as $gui) {
 // print_r($guiMovVentas);
 // print_r($guiInfReferenciales);
 // print_r($guiInfMovimientos);
-//print_r($accesoInterfaz);
+// print_r($accesoInterfaz);
 
 //Array que contiene los datos de la apertura de caja
 $apertura = ['apcier_cod' => 0,
@@ -567,6 +582,11 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/referenciales/compras/proveedores/index.php">Proveedores</a>
                                 </li>
                                 <?php } ?>
+                                <?php if ($accesoInterfaz['REF_FUNCIONARIO_PROVEEDOR']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/compras/funcionario_proveedor/index.php">Funcionarios de Proveedores</a>
+                                </li>
+                                <?php } ?>
                             </ul>
                         </li>
                     <?php } ?>
@@ -700,6 +720,16 @@ if(isset($_SESSION['numApcier'])){
                                 <?php if ($accesoInterfaz['REF_TIMBRADOS']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/timbrados/index.php">Timbrados</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_MARCA_VEHICULO']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/ventas/marca_vehiculo/index.php">Marcas de vehiculos</a>
+                                </li>
+                                <?php } ?>
+                                <?php if ($accesoInterfaz['REF_MODELO_VEHICULO']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/ventas/modelo_vehiculo/index.php">Modelos de vehiculos</a>
                                 </li>
                                 <?php } ?>
                             </ul>
@@ -926,12 +956,12 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/Informes/modulos/compras/index.php"> Compras </a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($accesoInterfaz['INF_MOV_COMPRAS']) { ?>
+                                <?php if ($accesoInterfaz['INF_MOV_SERVICIOS']) { ?>
                                 <li>
                                     <a href="/SysGym/Informes/modulos/servicios/index.php"> Servicios </a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($accesoInterfaz['INF_MOV_COMPRAS']) { ?>
+                                <?php if ($accesoInterfaz['INF_MOV_VENTAS']) { ?>
                                 <li>
                                     <a href="/SysGym/Informes/modulos/ventas/index.php"> Ventas </a>
                                 </li>
