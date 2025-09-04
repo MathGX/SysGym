@@ -18,6 +18,8 @@ order by p.permi_cod;";
 
 $resultado = pg_query($conexion, $sql);
 $datos = pg_fetch_all($resultado);
+
+$u = $_SESSION['usuarios'];
 ?>
 
 <!DOCTYPE html>
@@ -26,7 +28,7 @@ $datos = pg_fetch_all($resultado);
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>PERMISOS DE PERFILES</title>
+    <title>CHAPAS DE VEHICULOS</title>
     <!--Se icluyen los estilos CSS ingresando desde la carpeta raíz hacia el importCSS-->
     <?php include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importCSS.php"; ?>
 </head>
@@ -37,13 +39,13 @@ $datos = pg_fetch_all($resultado);
     <section class="content">
         <div class="container-fluid">
             <div class="row clearfix">
-
+                
                 <div class="col-lg-12">
-                    <!-- formulario de perfiles permisos -->
+                    <!-- formulario de CHAPAS DE VEHICULOS -->
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                FORMULARIO DE PERMISOS POR PERFIL<small>Registrar los permisos para cada perfil</small>
+                                FORMULARIO DE CHAPAS DE VEHICULOS<small>Registrar la chapa de vehiculos</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -53,45 +55,44 @@ $datos = pg_fetch_all($resultado);
                             <input type="hidden" id="transaccion" value="">
                             <div class="row clearfix">
 
-                                <div class="col-sm-2" style="display:none">
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="hidden" id="perfperm_cod" class="form-control" value="0" disabled>
+                                            <input type="text" id="chapve_cod" class="form-control" disabled>
                                             <label class="form-label">Código</label>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-md-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="hidden" id="perf_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="perf_descri" disabled onkeyup="getPerfiles()">
-                                            <label class="form-label">Perfil</label>
-                                            <div id="listaPerfiles" style="display: none;">
-                                                <ul class="list-group" id="ulPerfiles" style="height:60px; overflow:auto;"></ul>
+                                            <input type="hidden" id="modve_cod" value="0">
+                                            <input type="hidden" id="modve_descri" value="0">
+                                            <input type="hidden" id="marcve_cod" value="0">
+                                            <input type="hidden" id="marcve_descri" value="0">
+                                            <input type="text" class="form-control disabledno sinCarac" id="marca_modelo" disabled onkeyup="getMarcaModelo()">
+                                            <label class="form-label">Marca y Modelo</label>
+                                            <div id="listaMarcaModelo" style="display: none;">
+                                                <ul class="list-group" id="ulMarcaModelo" style="height:60px; overflow:auto;"></ul>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="hidden" id="permi_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="permi_descri" disabled onkeyup="getPermisos()">
-                                            <label class="form-label">Permiso</label>
-                                            <div id="listaPermisos" style="display: none;">
-                                                <ul class="list-group" id="ulPermisos" style="height:60px; overflow:auto;"></ul>
-                                            </div>
+                                            <input type="text" id="chapve_chapa" class="form-control disabledno sinCarac" disabled>
+                                            <label class="form-label">Nro. de Serie</label>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-md-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="perfperm_estado" class="form-control" disabled>
+                                            <input type="text" id="chapve_estado" class="form-control" disabled>
                                             <label class="form-label">Estado</label>
                                         </div>
                                     </div>
@@ -99,7 +100,7 @@ $datos = pg_fetch_all($resultado);
 
                             </div>
                             
-                            <!-- botones del formulario de perfiles permisos -->
+                            <!-- botones del formulario de tipo de documentos -->
                             <div class="icon-and-text-button-demo">
                                 <?php foreach ($datos as $key => $boton) { ?>
                                     <?php if (($boton['permi_descri'] == 'AGREGAR') && ($boton['asigusu_estado'] == 'ACTIVO')) { ?>
@@ -121,13 +122,11 @@ $datos = pg_fetch_all($resultado);
                                         </button>
                                     <?php } 
                                 } ?>
-                                <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2"
-                                    onclick="controlVacio()">
+                                <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">archive</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2"
-                                    onclick="cancelar()">
+                                <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -141,11 +140,11 @@ $datos = pg_fetch_all($resultado);
                 </div>
 
                 <div class="col-lg-12 tbl" style="display: block;">
-                    <!-- grilla del formulario permisos perfiles -->
+                    <!-- grilla del formulario tipo documento -->
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                LISTADO DE PERMISOS DE CADA PERFIL <small>Listado de los perfiles y sus permisos</small>
+                                LISTADO DE CHAPAS DE VEHICULOS<small>Chapas de vehiculos vigentes</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -154,8 +153,8 @@ $datos = pg_fetch_all($resultado);
                                     <thead>
                                         <tr>
                                             <th>CÓDIGO</th>
-                                            <th>PERFIL</th>
-                                            <th>PERMISO</th>
+                                            <th>NÚMERO DE CHAPA</th>
+                                            <th>MARCA Y MODELO</th>
                                             <th>ESTADO</th>
                                         </tr>
                                     </thead>

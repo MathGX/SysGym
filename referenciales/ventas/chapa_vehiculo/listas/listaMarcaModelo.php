@@ -1,0 +1,46 @@
+<?php
+
+header('Content-type: application/json; charset=utf-8');
+
+/*require_once es como un import, si usamos más de una vez pasa por alto,  
+es más recomendable y sí o sí se usa para llamar a otra clase, sin importar  
+que las clases estén dentro de la misma carpeta*/
+
+//importala clase conexion.php
+require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
+
+$objConexion = new Conexion();
+$conexion = $objConexion->getConexion();
+
+$marca_modelo = $_POST['marca_modelo'];
+
+//se realiza la consulta SQL a la base de datos con el filtro
+        $sql = "select 
+                        m.modve_cod,
+                        m.modve_descri,
+                        m.marcve_cod,
+                        mv.marcve_descri,
+                        mv.marcve_descri || ', MODELO ' || m.modve_descri as marca_modelo
+                from modelo_vehiculo m
+                        join marca_vehiculo mv on mv.marcve_cod = m.marcve_cod
+                where (mv.marcve_descri || ', MODELO ' || m.modve_descri) ilike '%$marca_modelo%' and m.modve_estado = 'ACTIVO'
+                order by modve_cod;";
+
+//consultamos a la base de datos y guardamos el resultado
+$resultado = pg_query($conexion, $sql);
+//convertimos el resultado en un array asociativo
+$datos = pg_fetch_all($resultado);
+//se consulta si el array asociativo está vacío, de ser así se envía un mensaje al front-end
+if (empty($datos)) {
+        echo json_encode(
+                array(
+                        "fila" => "No se encuentra el dato",
+                        "true" => true
+                )
+        );
+        // si datos no está vacío convertimoas el array asociativo en json
+} else {
+        echo json_encode($datos);
+}
+
+?>

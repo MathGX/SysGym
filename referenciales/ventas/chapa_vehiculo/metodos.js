@@ -17,7 +17,7 @@ let getCod = () => {
         url: "controlador.php",
         data: {consulCod: 1}
     }).done(function (respuesta){
-        $("#modve_cod").val(respuesta.codigo);
+        $("#chapve_cod").val(respuesta.codigo);
     });
 }
 
@@ -28,7 +28,7 @@ let agregar = () => {
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
     $(".disabledno").val("");
-    $("#modve_estado").val('ACTIVO');
+    $("#chapve_estado").val('ACTIVO');
     $(".tbl").attr("style", "display:none");
     getCod();
     habilitarBotones(true);
@@ -38,7 +38,7 @@ let agregar = () => {
 //funcion modificar
 let modificar = () => {
     $("#operacion").val(2);
-    $("#modve_estado").val('ACTIVO');
+    $("#chapve_estado").val('ACTIVO');
     $("#transaccion").val('MODIFICACION');
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
@@ -50,7 +50,7 @@ let modificar = () => {
 let eliminar = () => {
     $("#operacion").val(3);
     $("#transaccion").val('BORRADO');
-    $("#modve_estado").val('INACTIVO');
+    $("#chapve_estado").val('INACTIVO');
     habilitarBotones(true);
     window.scroll(0, -100);
 };
@@ -72,13 +72,15 @@ let grabar = () => {
         method: "POST",
         url: "controlador.php",
         data: {
+            chapve_cod: $("#chapve_cod").val(),
+            chapve_chapa: $("#chapve_chapa").val(),
+            chapve_estado: $("#chapve_estado").val(),
             modve_cod: $("#modve_cod").val(),
-            modve_descri: $("#modve_descri").val(),
-            marcve_cod: $("#marcve_cod").val(),
-            modve_estado: $("#modve_estado").val(),
             operacion: $("#operacion").val(),
             usu_cod: $("#usu_cod").val(),
             usu_login: $("#usu_login").val(),
+            modve_descri: $("#modve_descri").val(),
+            marcve_cod: $("#marcve_cod").val(),
             marcve_descri: $("#marcve_descri").val(),
             transaccion: $("#transaccion").val()
         },
@@ -259,7 +261,7 @@ $(".disabledno").each(function() {
 //-----------------------------------------------------------------------------------------------------------------------
 //funcion para alertar campos que solo acepten texto
 let soloTexto = (nombreInput, idInput) => {
-    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`]/;
+    caracteres = /[-'_¡!°/\@#$%^&*().¿?":{}|<>;~`]/;
     numeros = /[0-9]/;
     valor = $(idInput).val().trim();
     mensaje = "";
@@ -312,9 +314,10 @@ let listar = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>"+ objeto.modve_cod +"</td>";
+                    tabla += "<td>"+ objeto.chapve_cod +"</td>";
+                    tabla += "<td>"+ objeto.chapve_chapa +"</td>";
                     tabla += "<td>"+ objeto.marca_modelo +"</td>";
-                    tabla += "<td>"+ objeto.modve_estado +"</td>";
+                    tabla += "<td>"+ objeto.chapve_estado +"</td>";
                 tabla += "</tr>";
             }
             $("#grilla_datos").html(tabla);
@@ -327,15 +330,15 @@ let listar = () => {
 
 listar();
 
-//capturamos los datos de la tabla marca_vehiculo en un JSON a través de POST para listarlo
-function getMarca() {
+//capturamos los datos de la tabla modelo_vehiculo en un JSON a través de POST para listarlo
+function getMarcaModelo() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/referenciales/ventas/modelo_vehiculo/listas/listaMarca.php",
+        url: "/SysGym/referenciales/ventas/chapa_vehiculo/listas/listaMarcaModelo.php",
         data: {
-            marcve_descri:$("#marcve_descri").val()
+            marca_modelo:$("#marca_modelo").val()
         }
-        //en base al JSON traído desde el listaMarca arrojamos un resultado
+        //en base al JSON traído desde el listaMarcaModelo arrojamos un resultado
     }).done(function(lista) {
         //el JSON de respuesta es mostrado en una lista
         var fila = "";
@@ -344,24 +347,24 @@ function getMarca() {
             fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
         }else{
             $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionMarca("+JSON.stringify(item)+")'>"+item.marcve_descri+"</li>";
+                fila += "<li class='list-group-item' onclick='seleccionMarcaModelo("+JSON.stringify(item)+")'>"+item.marca_modelo+"</li>";
             });
         }
         //enviamos a los input correspondientes del conjunto de filas
-        $("#ulMarca").html(fila);
-        //le damos un estilo a la lista de Marca
-        $("#listaMarca").attr("style", "display:block; position:absolute; z-index:3000; width:100%");
+        $("#ulMarcaModelo").html(fila);
+        //le damos un estilo a la lista de MarcaModelo
+        $("#listaMarcaModelo").attr("style", "display:block; position:absolute; z-index:3000; width:100%");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");
     })
 }
 
 //seleccionamos el modulo por su key y enviamos el dato al input correspondiente
-function seleccionMarca (datos) {
+function seleccionMarcaModelo (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
-    $("#ulMarca").html();
-    $("#listaMarca").attr("style", "display:none;");
+    $("#ulMarcaModelo").html();
+    $("#listaMarcaModelo").attr("style", "display:none;");
     $(".focus").attr("class", "form-line focus focused");
 }

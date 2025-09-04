@@ -782,6 +782,85 @@ begin --iniciar
 end--finalizar
 $$
 language plpgsql;
+
+--sp_abm_chapa_vehiculo (CHAPA VEHICULO)
+create or replace function sp_abm_chapa_vehiculo (
+	chapvecod integer, 
+	chapvechapa varchar,
+	chapveestado varchar,
+	modvecod integer,
+	operacion integer,
+	usucod integer,
+	usulogin varchar,
+	modvedescri varchar,
+	marcvecod integer,
+	marcvedescri varchar,
+	transaccion varchar) returns void as 
+$$
+declare chapveaudit text;
+begin --iniciar
+	--se designan validaciones
+	if operacion in (1,2) then
+		perform 1 from chapa_vehiculo
+		where chapve_chapa = upper(chapvechapa)
+			and chapve_cod != chapvecod;
+		if found then
+			raise exception 'err_chapa';
+		-- realizamos un insert
+		elseif operacion = 1 then 
+			insert into chapa_vehiculo (
+				chapve_cod, 
+				chapve_chapa,
+				modve_cod,
+				chapve_estado
+			) values (
+				chapvecod,
+				upper(chapvechapa),
+				modvecod,
+				'ACTIVO');
+			raise notice 'LA CHAPA DEL VEHICULO FUE REGISTRADA EXITOSAMENTE';
+		-- realizamos un update
+		elseif operacion = 2 then  
+			update chapa_vehiculo 
+				set chapve_chapa = upper(chapvechapa), 
+				modve_cod = modvecod,
+				chapve_estado = 'ACTIVO'
+			where chapve_cod = chapvecod;
+			raise notice 'LA CHAPA DEL VEHICULO FUE MODIFICADA EXITOSAMENTE';
+		end if;
+	end if;
+	-- realizamos un update
+	if operacion = 3 then  
+		update chapa_vehiculo
+			set chapve_estado = 'INACTIVO'
+		where chapve_cod = chapvecod ;
+		raise notice 'LA CHAPA DEL VEHICULO FUE BORRADA EXITOSAMENTE';
+	end if;
+	--se selecciona la ultima auditoria
+	select coalesce(chapve_audit,'') into chapveaudit
+	from chapa_vehiculo
+	where chapve_cod = chapvecod;
+
+	--se actualiza la auditoria
+	update chapa_vehiculo
+    set chapve_audit = chapveaudit||' '||json_build_object(
+        'usu_cod', usucod,
+		'usu_login', usulogin,
+        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+        'transaccion', upper(transaccion),
+		'chapve_cod', chapvecod, 
+		'chapve_chapa', upper(chapvechapa), 
+		'modve_cod', modve_cod, 
+		'modve_descri', upper(modvedescri), 
+		'marcve_cod', modve_cod, 
+		'marcve_descri', upper(modvedescri), 
+		'chapve_estado', upper(chapveestado)
+    )||','
+    where chapve_cod = chapvecod;
+end--finalizar
+$$
+language plpgsql;
+
 -------------------------------MOVIMIENTOS-------------------------------
 
 --sp_pedido_venta_cab (PEDIDO VENTAS CABECERA)

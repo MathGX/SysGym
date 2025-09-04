@@ -136,7 +136,7 @@ $u = $_SESSION['usuarios'];
                                 <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2"
                                     onclick="controlVacio()">
                                     <i class="material-icons">archive</i>
-                                    <span>GRABAR</span>
+                                    <span>CONFIRMAR</span>
                                 </button>
                                 <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2"
                                     onclick="cancelar()">

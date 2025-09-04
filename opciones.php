@@ -732,6 +732,11 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/referenciales/ventas/modelo_vehiculo/index.php">Modelos de vehiculos</a>
                                 </li>
                                 <?php } ?>
+                                <?php if ($accesoInterfaz['REF_CHAPA_VEHICULO']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/ventas/chapa_vehiculo/index.php">Chapas de Vehículos</a>
+                                </li>
+                                <?php } ?>
                             </ul>
                         </li>
                     <?php } ?>
