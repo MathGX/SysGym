@@ -115,7 +115,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" class="form-control disabledno" id="pedcom_cod" disabled onkeyup="getPedCom()">
+                                            <input type="text" class="form-control disabledno soloNum" id="pedcom_cod" disabled onkeyup="getPedCom()">
                                             <label class="form-label">Pedido Nro.</label>
                                             <div id="listaPedCom" style="display: none;">
                                                 <ul class="list-group" id="ulPedCom" style="height:60px; overflow:auto;"></ul>
@@ -129,7 +129,7 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line focus">
                                             <input type="hidden" id="pro_cod" value="0">
                                             <input type="hidden" id="tiprov_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="pro_ruc" disabled onkeyup="getProveedor()">
+                                            <input type="text" class="form-control disabledno soloNum" id="pro_ruc" disabled onkeyup="getProveedor()">
                                             <label class="form-label">Prov. RUC</label>
                                             <div id="listaProveedor" style="display: none;">
                                                 <ul class="list-group" id="ulProveedor" style="height:60px; overflow:auto;"></ul>
@@ -224,7 +224,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
                                             <input type="hidden" id="tipimp_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disabledno sinCarac" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Item</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:auto;"></ul>
@@ -236,7 +236,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="number" id="presprovdet_cantidad" class="form-control disabledno" disabled>
+                                            <input type="text" id="presprovdet_cantidad" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Cantidad</label>
                                         </div>
                                     </div>
@@ -254,7 +254,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="number" id="presprovdet_precio" class="form-control disabledno" disabled>
+                                            <input type="text" id="presprovdet_precio" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Precio</label>
                                         </div>
                                     </div>
@@ -292,12 +292,12 @@ $u = $_SESSION['usuarios'];
                                     <thead>
                                         <tr>
                                             <th>ITEM</th>
-                                            <th>CANTIDAD</th>
+                                            <th style="text-align:right;">CANTIDAD</th>
                                             <th>MEDIDA</th>
-                                            <th>PRECIO UNIT.</th>
-                                            <th>EXENTA</th>
-                                            <th>IVA 5%</th>
-                                            <th>IVA 10%</th>
+                                            <th style="text-align:right;">PRECIO UNIT.</th>
+                                            <th style="text-align:right;">EXENTA</th>
+                                            <th style="text-align:right;">IVA 5%</th>
+                                            <th style="text-align:right;">IVA 10%</th>
                                         </tr>
                                     </thead>
                                     <tbody id="grilla_det"> 

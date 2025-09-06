@@ -828,46 +828,53 @@ language plpgsql;
 -----------------------------------------------------------MOVIMIENTOS-----------------------------------------------------------
 
 --sp_pedido_compra_cab (PEDIDO COMPRA CABECERA)
-CREATE OR REPLACE FUNCTION sp_pedido_compra_cab
-(pedcomcod integer,
-usucod integer,
-succod integer,
-empcod integer,
-pedcomestado varchar,
-operacion_cab integer,
-usulogin varchar,
-sucdescri varchar,
-emprazonsocial varchar,
-transaccion varchar)
-RETURNS void
-AS $$
+create or replace function sp_pedido_compra_cab (
+	pedcomcod integer,
+	usucod integer,
+	succod integer,
+	empcod integer,
+	pedcomestado varchar,
+	operacion_cab integer,
+	usulogin varchar,
+	sucdescri varchar,
+	emprazonsocial varchar,
+	transaccion varchar) returns void as 
+$$
 declare pedcomaudit text;
 begin 
     if operacion_cab = 1 then
         -- aqui hacemos un insert
-        INSERT INTO pedido_compra_cab 
-        (pedcom_cod,
-        pedcom_fecha, 
-        usu_cod, 
-        suc_cod,
-        emp_cod,
-        pedcom_estado)
-        VALUES(
-        pedcomcod,
-        current_date,
-        usucod,
-        succod,
-      	empcod,
-      	'ACTIVO');
+        insert into pedido_compra_cab (
+	        pedcom_cod,
+	        pedcom_fecha, 
+	        usu_cod, 
+	        suc_cod,
+	        emp_cod,
+	        pedcom_estado)
+        values (
+	        pedcomcod,
+	        current_date,
+	        usucod,
+	        succod,
+	      	empcod,
+	      	'ACTIVO');
         raise notice 'EL PEDIDO FUE REGISTADO CON EXITO';
     end if;
     if operacion_cab = 2 then
-        -- aqui hacemos un update
-		update pedido_compra_cab 
-			SET pedcom_estado = 'ANULADO'
-			usu_cod = usucod
-        WHERE pedcom_cod = pedcomcod;
-        raise notice 'EL PEDIDO FUE ANULADO';
+		perform 1 from pedido_presupuesto pp
+			join presupuesto_prov_cab ppc on pp.presprov_cod = ppc.presprov_cod
+		where pp.pedcom_cod = pedcomcod
+			and ppc.presprov_estado != 'ANULADO';
+		if found then
+			raise exception 'err_cab';
+		else
+	        -- aqui hacemos un update
+			update pedido_compra_cab 
+				set pedcom_estado = 'ANULADO',
+				usu_cod = usucod
+	        where pedcom_cod = pedcomcod;
+	        raise notice 'EL PEDIDO FUE ANULADO';
+		end if;
     end if;
 	--se selecciona la ultima auditoria
 	select coalesce(pedcom_audit,'') into pedcomaudit
@@ -887,7 +894,7 @@ begin
 		'suc_descri', upper(sucdescri), 
 		'pedcom_estado', upper(pedcomestado)
     )||','
-    WHERE pedcom_cod = pedcomcod;
+    where pedcom_cod = pedcomcod;
 end
 $$
 language plpgsql;
@@ -940,95 +947,102 @@ $$
 language plpgsql;
 
 --sp_presupuesto_prov_cab (PRESUPUESTO PROVEEDOR CABECERA)
-CREATE OR REPLACE FUNCTION sp_presupuesto_prov_cab
-(presprovcod integer,
-presprovfecha date,
-presprovfechavenci date,
-presprovestado varchar,
-procod integer,
-tiprovcod integer,
-succod integer,
-empcod integer,
-usucod integer,
-pedcomcod integer,
-operacion integer,
-proruc varchar,
-prorazonsocial varchar,
-sucdescri varchar,
-emprazonsocial varchar,
-usulogin varchar,
-transaccion varchar)
-RETURNS void
-AS $$
-declare presprovaudit text;
-declare	pedprecod integer := (select coalesce (max(pedpre_cod),0)+1 from pedido_presupuesto);
+create or replace function sp_presupuesto_prov_cab (
+	presprovcod integer,
+	presprovfecha date,
+	presprovfechavenci date,
+	presprovestado varchar,
+	procod integer,
+	tiprovcod integer,
+	succod integer,
+	empcod integer,
+	usucod integer,
+	pedcomcod integer,
+	operacion integer,
+	proruc varchar,
+	prorazonsocial varchar,
+	sucdescri varchar,
+	emprazonsocial varchar,
+	usulogin varchar,
+	transaccion varchar) RETURNS void AS 
+$$
+declare 
+	presprovaudit text;
+	pedprecod integer := (select coalesce (max(pedpre_cod),0)+1 from pedido_presupuesto);
 begin 
     if operacion = 1 then
 		if current_date > presprovfechavenci then
 			raise exception 'fecha';
 		end if;
-		perform 
-		ppc.presprov_cod,
-		pp.pedcom_cod,
-		ppc.pro_cod,
-		ppc.presprov_fecha,
-		ppc.presprov_fechavenci 
-		from presupuesto_prov_cab ppc 
-		join pedido_presupuesto pp on pp.presprov_cod = ppc.presprov_cod
-		where (pp.pedcom_cod = pedcomcod and ppc.pro_cod = procod and ppc.presprov_cod != presprovcod);
+		perform 1 from presupuesto_prov_cab ppc 
+			join pedido_presupuesto pp on pp.presprov_cod = ppc.presprov_cod
+		where pp.pedcom_cod = pedcomcod 
+			and ppc.pro_cod = procod 
+			and ppc.presprov_cod != presprovcod;
 		if found then
 			raise exception 'pedido';
 	    elseif operacion = 1 then
-        -- aqui hacemos un insert
-	        INSERT INTO presupuesto_prov_cab 
-				(presprov_cod,
-				presprov_fecha, 
-				presprov_fechavenci,
-				presprov_estado,
-				pro_cod,
-				tiprov_cod,
-				suc_cod,
-				emp_cod,
-				usu_cod)
-			VALUES(
-				presprovcod,
-				presprovfecha,
-				presprovfechavenci,
-				'ACTIVO',
-				procod,
-				tiprovcod,
-				succod,
-				empcod,
-				usucod);
-		    INSERT INTO pedido_presupuesto
-				(pedpre_cod,
-				pedcom_cod,
-				presprov_cod)
-				values(
-				pedprecod,
-				pedcomcod,
-				presprovcod);
+        	-- aqui hacemos un insert
+	        insert into presupuesto_prov_cab 
+		        (presprov_cod,
+		        presprov_fecha, 
+		        presprov_fechavenci,
+		        presprov_estado,
+		        pro_cod,
+		        tiprov_cod,
+		        suc_cod,
+		        emp_cod,
+		        usu_cod)
+	        values(
+		        presprovcod,
+		        presprovfecha,
+		        presprovfechavenci,
+		      	'ACTIVO',
+		      	procod,
+		      	tiprovcod,
+		        succod,
+		      	empcod,
+		    	usucod);
+			-- se insertan datos en la tabla intermedia
+		    insert into pedido_presupuesto
+			    (pedpre_cod,
+			    pedcom_cod,
+			    presprov_cod)
+		    values(
+			    pedprecod,
+			    pedcomcod,
+			    presprovcod);
 			--se actualiza la auditoria
 			update pedido_presupuesto
-				set pedpre_audit = json_build_object(
-					'usu_cod', usucod,
+			    set pedpre_audit = json_build_object(
+			        'usu_cod', usucod,
 					'usu_login', usulogin,
-					'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
-					'transaccion', upper(transaccion),
-					'pedcom_cod', pedcomcod,
-					'presprov_cod', presprovcod
-				)
-		    WHERE pedpre_cod = pedprecod;
+			        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+			        'transaccion', upper(transaccion),
+			        'pedcom_cod', pedcomcod,
+			        'presprov_cod', presprovcod
+			    )
+		    where pedpre_cod = pedprecod;
 	    	raise notice 'EL PRESUPUESTO FUE REGISTADO CON EXITO';
 	  	end if;
     end if;
     if operacion = 2 then
-        -- aqui hacemos un update
-		update presupuesto_prov_cab 
-			SET presprov_estado = 'ANULADO',
-			usu_cod = usucod
-        WHERE presprov_cod = presprovcod;
-        raise notice 'EL PRESUPUESTO FUE ANULADO';
+		-- se consulta si el presupuesto está asociado a una orden
+		perform 1 from presupuesto_orden po 
+			join orden_compra_cab occ on occ.ordcom_cod = po.ordcom_cod 
+		where po.presprov_cod = presprovcod
+			and occ.ordcom_estado != 'ANULADO';
+		-- en caso de que sí se muestra un mensaje de error, caso contrario se anula
+		if found then
+			raise exception 'err_cab';
+		else
+	        -- aqui hacemos un update
+			update presupuesto_prov_cab 
+				SET presprov_estado = 'ANULADO',
+				usu_cod = usucod
+	        where presprov_cod = presprovcod;
+	        raise notice 'EL PRESUPUESTO FUE ANULADO';
+		end if;
     end if;
 	--se selecciona la ultima auditoria
 	select coalesce(presprov_audit,'') into presprovaudit
@@ -1060,79 +1074,79 @@ $$
 language plpgsql;
 
 
+
 --sp_presupuesto_prov_det (PRESUPUESTO PROVEEDOR DETALLE)
-CREATE OR REPLACE FUNCTION sp_presupuesto_prov_det
-(itmcod integer, 
-tipitemcod integer, 
-presprovcod integer, 
-presprovdetcantidad numeric, 
-presprovdetprecio numeric, 
-operacion integer)
-RETURNS void
-AS $$
+create or replace function sp_presupuesto_prov_det
+	(itmcod integer, 
+	tipitemcod integer, 
+	presprovcod integer, 
+	presprovdetcantidad numeric, 
+	presprovdetprecio numeric, 
+	operacion integer) returns void as 
+$$
 begin 
 	if operacion = 1 then
 		perform * from presupuesto_prov_det
 		where itm_cod = itmcod and presprov_cod = presprovcod;
 		if found then
-			raise exception '1';
+			raise exception 'err_rep';
 	    elseif operacion = 1 then
 	        -- aqui hacemos un insert
-	        INSERT INTO presupuesto_prov_det 
-	        (itm_cod,
-	        tipitem_cod, 
-	        presprov_cod, 
-	        presprovdet_cantidad,
-	        presprovdet_precio)
-	        VALUES(
-	        itmcod,
-	        tipitemcod,
-	        presprovcod,
-	        presprovdetcantidad,
-	        presprovdetprecio);
+	        insert into presupuesto_prov_det (
+		        itm_cod,
+		        tipitem_cod, 
+		        presprov_cod, 
+		        presprovdet_cantidad,
+		        presprovdet_precio)
+	        values (
+		        itmcod,
+		        tipitemcod,
+		        presprovcod,
+		        presprovdetcantidad,
+		        presprovdetprecio);
 	        raise notice 'EL DETALLE FUE REGISTADO CON EXITO';
 	    end if;
 	end if;
     if operacion = 2 then
     	-- aqui hacemos un delete
 		delete from presupuesto_prov_det 
-		where 
-		itm_cod = itmcod 
-		and tipitem_cod = tipitemcod 
-		and presprov_cod = presprovcod;
-		raise notice 'EL DETALLE FUE ELIMINADO CON ÉXITO';
+		where itm_cod = itmcod 
+			and tipitem_cod = tipitemcod 
+			and presprov_cod = presprovcod;
+		raise notice 'EL DETALLE FUE ELIMINADO CON EXITO';
 	end if;
 end
 $$
 language plpgsql;
 
+
 --sp_orden_compra_cab (ORDEN COMPRA CABECERA)
-CREATE OR REPLACE FUNCTION sp_orden_compra_cab
-(ordcomcod integer,
-ordcomfecha date,
-ordcomcondicionpago formpago,
-ordcomcuota integer,
-ordcomintefecha varchar,
-ordcomestado varchar,
-procod integer,
-tiprovcod integer,
-succod integer,
-empcod integer,
-usucod integer,
-ordcommontocuota numeric,
-presprovcod integer,
-pedcomcod integer,
-operacion integer,
-prorazonsocial varchar,
-sucdescri varchar,
-emprazonsocial varchar,
-usulogin varchar,
-transaccion varchar)
-RETURNS void
-AS $$
+create or replace function sp_orden_compra_cab
+	(ordcomcod integer,
+	ordcomfecha date,
+	ordcomcondicionpago formpago,
+	ordcomcuota integer,
+	ordcomintefecha varchar,
+	ordcomestado varchar,
+	procod integer,
+	tiprovcod integer,
+	succod integer,
+	empcod integer,
+	usucod integer,
+	ordcommontocuota numeric,
+	presprovcod integer,
+	pedcomcod integer,
+	operacion integer,
+	prorazonsocial varchar,
+	sucdescri varchar,
+	emprazonsocial varchar,
+	usulogin varchar,
+	transaccion varchar) returns void as
+$$
 declare 
 	ordcomaudit text;
 	preorcod integer := (select coalesce (max(preor_cod),0)+1 from presupuesto_orden);
+	-- cursor de presupuesto_prov_cab
 	cu_presupuesto cursor is
 		select 
 			p.pro_ruc as proruc,
@@ -1143,6 +1157,10 @@ declare
 		from presupuesto_prov_cab ppc
 			join proveedor p on p.pro_cod = ppc.pro_cod
 		where ppc.presprov_cod = presprovcod;
+	-- cursor de presupuesto_prov_det
+	cu_pres_prov_det cursor is
+		select * from v_presupuesto_prov_det where presprov_cod = presprovcod;
+	-- cursor de pedido_compra_cab
 	cu_pedido cursor is
 		select 
 			coalesce(pedcom_audit,'') as pedcomaudit,
@@ -1151,8 +1169,8 @@ declare
 		where pedcom_cod = pedcomcod;
 begin 
     if operacion = 1 then
-        -- aqui hacemos un insert
-	        INSERT INTO orden_compra_cab 
+        	-- aqui hacemos un insert
+	        insert into orden_compra_cab 
 		        (ordcom_cod,
 		        ordcom_fecha, 
 		        ordcom_condicionpago,
@@ -1165,7 +1183,7 @@ begin
 		        emp_cod,
 		        usu_cod,
 				ordcom_montocuota)
-	        VALUES(
+	        values(
 		        ordcomcod,
 		        ordcomfecha,
 		        ordcomcondicionpago,
@@ -1178,8 +1196,8 @@ begin
 		      	empcod,
 		    	usucod,
 				ordcommontocuota);
-	    --INSERTA DATOS EN presupuesto_orden
-		    INSERT INTO presupuesto_orden
+	    	--inserta datos en presupuesto_orden
+		    insert into presupuesto_orden
 			    (preor_cod,
 			    presprov_cod,
 			    ordcom_cod)
@@ -1197,36 +1215,50 @@ begin
 			        'presprov_cod', presprovcod,
 			        'ordcom_cod', ordcomcod
 			    )
-		    WHERE preor_cod = preorcod;
-		  --SE MODIFICA EL ESTADO DE pedido_compra_cab
-		   	UPDATE pedido_compra_cab 
-				SET pedcom_estado = 'APROBADO',
+		    where preor_cod = preorcod;
+		  	--se modifica el estado de pedido_compra_cab
+		   	update pedido_compra_cab 
+				set pedcom_estado = 'APROBADO',
 				usu_cod = usucod
-	        WHERE pedcom_cod = pedcomcod;
-	        --SE MODIFICA EL ESTADO DE presupuesto_prov_cab
-	        UPDATE presupuesto_prov_cab 
-				SET presprov_estado = 'APROBADO',
+	        where pedcom_cod = pedcomcod;
+	        --se modifica el estado de presupuesto_prov_cab
+	        update presupuesto_prov_cab 
+				set presprov_estado = 'APROBADO',
 				usu_cod = usucod
-	        WHERE presprov_cod = presprovcod;
+	        where presprov_cod = presprovcod;
+			-- se insertan datos en el detalle de orden
+			for p in cu_pres_prov_det loop
+				perform sp_orden_compra_det(p.itm_cod, p.tipitem_cod, ordcomcod, p.presprovdet_cantidad, p.presprovdet_precio, operacion);
+			end loop;
 	    	raise notice 'LA ORDEN FUE REGISTADA CON EXITO';
     end if;
     if operacion = 2 then
-        -- aqui hacemos un update
-		update orden_compra_cab 
-			SET ordcom_estado = 'ANULADO',
-			usu_cod = usucod
-        WHERE ordcom_cod = ordcomcod;
-       --SE MODIFICA EL ESTADO DE presupuesto_prov_cab
-	    UPDATE presupuesto_prov_cab 
-			SET presprov_estado = 'ACTIVO',
-			usu_cod = usucod
-        WHERE presprov_cod = presprovcod;
-		--SE MODIFICA EL ESTADO DE pedido_compra_cab
-	   	UPDATE pedido_compra_cab 
-			SET pedcom_estado = 'ACTIVO',
-			usu_cod = usucod	
-		WHERE pedcom_cod = pedcomcod;
-        raise notice 'LA ORDEN FUE ANULADA CON EXITO';
+		-- se cosulta si la orden ya se encuentra asociada a una compra
+		perform 1 validar from compra_orden co 
+			join compra_cab cc on cc.com_cod = co.com_cod 
+		where co.ordcom_cod = ordcomcod
+			and cc.com_estado != 'ANULADO';
+		-- en caso de que si, re arroja una excepción, sino se realizan las actualizaciones
+		if found then
+			raise exception 'err_cab';
+		else
+	        -- aqui hacemos un update
+			update orden_compra_cab 
+				set ordcom_estado = 'ANULADO',
+				usu_cod = usucod
+	        where ordcom_cod = ordcomcod;
+	       --se modifica el estado de presupuesto_prov_cab
+		    update presupuesto_prov_cab 
+				set presprov_estado = 'ACTIVO',
+				usu_cod = usucod
+	        where presprov_cod = presprovcod;
+			--se modifica el estado de pedido_compra_cab
+		   	update pedido_compra_cab 
+				set pedcom_estado = 'ACTIVO',
+				usu_cod = usucod	
+			where pedcom_cod = pedcomcod;
+	        raise notice 'LA ORDEN FUE ANULADA CON EXITO';
+		end if;
     end if;
 	--se selecciona la ultima auditoria
 	select coalesce(ordcom_audit,'') into ordcomaudit
@@ -1254,7 +1286,7 @@ begin
 		'suc_descri', upper(sucdescri), 
 		'ordcom_estado', upper(ordcomestado)
     )||','
-    WHERE ordcom_cod = ordcomcod;
+    where ordcom_cod = ordcomcod;
 
 	--se abre el cursor de presupuesto proveedor
 	for presup in cu_presupuesto loop
@@ -1277,7 +1309,7 @@ begin
 			'suc_descri', upper(sucdescri), 
 			'presprov_estado', presup.presprovestado
 	    )||','
-	    WHERE presprov_cod = presprovcod;
+	    where presprov_cod = presprovcod;
 	end loop;
 
 	--se abre el cursor de pedido de compras
@@ -1295,47 +1327,54 @@ begin
 			'suc_descri', upper(sucdescri), 
 			'pedcom_estado', ped.pedcomestado 
 	    )||','
-	    WHERE pedcom_cod = pedcomcod;
+	    where pedcom_cod = pedcomcod;
 	end loop;
 end
 $$
 language plpgsql;
 
+
 --sp_orden_compra_det (ORDEN COMPRA DETALLE)
-CREATE OR REPLACE FUNCTION sp_orden_compra_det
-(itmcod integer, 
-tipitemcod integer, 
-ordcomcod integer, 
-ordcomdetcantidad numeric, 
-ordcomdetprecio numeric, 
-operacion integer)
-RETURNS void
-AS $$
+create or replace function sp_orden_compra_det (
+	itmcod integer, 
+	tipitemcod integer, 
+	ordcomcod integer, 
+	ordcomdetcantidad numeric, 
+	ordcomdetprecio numeric, 
+	operacion integer)
+	returns void as 
+$$
 begin 
 	if operacion = 1 then
+		perform 1 from orden_compra_det
+		where itm_cod = itmcod
+			and ordcom_cod = ordcomcod;
+		if found then
+			raise exception 'err_rep';
+		else
 	        -- aqui hacemos un insert
-	        INSERT INTO orden_compra_det 
-	        (itm_cod,
-	        tipitem_cod, 
-	        ordcom_cod, 
-	        ordcomdet_cantidad,
-	        ordcomdet_precio)
-	        VALUES(
-	        itmcod,
-	        tipitemcod,
-	        ordcomcod,
-	        ordcomdetcantidad,
-	        ordcomdetprecio);
+	        insert into orden_compra_det 
+		        (itm_cod,
+		        tipitem_cod, 
+		        ordcom_cod, 
+		        ordcomdet_cantidad,
+		        ordcomdet_precio)
+	        values(
+		        itmcod,
+		        tipitemcod,
+		        ordcomcod,
+		        ordcomdetcantidad,
+		        ordcomdetprecio);
 	        raise notice 'EL DETALLE FUE REGISTADO CON EXITO';
+		end if;
 	end if;
     if operacion = 2 then
     	-- aqui hacemos un delete
 		delete from orden_compra_det 
-		where 
-		itm_cod = itmcod 
-		and tipitem_cod = tipitemcod 
-		and ordcom_cod = ordcomcod;
-		raise notice 'EL DETALLE FUE ELIMINADO CON ÉXITO';
+		where itm_cod = itmcod 
+			and tipitem_cod = tipitemcod 
+			and ordcom_cod = ordcomcod;
+		raise notice 'EL DETALLE FUE ELIMINADO CON EXITO';
 	end if;
 end
 $$
@@ -2906,6 +2945,7 @@ returns trigger
 as $$
 	-- Se declaran los codigos y nombres de usuario para la tabla de auditoria
 	declare
+		ppdaudicod integer := (select coalesce(max(presprov_cod),0)+1 from presupesto_prov_det_auditoria);
 		usu_cod_old integer := (select ppc.usu_cod from presupuesto_prov_cab ppc where ppc.presprov_cod = old.presprov_cod);
 		usu_login_old varchar := (select u.usu_login from usuarios u where u.usu_cod = usu_cod_old);
 		usu_cod_new integer := (select ppc.usu_cod from presupuesto_prov_cab ppc where ppc.presprov_cod = new.presprov_cod);
@@ -2914,6 +2954,7 @@ as $$
 		-- Si la operacion es eliminar el registro
 	    if (TG_OP = 'DELETE') then
 	        insert into presupuesto_prov_det_auditoria (
+				ppdaudi_cod,
 				ppdaudi_operacion,
 				usu_cod,
 				usu_login,
@@ -2923,6 +2964,7 @@ as $$
 				presprovdet_cantidad, 
 				presprovdet_precio)
 	        values (
+				ppdaudicod,
 				TG_OP, 
 				usu_cod_old, 
 				usu_login_old,
@@ -2934,6 +2976,7 @@ as $$
 		-- Si la operacion es insertar un registro
 	    elseif (TG_OP = 'INSERT') then
 	        insert into presupuesto_prov_det_auditoria (
+				ppdaudi_cod,
 				ppdaudi_operacion,
 				usu_cod,
 				usu_login,
@@ -2943,6 +2986,7 @@ as $$
 				presprovdet_cantidad, 
 				presprovdet_precio)
 	        values (
+				ppdaudicod,
 				TG_OP, 
 				usu_cod_new, 
 				usu_login_new,
@@ -2958,6 +3002,8 @@ as $$
 $$
 language plpgsql;
 
+
+
 create trigger tg_presupuesto_prov_det_auditoria
 after insert or delete on presupuesto_prov_det
 for each row execute function sp_presupuesto_prov_det_auditoria();
@@ -2968,6 +3014,7 @@ returns trigger
 as $$
 	-- Se declaran los codigos y nombres de usuario para la tabla de auditoria
 	declare
+		ocdaudicod integer := (select coalesce(max(ocdaudi_cod),0)+1 from orden_compra_det_auditoria);
 		usu_cod_old integer := (select occ.usu_cod from orden_compra_cab occ where occ.ordcom_cod = old.ordcom_cod);
 		usu_login_old varchar := (select u.usu_login from usuarios u where u.usu_cod = usu_cod_old);
 		usu_cod_new integer := (select occ.usu_cod from orden_compra_cab occ where occ.ordcom_cod = new.ordcom_cod);
@@ -2976,6 +3023,7 @@ as $$
 		-- Si la operacion es eliminar el registro
 	    if (TG_OP = 'DELETE') then
 	        insert into orden_compra_det_auditoria (
+				ocdaudi_cod,
 				ocdaudi_operacion,
 				usu_cod,
 				usu_login,
@@ -2985,6 +3033,7 @@ as $$
 				ordcomdet_cantidad, 
 				ordcomdet_precio)
 	        values (
+				ocdaudicod,
 				TG_OP, 
 				usu_cod_old, 
 				usu_login_old,
@@ -2996,6 +3045,7 @@ as $$
 		-- Si la operacion es insertar un registro
 	    elseif (TG_OP = 'INSERT') then
 	        insert into orden_compra_det_auditoria (
+				ocdaudi_cod,
 				ocdaudi_operacion,
 				usu_cod,
 				usu_login,
@@ -3005,6 +3055,7 @@ as $$
 				ordcomdet_cantidad, 
 				ordcomdet_precio)
 	        values (
+				ocdaudicod,
 				TG_OP, 
 				usu_cod_new, 
 				usu_login_new,
@@ -3019,6 +3070,7 @@ as $$
 	end; 
 $$
 language plpgsql;
+
 
 create trigger tg_orden_compra_det_auditoria
 after insert or delete on orden_compra_det

@@ -9,34 +9,29 @@ $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
 //Consultamos si existe la variable operacion
-if (isset($_POST['operacion_cab'])) {
+if (isset($_POST['operacion'])) {
 
-    //Se escapan los datos para que se acepten comillas simples
-    $pedcom_estado = pg_escape_string($conexion, $_POST['pedcom_estado']);
-    $usu_login = pg_escape_string($conexion, $_POST['usu_login']);
-    $suc_descri = pg_escape_string($conexion, $_POST['suc_descri']);
-    $emp_razonsocial = pg_escape_string($conexion, $_POST['emp_razonsocial']);
+    //escapar los datos para que acepte comillas simples
+    $tipcli_descri = pg_escape_string($conexion, $_POST['tipcli_descri']);
+    $tipcli_estado = pg_escape_string($conexion, $_POST['tipcli_estado']);
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
-    $sql = "select sp_pedido_compra_cab(
-        {$_POST['pedcom_cod']},
+    $sql = "select sp_abm_tipo_cliente(
+        {$_POST['tipcli_cod']},
+        '$tipcli_descri',
+        '$tipcli_estado',
+        {$_POST['operacion']},
         {$_POST['usu_cod']},
-        {$_POST['suc_cod']},
-        {$_POST['emp_cod']},
-        '$pedcom_estado',
-        {$_POST['operacion_cab']},
-        '$usu_login',
-        '$suc_descri',
-        '$emp_razonsocial',
+        '{$_POST['usu_login']}',
         '{$_POST['transaccion']}'
     );";
 
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "err_cab") !== false) {
+    if (strpos($error, "1") !== false) {
         $response = array(
-            "mensaje" => "EL ESTADO DEL PEDIDO IMPIDE QUE SEA ANULADO, SE ENCUENTRA ASOCIADO A UN PRESUPUESTO",
+            "mensaje" => "ESTE TIPO DE CLIENTE YA EXISTE",
             "tipo" => "error"
         );
     } else {
@@ -47,18 +42,23 @@ if (isset($_POST['operacion_cab'])) {
     }
     echo json_encode($response);
 
+
 } else if (isset($_POST['consulCod']) == 1) {
     //Se obtiene el valor para asignar al codigo
-    $pedcomCod = "select coalesce (max(pedcom_cod),0)+1 as codigo from pedido_compra_cab;";
+    $tipcliCod = "select coalesce (max(tipcli_cod),0)+1 as codigo from tipo_cliente;";
 
-    $codigo = pg_query($conexion, $pedcomCod);
-    $codigoPedcom = pg_fetch_assoc($codigo);
-    echo json_encode($codigoPedcom);
+    $codigo = pg_query($conexion, $tipcliCod);
+    $codigotipcli = pg_fetch_assoc($codigo);
+    echo json_encode($codigotipcli);
 
 } else {
     //Si el post no recibe la operacion realizamos una consulta
-    $sql = "select * from v_pedido_compra_cab;";
-
+    $sql = "select 
+            tc.tipcli_cod,
+            tc.tipcli_descri,
+            tc.tipcli_estado 
+            from tipo_cliente tc
+            order by tc.tipcli_cod;";
     $resultado = pg_query($conexion, $sql);
     $datos = pg_fetch_all($resultado);
     echo json_encode($datos);

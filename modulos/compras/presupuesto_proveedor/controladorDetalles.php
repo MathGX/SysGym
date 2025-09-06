@@ -11,6 +11,7 @@ $conexion = $objConexion->getConexion();
 //Consultamos si existe la variable operacion
 if (isset($_POST['operacion_det'])) {
 
+    // 
     $presprovdet_cantidad = str_replace(",", ".", $_POST['presprovdet_cantidad']);
     $presprovdet_precio = str_replace(",", ".", $_POST['presprovdet_precio']);
 
@@ -27,7 +28,7 @@ if (isset($_POST['operacion_det'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_rep") !== false) {
         $response = array(
             "mensaje" => "ESTE ITEM YA ESTÁ CARGADO",
             "tipo" => "error"
@@ -40,6 +41,16 @@ if (isset($_POST['operacion_det'])) {
     }
     echo json_encode($response);
 
+} else if (isset($_POST['validacion_det']) == 1) {
+    //Se consulta si el pedido de compra esta asociado a un presupuesto
+    $pedcomCod = "select 1 validar from presupuesto_orden po 
+                    join orden_compra_cab occ on occ.ordcom_cod = po.ordcom_cod 
+                where po.presprov_cod = {$_POST['presprov_cod']}
+                    and occ.ordcom_estado != 'ANULADO';";
+
+    $codigo = pg_query($conexion, $pedcomCod);
+    $codigoPedcom = pg_fetch_assoc($codigo);
+    echo json_encode($codigoPedcom);
 
 } else if (isset($_POST['presprov_cod'])){
 

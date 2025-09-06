@@ -25,6 +25,95 @@ let formatoFecha = (fecha) => {
 
 let ahora = new Date();
 $("#pedcom_fecha").val(formatoFecha(ahora));
+
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+// Variable para rastrear si se hizo clic en la lista
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede aceptar caracteres especiales.",
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*()¿?":{}|<>;~`+]/;
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numericos.",
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 //funcion habilitar inputs
 let habilitarBotones = (operacion_cab) => {
@@ -38,6 +127,7 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
+//funcion para obtener el siguiente codigo
 let getCod = () => {
     $.ajax({
         method: "POST",
@@ -167,26 +257,32 @@ let confirmar = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".focus").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#pedcom_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#pedcom_estado").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
     } else {
@@ -223,22 +319,47 @@ let habilitarBotones2 = (operacion_det) => {
     }
 };
 
-//funcion agregar
+//funcion para validar si se puede agregar o eliminar un detalle
+let validarDetalle = () => {
+    return $.ajax({
+        method: "POST",
+        url: "controladorDetalles.php",
+        data: {
+            validacion_det: 1,
+            pedcom_cod: $("#pedcom_cod").val(),
+        }
+    });
+}
+
+// funcion agregar del detalle
 let agregar = () => {
-    $("#operacion_det").val(1);
-    $("#itm_cod, #itm_descri, #tipitem_cod, #tipimp_cod, #pedcomdet_cantidad, #uni_descri, #pedcomdet_precio").val('');
-    $(".disabledno").removeAttr("disabled");
-    $(".foc").attr("class", "form-line foc focused");
-    habilitarBotones2(true);
-    window.scroll(0, -100);
+    validarDetalle().done(function(respuesta) {
+        if (respuesta.validar == 1) {
+            alertaLabel("NO SE PUEDEN AGREGAR MAS ITEMS, EL PEDIDO SE ENCUENTRA ASOCIADO A UN PRESUPUETO");
+            return;
+        }
+        $(".foc").find(".form-control").val('');
+        ("#operacion_det").val(1);
+        (".disabledno").removeAttr("disabled");
+        $(".foc").attr("class", "form-line foc focused");
+        habilitarBotones2(true);
+        window.scroll(0, -100);
+    });
 };
 
-//funcion eliminar
+// funcion eliminar del detalle
 let eliminar = () => {
-    $("#operacion_det").val(2);
-    habilitarBotones2(true);
-    window.scroll(0, -100);
+    validarDetalle().done(function(respuesta) {
+        if (respuesta.validar == 1) {
+            alertaLabel("NO SE PUEDEN ELIMINAR ITEMS, EL PEDIDO SE ENCUENTRA ASOCIADO A UN PRESUPUETO");
+            return;
+        }
+        $("#operacion_det").val(2);
+        habilitarBotones2(true);
+        window.scroll(0, -100);
+    });
 };
+
 
 /*enviamos por POST a la base de datos los datos cargados los input para grabar un nuevo detalle de inscripción*/
 function grabar2() {
@@ -264,7 +385,11 @@ function grabar2() {
         function () {
             //Si la respuesta devuelve un success recargamos la pagina
             if (respuesta.tipo == "success") {
-                location.reload(true);
+                listar2(); //actualizamos la grilla
+                $(".foc").find(".form-control").val(''); //limpiamos los input
+                $(".foc").attr("class", "form-line foc"); //
+                $(".disabledno").attr("disabled", "disabled"); //deshabilitamos los input
+                habilitarBotones2(false); //deshabilitamos los botones
             }
         }
     );
@@ -322,45 +447,44 @@ let confirmar2 = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio2 = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".foc").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#presprov_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#itm_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#pedcomdet_cantidad").val() == "") {
-        condicion = "i";
-    } else if ($("#uni_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#pedcomdet_precio").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
+    } else if (($("#tipitem_cod").val() == "1") && $("#pedcomdet_cantidad").val() !== "0") {
+        alertaLabel("El campo <b>Cantidad</b> debe ser 0 (cero) para los servicios.");
     } else {
-        if (($("#tipitem_cod").val() == "1") && $("#pedcomdet_cantidad").val() !== "0") {
-            swal({
-                title: "RESPUESTA!!",
-                text: "La cantidad debe ser 0",
-                type: "error",
-            });
-        } else {
-            confirmar2();
-        }
+        confirmar2();
     }
 };
 
-
 const itemServicio = () => {
-    if ($('#tipitem_cod').val() == '1') {
-        $('#pedcomdet_cantidad').val(0);
+    if ($("#tipitem_cod").val() == "1") {
+        $("#pedcomdet_cantidad").val(0);
     }
 }
 

@@ -115,7 +115,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus focused">
-                                            <input type="text" id="pedcom_fecha" class="form-control disabledno" disabled>
+                                            <input type="text" id="pedcom_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -180,7 +180,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
                                             <input type="hidden" id="tipimp_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disabledno sinCarac" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Item</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:auto;"></ul>
@@ -192,7 +192,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="number" id="pedcomdet_cantidad" class="form-control disabledno" disabled>
+                                            <input type="text" id="pedcomdet_cantidad" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Cantidad</label>
                                         </div>
                                     </div>

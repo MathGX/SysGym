@@ -65,13 +65,13 @@ language plpgsql;
 
 --sp_abm_tipoComprobantes (TIPO COMPROBANTES)
 CREATE OR REPLACE FUNCTION sp_abm_tipoComprobantes
-(tipcompcod integer, 
-tipcompdescri varchar, 
-tipcompestado varchar,
-operacion integer,
-usucod integer,
-usulogin varchar,
-transaccion varchar)
+	(tipcompcod integer, 
+	tipcompdescri varchar, 
+	tipcompestado varchar,
+	operacion integer,
+	usucod integer,
+	usulogin varchar,
+	transaccion varchar)
 RETURNS void
 AS $$
 declare tipcompaudit text;

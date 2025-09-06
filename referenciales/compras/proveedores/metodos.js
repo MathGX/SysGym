@@ -264,7 +264,7 @@ $(".disabledno").each(function() {
 //-----------------------------------------------------------------------------------------------------------------------
 //funcion para alertar campos que solo acepten texto
 let soloTexto = (nombreInput, idInput) => {
-    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`]/;
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
     numeros = /[0-9]/;
     valor = $(idInput).val().trim();
     mensaje = "";
@@ -289,9 +289,9 @@ $(".soloTxt").each(function() {
 //funcion para alertar campos que solo acepten numeros
 let soloNumeros = (nombreInput, idInput) => {
     if (idInput === "#pro_ruc") {
-        caracteres = /['_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`]/;
+        caracteres = /['_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
     } else {
-        caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`]/;
+        caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
     }
     letras = /[a-zA-Z]/;
     valor = $(idInput).val().trim();

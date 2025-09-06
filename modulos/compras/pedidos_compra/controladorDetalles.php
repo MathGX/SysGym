@@ -40,6 +40,16 @@ if (isset($_POST['operacion_det'])) {
     }
     echo json_encode($response);
 
+} else if (isset($_POST['validacion_det']) == 1) {
+    //Se consulta si el pedido de compra esta asociado a un presupuesto
+    $pedcomCod = "select 1 validar from pedido_presupuesto pp
+                    join presupuesto_prov_cab ppc on pp.presprov_cod = ppc.presprov_cod
+                where pp.pedcom_cod = {$_POST['pedcom_cod']}
+                    and ppc.presprov_estado != 'ANULADO';";
+
+    $codigo = pg_query($conexion, $pedcomCod);
+    $codigoPedcom = pg_fetch_assoc($codigo);
+    echo json_encode($codigoPedcom);
 
 } else if (isset($_POST['pedcom_cod'])){
 

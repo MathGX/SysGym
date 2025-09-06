@@ -672,6 +672,11 @@ if(isset($_SESSION['numApcier'])){
                                 <span>Ref. Ventas</span>
                             </a>
                             <ul class="ml-menu">
+                                <?php if ($accesoInterfaz['REF_TIPO_CLIENTE']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/ventas/tipo_cliente/index.php">Tipos de Cliente</a>
+                                </li>
+                                <?php } ?>
                                 <?php if ($accesoInterfaz['REF_CLIENTES']){?>
                                 <li>
                                     <a href="/SysGym/referenciales/ventas/clientes/index.php">Clientes</a>

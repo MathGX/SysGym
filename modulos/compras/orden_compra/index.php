@@ -128,7 +128,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="pedcom_cod" value="0">
                                             <input type="hidden" id="pro_email" value="@">
                                             <input type="hidden" id="proveedor" value="prov">
-                                            <input type="text" class="form-control disabledno" id="pro_razonsocial" disabled onkeyup="getPresupuesto()">
+                                            <input type="text" class="form-control disabledno sinCarac" id="pro_razonsocial" disabled onkeyup="getPresupuesto()">
                                             <label class="form-label">Proveedor - RUC</label>
                                             <div id="listaPresupuesto" style="display: none;">
                                                 <ul class="list-group" id="ulPresupuesto" style="height:60px; overflow:auto;"></ul>
@@ -140,7 +140,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" class="form-control" id="presprov_cod" disabled>
+                                            <input type="text" class="form-control soloNum" id="presprov_cod" disabled>
                                             <label class="form-label">Presup. Nro.</label>
                                         </div>
                                     </div>
@@ -149,7 +149,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="ordcom_condicionpago" class="form-control disabledno" disabled onkeyup="getCondicion()">
+                                            <input type="text" id="ordcom_condicionpago" class="form-control disabledno soloTxt" disabled onkeyup="getCondicion()">
                                             <label class="form-label">Condición</label>
                                             <div id="listaCondicion" style="display: none;">
                                                 <ul class="list-group" id="ulCondicion"style="height:60px; overflow:auto;"></ul>
@@ -158,10 +158,10 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-1">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="ordcom_cuota" class="form-control disabledno" disabled>
+                                            <input type="text" id="ordcom_cuota" class="form-control disabledno soloNum" disabled onkeyup="getMontoCuota()">
                                             <label class="form-label">Cuotas</label>
                                         </div>
                                     </div>
@@ -170,7 +170,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="ordcom_montocuota" class="form-control disabledno" disabled>
+                                            <input type="text" id="ordcom_montocuota" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Monto de cuota</label>
                                         </div>
                                     </div>
@@ -179,7 +179,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="ordcom_intefecha" class="form-control disabledno" disabled>
+                                            <input type="text" id="ordcom_intefecha" class="form-control disabledno sinCarac" disabled>
                                             <label class="form-label">Intervalo de pago</label>
                                         </div>
                                     </div>
@@ -252,7 +252,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
                                             <input type="hidden" id="tipimp_cod" value="0">
-                                            <input type="text" class="form-control disabledno2" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disabledno2 sinCarac" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Item</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:auto;"></ul>
@@ -320,12 +320,12 @@ $u = $_SESSION['usuarios'];
                                     <thead>
                                         <tr>
                                             <th>ITEM</th>
-                                            <th>CANTIDAD</th>
+                                            <th style="text-align:right;">CANTIDAD</th>
                                             <th>MEDIDA</th>
-                                            <th>PRECIO UNIT.</th>
-                                            <th>EXENTA</th>
-                                            <th>IVA 5%</th>
-                                            <th>IVA 10%</th>
+                                            <th style="text-align:right;">PRECIO UNIT.</th>
+                                            <th style="text-align:right;">EXENTA</th>
+                                            <th style="text-align:right;">IVA 5%</th>
+                                            <th style="text-align:right;">IVA 10%</th>
                                         </tr>
                                     </thead>
                                     <tbody id="grilla_det">

@@ -25,14 +25,31 @@ if (isset($_POST['operacion_det'])) {
     );";
 
     pg_query($conexion, $sql);
-
+    $error = pg_last_error($conexion);
+    //Si ocurre un error lo capturamos y lo enviamos al front-end
+    if (strpos($error, "err_rep") !== false) {
+        $response = array(
+            "mensaje" => "ESTE ITEM YA ESTÁ CARGADO",
+            "tipo" => "error"
+        );
+    } else {
         $response = array(
             "mensaje" => pg_last_notice($conexion),
             "tipo" => "success"
         );
-
+    }
     echo json_encode($response);
 
+} else if (isset($_POST['validacion_det']) == 1) {
+    //Se consulta si el pedido de compra esta asociado a un presupuesto
+    $pedcomCod = "select 1 validar from compra_orden co 
+                    join compra_cab cc on cc.com_cod = co.com_cod 
+                where co.ordcom_cod = {$_POST['ordcom_cod']}
+                    and cc.com_estado != 'ANULADO';";
+
+    $codigo = pg_query($conexion, $pedcomCod);
+    $codigoPedcom = pg_fetch_assoc($codigo);
+    echo json_encode($codigoPedcom);
 
 } else if (isset($_POST['ordcom_cod'])){
 
