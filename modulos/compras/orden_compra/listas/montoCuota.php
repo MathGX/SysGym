@@ -16,7 +16,7 @@ $presprov_cod = $_POST['presprov_cod'];
 $ordcom_cuota = $_POST['ordcom_cuota'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
-$sql = "select round(sum(ppd.total)/$ordcom_cuota) ordcom_montocuota from v_presupuesto_prov_det ppd where ppd.presprov_cod = 2;";
+$sql = "select round(sum(ppd.total)/$ordcom_cuota) ordcom_montocuota from v_presupuesto_prov_det ppd where ppd.presprov_cod = $presprov_cod;";
         
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);

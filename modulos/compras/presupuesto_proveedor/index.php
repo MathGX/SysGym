@@ -150,7 +150,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus focused">
-                                            <input type="text" id="presprov_fecha" class="form-control disabledno" disabled>
+                                            <input type="date" id="presprov_fecha" class="form-control disabledno" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -173,11 +173,17 @@ $u = $_SESSION['usuarios'];
                                         </div>
                                     </div>
                                 </div>
+                                <input type="file" id="archExcel" accept=".xls,.xlsx" style="display:none">
 
-                            <!-- botones del formulario de ciudades -->
                             </div>
+                            <!-- botones del formulario de presupuestos -->
                             <div class="icon-and-text-button-demo">
                                 <?php if ($botNuevo == true) { ?>
+                                    <!-- boton para cargar excel -->
+                                    <button type="button" style="width:12.5%;" class="btn bg-green waves-effect btnOperacion1" onclick="nuevo(); $('#archExcel').click()">
+                                        <i class="material-icons">open_in_browser</i>
+                                        <span>EXCEL</span>
+                                    </button>
                                     <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="nuevo()">
                                         <i class="material-icons">create_new_folder</i>
                                         <span>NUEVO</span>

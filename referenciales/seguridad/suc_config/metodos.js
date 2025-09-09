@@ -195,7 +195,7 @@ let seleccionarFila = (objetoJSON) => {
 function formatoTabla() {
     $(".js-exportable").DataTable({
         language: {
-            url: "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json",
+            url: "/SysGym/others/extension/Spanish.json",
         },
         dom:
             "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +

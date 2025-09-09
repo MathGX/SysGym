@@ -18,11 +18,14 @@ let formatoFecha = (fecha) => {
     let dia = fecha.getDate();
     let mes = fecha.getMonth() + 1;
     let ano = fecha.getFullYear();
+    let fechaHoy = '';
 
     mes = mes < 10 ? '0' + mes : mes;
     dia = dia < 10 ? '0' + dia : dia;
 
-    return `${dia}/${mes}/${ano}`;
+    fechaHoy = `${ano}-${mes}-${dia}`;
+
+    return fechaHoy;
 }
 
 let ahora = new Date();
@@ -283,7 +286,12 @@ let confirmar = () => {
         function (isConfirm) {
             //Si la operacion es correcta llamamos al metodo grabar
             if (isConfirm) {
-                grabar();
+                let archivo = $("#archExcel")[0].files[0];
+                if (archivo) {
+                    grabarExcel();
+                } else {
+                    grabar();
+                }
             } else {
                 //Si cancelamos la operacion realizamos un reload
                 cancelar();
@@ -314,12 +322,17 @@ let controlVacio = () => {
 
     // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
     if (camposVacios.length > 0) {
-        swal({
-            html: true,
-            title: "RESPUESTA!!",
-            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
-            type: "error",
-        });
+        let archivo = $("#archExcel")[0].files[0];
+        if (archivo) {
+            confirmar();
+        } else {
+            swal({
+                html: true,
+                title: "RESPUESTA!!",
+                text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
+                type: "error",
+            });
+        }
     } else {
         confirmar();
     }
@@ -329,7 +342,7 @@ let controlVacio = () => {
 function formatoTabla() {
     $(".js-exportable").DataTable({
         language: {
-            url: "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json",
+            url: "/SysGym/others/extension/Spanish.json",
         },
         dom:
             "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
@@ -409,41 +422,41 @@ function grabar2() {
             operacion_det: $("#operacion_det").val(),
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
-.done(function (respuesta) {
-    swal(
-        {
-            title: "RESPUESTA!!",
-            text: respuesta.mensaje,
-            type: respuesta.tipo,
-        },
-        function () {
-            //Si la respuesta devuelve un success recargamos la pagina
-            if (respuesta.tipo == "success") {
-                listar2(); //actualizamos la grilla
-                $(".foc").find(".form-control").val(''); //limpiamos los input
-                $(".foc").attr("class", "form-line foc"); //se bajan los labels quitando el focused
-                $(".disabledno").attr("disabled", "disabled"); //deshabilitamos los input
-                habilitarBotones2(false); //deshabilitamos los botones
+    .done(function (respuesta) {
+        swal(
+            {
+                title: "RESPUESTA!!",
+                text: respuesta.mensaje,
+                type: respuesta.tipo,
+            },
+            function () {
+                //Si la respuesta devuelve un success recargamos la pagina
+                if (respuesta.tipo == "success") {
+                    listar2(); //actualizamos la grilla
+                    $(".foc").find(".form-control").val(''); //limpiamos los input
+                    $(".foc").attr("class", "form-line foc"); //se bajan los labels quitando el focused
+                    $(".disabledno").attr("disabled", "disabled"); //deshabilitamos los input
+                    habilitarBotones2(false); //deshabilitamos los botones
+                }
             }
+        );
+    }).fail(function (a, b, c) {
+        let errorTexto = a.responseText;
+        let inicio = errorTexto.indexOf("{"); // Obtenemos el índice del primer "{" y agregamos 1 para saltar el mismo
+        let final = errorTexto.lastIndexOf("}") + 1; // Obtenemos el índice del último "}"
+        let errorJson = errorTexto.substring(inicio, final); // Extraemos la palabra entre los índices obtenidos
+
+        let errorObjeto = JSON.parse(errorJson);
+        console.log(errorObjeto.tipo);
+
+        if (errorObjeto.tipo == "error") {
+            swal({
+                title: "RESPUESTA!!",
+                text: errorObjeto.mensaje,
+                type: errorObjeto.tipo,
+            });
         }
-    );
-}).fail(function (a, b, c) {
-    let errorTexto = a.responseText;
-    let inicio = errorTexto.indexOf("{"); // Obtenemos el índice del primer "{" y agregamos 1 para saltar el mismo
-    let final = errorTexto.lastIndexOf("}") + 1; // Obtenemos el índice del último "}"
-    let errorJson = errorTexto.substring(inicio, final); // Extraemos la palabra entre los índices obtenidos
-
-    let errorObjeto = JSON.parse(errorJson);
-    console.log(errorObjeto.tipo);
-
-    if (errorObjeto.tipo == "error") {
-        swal({
-            title: "RESPUESTA!!",
-            text: errorObjeto.mensaje,
-            type: errorObjeto.tipo,
-        });
-    }
-});
+    });
 };
 
 //funcion confirmar SweetAlert
@@ -515,6 +528,110 @@ let controlVacio2 = () => {
         confirmar2();
     }
 };
+
+/*---------------------------------------------------- GRABAR EXCEL ----------------------------------------------------*/
+
+function grabarExcel() {
+    
+    let archivo = $("#archExcel")[0].files[0];
+
+    let formData = new FormData();
+    formData.append("archExcel", archivo);
+
+    // Agregar datos
+    formData.append("presprov_cod", $("#presprov_cod").val());
+    formData.append("presprov_fecha", $("#presprov_fecha").val());
+    formData.append("presprov_estado", $("#presprov_estado").val());
+    formData.append("usu_cod", $("#usu_cod").val());
+    formData.append("suc_cod", $("#suc_cod").val());
+    formData.append("emp_cod", $("#emp_cod").val());
+    formData.append("usu_login", $("#usu_login").val());
+    formData.append("suc_descri", $("#suc_descri").val());
+    formData.append("emp_razonsocial", $("#emp_razonsocial").val());
+    formData.append("operacion_cab", $("#operacion_cab").val());
+    formData.append("transaccion", $("#transaccion").val());
+
+    $.ajax({
+        method: "POST",
+        url: "controladorExcel.php",
+        data: formData,
+        contentType: false,
+        processData: false
+    })
+    .done(function (respuesta) {
+        let texto = "";
+        if (Array.isArray(respuesta.mensajes)) {
+            texto = respuesta.mensajes.join("<br>");
+        } else {
+            texto = respuesta.mensaje; // fallback por si acaso
+        }
+
+        swal(
+            {
+                html: true,
+                title: "RESPUESTA!!",
+                text: texto,
+                type: respuesta.tipo,
+            },
+            function () {
+                if (respuesta.tipo === "success" || respuesta.tipo === "warning") {
+                    location.reload(true);
+                }
+            }
+        );
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+        let icon = "error";
+        let mensajes = ["Ocurrió un error inesperado."];
+
+        try {
+            // Intentar parsear el JSON tal cual
+            const json = JSON.parse(jqXHR.responseText || "{}");
+
+            if (Array.isArray(json.mensajes)) {
+                mensajes = json.mensajes;
+            } else if (json.mensaje) {
+                mensajes = [json.mensaje];
+            }
+
+            if (json.tipo) {
+                icon = json.tipo;
+            }
+        } catch (e) {
+            // Si hay basura en la respuesta, intentar extraer el {...}
+            const txt = jqXHR.responseText || "";
+            const i = txt.indexOf("{");
+            const j = txt.lastIndexOf("}");
+            if (i !== -1 && j !== -1 && j > i) {
+                try {
+                    const json2 = JSON.parse(txt.substring(i, j + 1));
+                    if (Array.isArray(json2.mensajes)) {
+                        mensajes = json2.mensajes;
+                    } else if (json2.mensaje) {
+                        mensajes = [json2.mensaje];
+                    }
+                    if (json2.tipo) {
+                        icon = json2.tipo;
+                    }
+                } catch (_) {
+                    // dejo el mensaje genérico
+                }
+            }
+        }
+
+        swal({
+            html: true,
+            title: "RESPUESTA!!",
+            text: mensajes.join("<br>"),
+            type: icon
+        }, function () {
+            if (icon === "error" || icon === "warning") {
+                location.reload(true);
+            }
+        });
+    });
+}
+
 
 /*---------------------------------------------------- LISTAR Y SELECCION DE CABECERA Y DETALLE ----------------------------------------------------*/
 
@@ -618,7 +735,7 @@ let listar = () => {
                     tabla += "<td>" + objeto.suc_descri + "</td>";
                     tabla += "<td>" + objeto.pedcom_cod + "</td>";
                     tabla += "<td>" + objeto.pro_razonsocial + "</td>";
-                    tabla += "<td>" + objeto.presprov_fecha + "</td>";
+                    tabla += "<td>" + objeto.presprov_fecha2 + "</td>";
                     tabla += "<td>" + objeto.presprov_fechavenci2 + "</td>";
                     tabla += "<td>" + objeto.presprov_estado + "</td>";
                 tabla += "</tr>";

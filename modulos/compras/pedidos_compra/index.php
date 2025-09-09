@@ -297,6 +297,207 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
+                <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+                <!-- card de envio de solicitud de presupuesto -->
+                <div class="col-lg-12 solicitu_presupuesto">
+                    <div class="card">
+                    <!-- formulario de solicitud de presupuesto -->
+                        <div class="header bg-indigo">
+                            <h2>
+                                SOLICITUD DE PRESUPUESTOS <small>Registro de solicitudes enviadas a proveedores</small>
+                            </h2>
+                        </div>
+                        <div class="body">
+                            <div class="row clearfix">
+
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line solfocus">
+                                            <input type="text" id="solpre_cod" class="form-control" disabled>
+                                            <label class="form-label">Solicitud Nro.</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line solfocus">
+                                            <input type="text" class="form-control disabledno soloNum" id="pedcom_cod_sol" disabled onkeyup="getPedCom()">
+                                            <label class="form-label">Pedido Nro.</label>
+                                            <div id="listaPedCom" style="display: none;">
+                                                <ul class="list-group" id="ulPedCom" style="height:60px; overflow:auto;"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-5">
+                                    <div class="form-group form-float">
+                                        <div class="form-line solfocus">
+                                            <input type="hidden" id="pro_cod" value="0">
+                                            <input type="hidden" id="tiprov_cod" value="0">
+                                            <input type="hidden" id="pro_ruc" value="">
+                                            <input type="text" class="form-control disabledno sinCarac" id="pro_razonsocial" disabled onkeyup="getProveedor()">
+                                            <label class="form-label">Proveedor - RUC</label>
+                                            <div id="listaProveedor" style="display: none;">
+                                                <ul class="list-group" id="ulProveedor" style="height:60px; overflow:auto;"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    
+                                <div class="col-sm-3">
+                                    <div class="form-group form-float">
+                                        <div class="form-line solfocus">
+                                            <input type="text" id="solpre_email" class="form-control" disabled>
+                                            <label class="form-label">E-Mail</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- botones del formulario de cabecera de la solicitud -->
+                                <div class="col-sm-12 icon-and-text-button-demo">
+                                    <?php if ($botNuevo == true) { ?>
+                                        <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion5" onclick="nuevaSolici()">
+                                            <i class="material-icons">create_new_folder</i>
+                                            <span>NUEVO</span>
+                                        </button>
+                                    <?php } ?>
+                                    <?php if ($botEliminar == true) { ?>
+                                        <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion5" onclick="eliminarSolici()">
+                                            <i class="material-icons">delete</i>
+                                            <span>ELIMINAR</span>
+                                        </button>
+                                    <?php } ?>
+                                    <button type="button" style="width:12.5%;" class="btn bg-blue waves-effect btnOperacion5" onclick="enviarDoc()">
+                                        <i class="material-icons">email</i>
+                                        <span>ENVIAR</span>
+                                    </button>
+                                    <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion6" onclick="controlVacio3()">
+                                        <i class="material-icons">save</i>
+                                        <span>CONFIRMAR</span>
+                                    </button>
+                                    <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion6" onclick="cancelar()">
+                                        <i class="material-icons">close</i>
+                                        <span>CANCELAR</span>
+                                    </button>
+                                </div>
+
+                                <!-- Detalle de la solicitud -->
+                                <div class="col-sm-12 row clearfix sol_presup_det" style="display:none;">
+
+                                    <h5 class="col-sm-12">Items a Solicitar al Proveedor</h5>
+
+                                    <div class="col-sm-5">
+                                        <div class="form-group form-float">
+                                            <div class="form-line solfoc">
+                                                <input type="hidden" id="tipitem_cod_sol" value="0">
+                                                <input type="text" class="form-control disabledno sinCarac" id="itm_descri_sol" disabled onkeyup="getItemsPed()">
+                                                <label class="form-label">Item</label>
+                                                <div id="listaItemsPed" style="display: none;">
+                                                    <ul class="list-group" id="ulItemsPed" style="height:60px; overflow:auto;"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-2">
+                                        <div class="form-group form-float">
+                                            <div class="form-line solfoc">
+                                                <input type="text" id="itm_cod_sol" class="form-control" disabled>
+                                                <label class="form-label">Cod. Item</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-2">
+                                        <div class="form-group form-float">
+                                            <div class="form-line solfoc">
+                                                <input type="text" id="solpredet_cantidad" class="form-control" disabled>
+                                                <label class="form-label">Cantidad</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- botones del detalle de la solicitud -->
+                                    <div class="col-sm-12 icon-and-text-button-demo">
+                                        <?php if ($botAgregar == true) { ?>
+                                            <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion7" onclick="agregarSoliciDet()">
+                                                <i class="material-icons">file_upload</i>
+                                                <span>AGREGAR</span>
+                                            </button>
+                                        <?php } ?>
+                                        <?php if ( $botEliminar == true) { ?>
+                                            <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion7" onclick="eliminarSolicDet()">
+                                                <i class="material-icons">delete</i>
+                                                <span>ELIMINAR</span>
+                                            </button>
+                                        <?php } ?>
+                                        <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion8" onclick="controlVacio4()">
+                                            <i class="material-icons">archive</i>
+                                            <span>CONFIRMAR</span>
+                                        </button>
+                                        <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion8" onclick="cancelar()">
+                                            <i class="material-icons">close</i>
+                                            <span>CANCELAR</span>
+                                        </button>
+                                    </div>
+    
+                                    <!-- grilla del detalle de solicitud del presupuesto -->
+                                    <div class="col-sm-12 table-responsive">
+                                        <table class="table table-hover table-borderer table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>COD. ITEM</th>
+                                                    <th>ITEM</th>
+                                                    <th>CANTIDAD</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="grilla_det_sol"> 
+        
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div> <!--Final del detalle de la solicitud-->
+                                
+                            </div> <!-- Final del row clearfix de la solicitud -->
+
+                        </div>
+                    </div>
+                </div> <!-- Cierre del div de la solicitud cabecera y detalle -->
+                
+                <!-- grilla del de la cabecera de solicitudes-->
+                <div class="col-lg-12 tbl_soli">
+                    <div class="card">
+                        <div class="header bg-indigo">
+                            <h2>
+                                SOLICITUDES REGISTRADAS <small>Listado de solicitudes de prepuspuestos</small>
+                            </h2>
+                        </div>
+                        <div class="body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-borderer table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>NRO. SOLICITUD</th>
+                                            <th>FECHA</th>
+                                            <th>USUARIO</th>
+                                            <th>SUCURSAL</th>
+                                            <th>PEDIDO NRO.</th>
+                                            <th>PROVEEDOR</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="grilla_cab_sol">
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
