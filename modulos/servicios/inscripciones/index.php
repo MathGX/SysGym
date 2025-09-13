@@ -146,7 +146,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc focused">
-                                            <input type="time" id="insdet_horainicio" class="form-control disabledno" disabled>
+                                            <input type="time" id="ins_hora_ini" class="form-control disabledno" disabled>
                                             <label class="form-label">Desde</label>
                                         </div>
                                     </div>
@@ -155,7 +155,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc focused">
-                                            <input type="time" id="insdet_horafinal" class="form-control disabledno" disabled>
+                                            <input type="time" id="ins_hora_fin" class="form-control disabledno" disabled>
                                             <label class="form-label">Hasta</label>
                                         </div>
                                     </div>

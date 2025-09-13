@@ -113,6 +113,8 @@ let grabar = () => {
             suc_cod: $("#suc_cod").val(),
             emp_cod: $("#emp_cod").val(),
             cli_cod: $("#cli_cod").val(),
+            ins_hora_ini: $("#ins_hora_ini").val(),
+            ins_hora_fin: $("#ins_hora_fin").val(),
             operacion_cab: $("#operacion_cab").val(),
             usu_login: $("#usu_login").val(),
             suc_descri: $("#suc_descri").val(),

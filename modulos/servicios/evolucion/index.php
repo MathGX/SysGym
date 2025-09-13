@@ -203,7 +203,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="evo_fecha" class="form-control" disabled>
+                                            <input type="text" id="evodet_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha Actualización</label>
                                         </div>
                                     </div>

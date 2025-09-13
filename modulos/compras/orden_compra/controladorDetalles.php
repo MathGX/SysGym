@@ -22,6 +22,7 @@ if (isset($_POST['operacion_det'])) {
         $ordcomdet_cantidad,
         $ordcomdet_precio,
         {$_POST['operacion_det']}
+        {$_POST['usu_cod']}
     );";
 
     pg_query($conexion, $sql);

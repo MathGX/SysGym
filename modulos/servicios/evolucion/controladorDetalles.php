@@ -19,6 +19,7 @@ if (isset($_POST['operacion_det'])) {
         {$_POST['param_cod']},
         {$_POST['evodet_registro_ant']},
         $evodet_registro_act,
+        '{$_POST['evodet_fecha']}',
         {$_POST['operacion_det']},
         {$_POST['med_cod']}
     );";

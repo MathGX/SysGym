@@ -75,7 +75,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="ajinv_cod" class="form-control" disabled>
+                                            <input type="text" id="ajus_cod" class="form-control" disabled>
                                             <label class="form-label">Ajuste Nro.</label>
                                         </div>
                                     </div>
@@ -114,7 +114,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus focused">
-                                            <input type="text" id="ajinv_fecha" class="form-control" disabled>
+                                            <input type="date" id="ajus_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -123,7 +123,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="ajinv_tipoajuste" class="form-control disabledno" disabled onkeyup="getAjuste()">
+                                            <input type="text" id="ajus_tipoajuste" class="form-control disabledno soloTxt" disabled onkeyup="getAjuste()">
                                             <label class="form-label">Tipo de ajuste</label>
                                             <div id="listaAjuste" style="display: none;">
                                                 <ul class="list-group" id="ulAjuste" style="height:60px; overflow:auto"></ul>
@@ -135,7 +135,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="ajinv_estado" class="form-control" disabled>
+                                            <input type="text" id="ajus_estado" class="form-control" disabled>
                                             <label class="form-label">Estado</label>
                                         </div>
                                     </div>
@@ -160,7 +160,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="cancelar()">
+                                <button type="button" style="display:none;" class="btn bg-red waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -189,7 +189,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="dep_cod" value="0">
-                                            <input type="text" class="form-control disabledno2" id="dep_descri" disabled onkeyup="getDeposito()">
+                                            <input type="text" class="form-control disabledno2 sinCarac" id="dep_descri" disabled onkeyup="getDeposito()">
                                             <label class="form-label">Depósito</label>
                                             <div id="listaDeposito" style="display: none;">
                                                 <ul class="list-group" id="ulDeposito" style="height:60px; overflow:auto"></ul>
@@ -203,7 +203,7 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line foc">
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
-                                            <input type="text" class="form-control disa" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disa sinCarac" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Item</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:auto;"></ul>
@@ -215,7 +215,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="number" id="ajinvdet_cantidad" class="form-control disabledno2" disabled>
+                                            <input type="text" id="ajusdet_cantidad" class="form-control disabledno2 soloNum" disabled>
                                             <label class="form-label">Cantidad</label>
                                         </div>
                                     </div>
@@ -233,7 +233,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="number" id="ajinvdet_precio" class="form-control" disabled>
+                                            <input type="number" id="ajusdet_precio" class="form-control" disabled>
                                             <label class="form-label">Precio</label>
                                         </div>
                                     </div>
@@ -242,7 +242,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-4">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="ajinvdet_motivo" class="form-control disabledno2" disabled>
+                                            <input type="text" id="ajusdet_motivo" class="form-control disabledno2 soloTxt" disabled>
                                             <label class="form-label">Motivo</label>
                                         </div>
                                     </div>
@@ -268,7 +268,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">archive</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
+                                <button type="button" style="display:none;" class="btn bg-red waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>

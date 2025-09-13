@@ -16,16 +16,15 @@ $prov = $_POST['pro_razonsocial'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
 $sql = "select 
-        occ.ordcom_cod,
-        occ.pro_cod,
-        occ.tiprov_cod,
-        p.pro_razonsocial||' - '||tp.tiprov_descripcion as pro_razonsocial,
-        p.pro_timbrado as com_timbrado,
-        po.presprov_cod,
-        occ.ordcom_condicionpago as com_tipfac,
-        occ.ordcom_montocuota as com_montocuota,
-        occ.ordcom_cuota as com_cuotas,
-        occ.ordcom_intefecha as com_intefecha
+                occ.ordcom_cod,
+                occ.pro_cod,
+                occ.tiprov_cod,
+                p.pro_razonsocial||' - '||tp.tiprov_descripcion as pro_razonsocial,
+                po.presprov_cod,
+                occ.ordcom_condicionpago as com_tipfac,
+                occ.ordcom_montocuota as com_montocuota,
+                occ.ordcom_cuota as com_cuotas,
+                occ.ordcom_intefecha as com_intefecha
         from orden_compra_cab occ 
         join proveedor p on p.pro_cod = occ.pro_cod and p.tiprov_cod = occ.tiprov_cod 
                 join tipo_proveedor tp on tp.tiprov_cod = p.tiprov_cod 

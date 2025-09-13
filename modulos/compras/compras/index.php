@@ -114,7 +114,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus focused">
-                                            <input type="text" id="com_fecha" class="form-control" disabled>
+                                            <input type="date" id="com_fecha" class="form-control disabledno" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -124,17 +124,8 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus ">
                                             <input type="hidden" id="tipcomp_cod" value="4">
-                                            <input type="text" id="com_nrofac" class="form-control disabledno" disabled>
+                                            <input type="text" id="com_nrofac" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Factura nro.</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-2">
-                                    <div class="form-group form-float">
-                                        <div class="form-line focus focused">
-                                            <input type="date" id="com_fecha_fac" class="form-control" disabled>
-                                            <label class="form-label">Fecha Factura</label>
                                         </div>
                                     </div>
                                 </div>
@@ -145,7 +136,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="pro_cod" value="0">
                                             <input type="hidden" id="tiprov_cod" value="0">
                                             <input type="hidden" id="presprov_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="pro_razonsocial" disabled onkeyup="getOrden()">
+                                            <input type="text" class="form-control disabledno sinCarac" id="pro_razonsocial" disabled onkeyup="getOrden()">
                                             <label class="form-label">Proveedor - RUC</label>
                                             <div id="listaOrden" style="display: none;">
                                                 <ul class="list-group" id="ulOrden" style="height:60px; overflow:auto;"></ul>
@@ -157,7 +148,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="com_timbrado" class="form-control disabledno" disabled>
+                                            <input type="text" id="com_timbrado" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Timbrado</label>
                                         </div>
                                     </div>
@@ -166,7 +157,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus focused">
-                                            <input type="date" id="pro_timb_fec_venc" class="form-control disabledno" disabled>
+                                            <input type="date" id="com_timb_fec_venc" class="form-control disabledno" disabled>
                                             <label class="form-label">Vencimiento Timbrado</label>
                                         </div>
                                     </div>
@@ -184,7 +175,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="com_tipfac" class="form-control disabledno" disabled onclick="getTipFac()">
+                                            <input type="text" id="com_tipfac" class="form-control disabledno soloTxt" disabled onkeyup="getTipFac()">
                                             <label class="form-label">Tipo de compra</label>
                                             <div id="listaTipFac" style="display: none;">
                                                 <ul class="list-group" id="ulTipFac" style="height:60px; overflow:auto;"></ul>
@@ -196,7 +187,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="com_montocuota" class="form-control disabledno" disabled>
+                                            <input type="text" id="com_montocuota" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Monto de cuota</label>
                                         </div>
                                     </div>
@@ -205,7 +196,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-1">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="com_cuotas" class="form-control disabledno" disabled>
+                                            <input type="text" id="com_cuotas" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Cuotas</label>
                                         </div>
                                     </div>
@@ -214,7 +205,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="com_intefecha" class="form-control disabledno" disabled>
+                                            <input type="text" id="com_intefecha" class="form-control disabledno sinCarac" disabled>
                                             <label class="form-label">Intervalo de pago</label>
                                         </div>
                                     </div>
@@ -248,7 +239,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="cancelar()">
+                                <button type="button" style="display:none;" class="btn bg-red waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -277,7 +268,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="dep_cod" value="0">
-                                            <input type="text" class="form-control disabledno2" id="dep_descri" disabled onkeyup="getDeposito()">
+                                            <input type="text" class="form-control disabledno2 sinCarac" id="dep_descri" disabled onkeyup="getDeposito()">
                                             <label class="form-label">Depósito</label>
                                             <div id="listaDeposito" style="display: none;">
                                                 <ul class="list-group" id="ulDeposito" style="height:60px; overflow:auto;"></ul>
@@ -292,7 +283,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
                                             <input type="hidden" id="tipimp_cod" value="0">
-                                            <input type="text" class="form-control disa" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disa sinCarac" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Item</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:scroll;"></ul>
@@ -304,7 +295,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="number" id="comdet_cantidad" class="form-control" pattern="\d+(\.\d{2})?" disabled>
+                                            <input type="number" id="comdet_cantidad" class="form-control disabledno2 soloNum" pattern="\d+(\.\d{2})?" disabled>
                                             <label class="form-label">Cantidad</label>
                                         </div>
                                     </div>
@@ -348,7 +339,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">archive</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
+                                <button type="button" style="display:none;" class="btn bg-red waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -361,12 +352,12 @@ $u = $_SESSION['usuarios'];
                                         <tr>
                                             <th>ITEM</th>
                                             <th>DEPÓSITO</th>
-                                            <th>CANTIDAD</th>
+                                            <th style="text-align:right;">CANTIDAD</th>
                                             <th>MEDIDA</th>
-                                            <th>PRECIO</th>
-                                            <th>EXCENTA</th>
-                                            <th>IVA 5%</th>
-                                            <th>IVA 10%</th>
+                                            <th style="text-align:right;">PRECIO</th>
+                                            <th style="text-align:right;">EXCENTA</th>
+                                            <th style="text-align:right;">IVA 5%</th>
+                                            <th style="text-align:right;">IVA 10%</th>
                                         </tr>
                                     </thead>
                                     <tbody id="grilla_det">

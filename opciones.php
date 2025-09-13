@@ -58,7 +58,7 @@ foreach($pantallaSys as $pantalla) {
 //     'REF_PERSONAS', 'REF_CARGOS', 'REF_FUNCIONARIOS', 'REF_DIAS', 'REF_TIPO_EQUIPO', 'REF_EQUIPOS', 'REF_PARAMETROS_MEDICION', 
 //     'REF_UNIDAD_MEDIDA', 'REF_EJERCICIOS', 'REF_TIPO_RUTINA', 'REF_TIPO_PLAN_ALIMENTICIO', 'REF_COMIDAS', 'REF_HORARIOS_COMIDA',
 //     //Movimientos de Compras
-//     'PEDIDOS_COMPRA', 'PRESUPUESTOS_PROVEEDOR', 'ORDENES_COMPRA', 'COMPRAS', 'NOTAS_COMPRAS', 'AJUSTES_INVENTARIO', 
+//     'PEDIDOS_COMPRA', 'PRESUPUESTOS_PROVEEDOR', 'ORDENES_COMPRA', 'COMPRAS', 'NOTAS_COMPRAS', 'AJUSTES_STOCK', 
 //     //Movimientos de Servicios
 //     'CUPOS_SERVICIOS', 'PROMOCIONES', 'INSCRIPCIONES','PRESUPUESTO_PREPARACION', 'MEDICIONES', 'RUTINAS', 
 //     'PLANES_ALIMENTICIOS', 'EVOLUCION', 'ASISTENCIAS', 'RECLAMOS', 'SALIDAS', 
@@ -784,7 +784,7 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/modulos/compras/compras/index.php">Compras</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($accesoInterfaz['AJUSTES_INVENTARIO']) { ?>
+                                <?php if ($accesoInterfaz['AJUSTES_STOCK']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/compras/ajuste_stock/index.php">Ajustes de stock</a>
                                 </li>

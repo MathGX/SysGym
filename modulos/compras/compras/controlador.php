@@ -12,24 +12,19 @@ $conexion = $objConexion->getConexion();
 if (isset($_POST['operacion_cab'])) {
 
     //captura de datos desde el front-end
-    $intervalo = $_POST['com_intefecha'];
-    $estado = $_POST['com_estado'];
-    $proveedor = $_POST['pro_razonsocial'];
-    $usuario = $_POST['usu_login'];
-    $sucursal = $_POST['suc_descri'];
-    $empresa = $_POST['emp_razonsocial'];
     $factura = $_POST['com_nrofac'];
 
     //escapar los datos para que acepte comillas simples
-    $com_intefecha = pg_escape_string($conexion, $intervalo);
-    $com_estado = pg_escape_string($conexion, $estado);
-    $pro_razonsocial = pg_escape_string($conexion, $proveedor);
-    $usu_login = pg_escape_string($conexion, $usuario);
-    $suc_descri = pg_escape_string($conexion, $sucursal);
-    $emp_razonsocial = pg_escape_string($conexion, $factura);
+    $com_intefecha = pg_escape_string($conexion, $_POST['com_intefecha']);
+    $com_estado = pg_escape_string($conexion, $_POST['com_estado']);
+    $pro_razonsocial = pg_escape_string($conexion, $_POST['pro_razonsocial']);
+    $usu_login = pg_escape_string($conexion, $_POST['usu_login']);
+    $suc_descri = pg_escape_string($conexion, $_POST['suc_descri']);
+    $emp_razonsocial = pg_escape_string($conexion, $_POST['emp_razonsocial']);
 
-    //separar el nro de factura por guiones
+    //Se eliminan espacios en blanco
     $factura = preg_replace('/\D/', '', $factura);
+    //separar el nro de factura por guiones
     $com_nrofac = substr($factura, 0, 3).'-'.substr($factura, 3, 3).'-'.substr($factura, 6);
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
@@ -50,6 +45,7 @@ if (isset($_POST['operacion_cab'])) {
         {$_POST['com_montocuota']},
         '{$_POST['com_timbrado']}',
         {$_POST['tipcomp_cod']},
+        '{$_POST['com_timb_fec_venc']}',
         {$_POST['operacion_cab']},
         '$pro_razonsocial',
         '$usu_login',
@@ -61,9 +57,14 @@ if (isset($_POST['operacion_cab'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_rep") !== false) {
         $response = array(
             "mensaje" => "ESTE N° DE FACTURA YA ESTÁ CARGADO",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "err_cab") !== false) {
+        $response = array(
+            "mensaje" => "EL ESTADO DE LA COMPRA IMPIDE QUE SEA ANULADA, SE ENCUENTRA ASOCIADA A UNA NOTA  ",
             "tipo" => "error"
         );
     } else {

@@ -23,7 +23,7 @@ $sql = "select
         s.tipitem_cod,
         i.itm_descri,
         um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri,
-        i.itm_costo as ajinvdet_precio
+        i.itm_costo as ajusdet_precio
         from stock s
         join items i on i.itm_cod = s.itm_cod and i.tipitem_cod = s.tipitem_cod
                 join tipo_item ti on ti.tipitem_cod = i.tipitem_cod

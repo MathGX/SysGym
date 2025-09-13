@@ -478,6 +478,7 @@ function grabar2() {
             ordcomdet_cantidad: $("#ordcomdet_cantidad").val(),           
             ordcomdet_precio: $("#ordcomdet_precio").val(),
             operacion_det: $("#operacion_det").val(),
+            usu_cod: $("#usu_cod").val(),
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
 .done(function (respuesta) {

@@ -1341,9 +1341,11 @@ create or replace function sp_orden_compra_det (
 	ordcomcod integer, 
 	ordcomdetcantidad numeric, 
 	ordcomdetprecio numeric, 
-	operacion integer)
-	returns void as 
+	operacion integer) returns void as 
 $$
+declare
+	cu_cab cursor is
+		select oc.*, 'MODIFICACION' transaccion from v_orden_compra_cab oc where oc.ordcom_cod = ordcomcod;
 begin 
 	if operacion = 1 then
 		perform 1 from orden_compra_det
@@ -1376,41 +1378,76 @@ begin
 			and ordcom_cod = ordcomcod;
 		raise notice 'EL DETALLE FUE ELIMINADO CON EXITO';
 	end if;
+	-- Se actualiza monto de la cuota de la cabecera
+	update orden_compra_cab
+		set ordcom_montocuota = (select round(sum(ocd.ordcomdet_precio*ocd.ordcomdet_cantidad)/occ.ordcom_cuota)
+								from orden_compra_det ocd
+									join orden_compra_cab occ on occ.ordcom_cod = ocd.ordcom_cod 
+								where ocd.ordcom_cod = ordcomcod
+								group by occ.ordcom_cuota)
+	where ordcom_cod = ordcomcod;
+	-- se audita la cabecera
+	for o in cu_cab loop
+		perform sp_orden_compra_cab(
+			o.ordcom_cod, 
+			current_date, 
+			o.ordcom_condicionpago, 
+			o.ordcom_cuota, 
+			o.ordcom_intefecha, 
+			o.ordcom_estado, 
+			o.pro_cod, 
+			o.tiprov_cod, 
+			o.suc_cod, 
+			o.emp_cod, 
+			o.usu_cod, 
+			o.ordcom_montocuota, 
+			o.presprov_cod, 
+			o.pedcom_cod, 
+			3, 
+			o.pro_razonsocial, 
+			o.suc_descri, 
+			o.emp_razonsocial, 
+			o.usu_login, 
+			cast(o.transaccion as varchar));
+	end loop;
 end
 $$
 language plpgsql;
 
+
 --sp_compra_cab (COMPRA CABECERA)
-CREATE OR REPLACE FUNCTION sp_compra_cab
-(comcod integer,
-comfecha date,
-comnrofac varchar,
-comtipfac tipofac,
-comcuotas integer,
-comintefecha varchar,
-comestado varchar,
-procod integer,
-tiprovcod integer,
-usucod integer,
-succod integer,
-empcod integer,
-ordcomcod integer,
-commontocuota numeric,
-comtimbrado varchar,
-tipcompcod integer,
-operacion integer,
-prorazonsocial varchar,
-usulogin varchar,
-sucdescri varchar,
-emprazonsocial varchar,
-transaccion varchar)
-RETURNS void
-AS $$
+create or replace function sp_compra_cab
+	(comcod integer,
+	comfecha date,
+	comnrofac varchar,
+	comtipfac tipofac,
+	comcuotas integer,
+	comintefecha varchar,
+	comestado varchar,
+	procod integer,
+	tiprovcod integer,
+	usucod integer,
+	succod integer,
+	empcod integer,
+	ordcomcod integer,
+	commontocuota numeric,
+	comtimbrado varchar,
+	tipcompcod integer,
+	comtimbfecvenc date,
+	operacion integer,
+	prorazonsocial varchar,
+	usulogin varchar,
+	sucdescri varchar,
+	emprazonsocial varchar,
+	transaccion varchar) returns void as 
+$$
 declare 
 	comdet record;
 	comaudit text;
+	cant_stock numeric;
 	comorcod integer := (select coalesce (max(comor_cod),0)+1 from compra_orden);
 	libcomcod integer:= (select coalesce (max(libcom_cod),0)+1 from libro_compras);
+	--cursor de orden_compra_cab
 	cu_orden cursor is
 		select 
 			coalesce(occ.ordcom_audit,'') as ordcomaudit,
@@ -1419,21 +1456,46 @@ declare
 			occ.ordcom_estado as ordcomestado
 		from orden_compra_cab occ
 		where occ.ordcom_cod = ordcomcod;
+	--cursor de libro_compras
 	cu_libcom cursor is
 		select lc.* from libro_compras lc
 		where lc.com_cod = comcod;
+	--cursor de cuentas a pagar
 	cu_cuenpag cursor is
 		select cp.* from cuentas_pagar cp
 		where cp.com_cod = comcod;
+	--valor para determinar si se actualiza el timbrado de la tabla proveedor (1:SI, 2:NO)
+	act_tim integer := (select 
+							case 
+								when pro_timbrado != comtimbrado then 1
+								else 0
+							end 
+						from proveedor 
+						where pro_cod = procod);
+	--cursor de proveedor
+	cu_prov cursor is
+		select 
+			p.pro_razonsocial,
+			p.pro_ruc,
+			p.pro_direccion,
+			p.pro_telefono,
+			p.pro_email,
+			p.pro_estado,
+			tp.tiprov_descripcion
+		from proveedor p 
+			join tipo_proveedor tp on tp.tiprov_cod = p.tiprov_cod
+		where p.pro_cod = procod;
 begin 
     if operacion = 1 then
-		perform * from compra_cab
-		where (com_nrofac = comnrofac and com_estado = 'ACTIVO');
+		perform 1 from compra_cab
+		where com_nrofac = comnrofac 
+			and com_timbrado = comtimbrado
+			and com_estado = 'ACTIVO';
 		if found then
-			raise exception '1';
-	    elseif operacion = 1 then
-        -- aqui hacemos un insert
-	        INSERT INTO compra_cab 
+			raise exception 'err_rep';
+	    else
+        	-- aqui hacemos un insert
+	        insert into compra_cab 
 		        (com_cod,
 		        com_fecha,
 		        com_nrofac,
@@ -1448,8 +1510,9 @@ begin
 		        emp_cod,
 				com_montocuota,
 				com_timbrado,
-				tipcomp_cod)
-	        VALUES(
+				tipcomp_cod,
+				com_timb_fec_venc)
+	        values(
 		        comcod,
 		        comfecha,
 		        comnrofac,
@@ -1464,9 +1527,10 @@ begin
 		      	empcod,
 				commontocuota,
 				comtimbrado,
-				tipcompcod);
-	    --INSERTA DATOS EN compra_orden
-		    INSERT INTO compra_orden
+				tipcompcod,
+				comtimbfecvenc);
+	    	--inserta datos en compra_orden
+		    insert into compra_orden
 			    (comor_cod,
 			    ordcom_cod,
 			    com_cod)
@@ -1482,15 +1546,14 @@ begin
 			        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
 			        'transaccion', upper(transaccion),
 			        'ordcom_cod', ordcomcod,
-					'com_cod', comcod
-			    )
-    		WHERE com_cod = comcod;
-		  --SE MODIFICA EL ESTADO DE ORDEN_compra_cab
-		   	UPDATE orden_compra_cab 
-				SET ordcom_estado = 'RECIBIDO',
+					'com_cod', comcod)
+    		where com_cod = comcod;
+		  	--se modifica el estado de orden_compra_cab
+		   	update orden_compra_cab 
+				set ordcom_estado = 'RECIBIDO',
 				usu_cod = usucod
-	        WHERE ordcom_cod = ordcomcod;
-	      --SE indertan datos en libro_compras
+	        where ordcom_cod = ordcomcod;
+	      	--se indertan datos en libro_compras
 	        insert into libro_compras
 		        (com_cod,
 		        libcom_cod,
@@ -1511,7 +1574,7 @@ begin
 		        0,
 		        'ACTIVO',
 				tipcompcod);
-	      --INSERTA DATOS EN cuentas_pagar
+	      	--inserta datos en cuentas_pagar
 	        insert into cuentas_pagar 
 		        (com_cod,
 		        cuenpag_cuotas,
@@ -1524,39 +1587,87 @@ begin
 		        0,
 		        0,
 		        'ACTIVO');
+			-- actualizar timbrado de proveedor si es diferente
+			if act_tim = 1 then
+				for p in cu_prov loop
+					perform sp_abm_proveedores(
+						procod, 
+						tiprovcod, 
+						p.pro_razonsocial, 
+						p.pro_ruc, 
+						p.pro_direccion, 
+						p.pro_telefono, 
+						p.pro_email,
+						p.pro_estado, 
+						comtimbrado, 
+						comtimbfecvenc, 
+						2, 
+						usucod, 
+						usulogin, 
+						'MODIFICACION', 
+						p.tiprov_descripcion);
+				end loop;
+			end if;
 	    	raise notice 'LA COMPRA FUE REGISTADA CON EXITO';
 	    end if;
     end if;
     if operacion = 2 then
-        -- aqui hacemos un update
-		update compra_cab 
-			SET com_estado = 'ANULADO',
-			usu_cod = usucod
-        WHERE com_cod = comcod;
-       --SE MODIFICA EL ESTADO DE ORDEN_compra_cab
-		UPDATE orden_compra_cab 
-			SET ordcom_estado = 'ACTIVO',
-			usu_cod = usucod
-        WHERE ordcom_cod = ordcomcod;
-       --ANULAMOS LIBRO COMPRAS
-        update libro_compras 
-        	SET libcom_estado = 'ANULADO'
-        WHERE com_cod = comcod;
-        --ANULAMOS CUENTAS PAGAR
-        update cuentas_pagar 
-        	SET cuenpag_estado = 'ANULADO'
-        WHERE com_cod = comcod;
-        -- ACTUALIZA STOCK (RESTA)
-		for comdet in select * from compra_det where com_cod = comcod loop
-			UPDATE stock
-				set sto_cantidad = sto_cantidad - comdet.comdet_cantidad
-			where itm_cod = comdet.itm_cod
-				and tipitem_cod = comdet.tipitem_cod
-				and dep_cod = comdet.dep_cod
-				and suc_cod = comdet.suc_cod
-				and emp_cod = comdet.emp_cod;
-		end loop;
-		raise notice 'LA COMPRA FUE ANULADA CON EXITO';
+		-- se consulta si la compra está asociada a una nota
+		perform 1 from nota_compra_cab ncc 
+		where ncc.com_cod = comcod
+			and occ.notacom_estado != 'ANULADO';
+		-- en caso de que sí se muestra un mensaje de error, caso contrario se anula
+		if found then
+			raise exception 'err_cab';
+		else
+	        -- aqui hacemos un update 
+			update compra_cab 
+				set com_estado = 'ANULADO',
+				usu_cod = usucod
+	        where com_cod = comcod;
+	       --se modifica el estado de orden_compra_cab
+			update orden_compra_cab 
+				seT ordcom_estado = 'ACTIVO',
+				usu_cod = usucod
+	        where ordcom_cod = ordcomcod;
+	       --anulamos libro compras
+	        update libro_compras 
+	        	set libcom_estado = 'ANULADO'
+	        where com_cod = comcod;
+	        --anulamos cuentas pagar
+	        update cuentas_pagar 
+	        	set cuenpag_estado = 'ANULADO'
+	        where com_cod = comcod;
+	        -- actualiza stock (resta) y se audita
+			for comdet in select * from compra_det where com_cod = comcod loop
+				update stock
+					set sto_cantidad = sto_cantidad - comdet.comdet_cantidad
+				where itm_cod = comdet.itm_cod
+					and tipitem_cod = comdet.tipitem_cod
+					and dep_cod = comdet.dep_cod
+					and suc_cod = comdet.suc_cod
+					and emp_cod = comdet.emp_cod;
+				--
+				cant_stock = (select sto_cantidad from stock
+								where itm_cod = comdet.itm_cod
+									and tipitem_cod = comdet.tipitem_cod
+									and dep_cod = comdet.dep_cod
+									and suc_cod = comdet.suc_cod
+									and emp_cod = comdet.emp_cod);
+				--
+				perform sp_abm_stock_auditoria(
+					comdet.itm_cod, 
+					comdet.tipitem_cod, 
+					comdet.dep_cod, 
+					succod, 
+					empcod, 
+					cant_stock, 
+					2, 
+					usucod, 
+					usulogin);
+			end loop;
+			raise notice 'LA COMPRA FUE ANULADA CON EXITO';
+		end if;
     end if;
 	--se selecciona la ultima auditoria
 	select coalesce(com_audit,'') into comaudit
@@ -1581,13 +1692,14 @@ begin
 	        'tiprov_cod', tiprovcod,
 	        'pro_razonsocial', upper(prorazonsocial),
 			'com_timbrado', comtimbrado,
+			'com_timb_fec_venc', comtimbfecvenc,
 	        'emp_cod', empcod,
 	        'emp_razonsocial', upper(emprazonsocial),
 	        'suc_cod', succod,
 			'suc_descri', upper(sucdescri), 
 			'com_estado', upper(comestado)
 	    )||','
-    WHERE com_cod = comcod;
+    where com_cod = comcod;
 
 	--se abre el cursor de libro_compras
 	for libro in cu_libcom loop
@@ -1607,7 +1719,24 @@ begin
 				'libcom_iva10', libro.libcom_iva10,
 				'libcom_estado', libro.libcom_estado
 			)||','
-	    WHERE com_cod = comcod;
+	    where com_cod = comcod;
+	end loop;
+
+--se abre el cursor de cuentas_pagar
+	for cuenta in cu_cuenpag loop
+	--se actualiza la auditoria de cuentas_pagar
+		update cuentas_pagar
+			set cuenpag_audit = coalesce(cuenta.cuenpag_audit,'')||' '||json_build_object(
+			    'usu_cod', usucod,
+				'usu_login', usulogin,
+			    'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+			    'transaccion', upper(transaccion),
+				'cuenpag_cuotas', cuenta.cuenpag_cuotas,
+				'cuenpag_monto', cuenta.cuenpag_monto,
+				'cuenpag_saldo', cuenta.cuenpag_saldo,
+				'cuenpag_estado', cuenta.cuenpag_estado
+			)||','
+	    where com_cod = comcod;
 	end loop;
 
 	--se abre el cursor de orden_compra
@@ -1633,11 +1762,12 @@ begin
 				'suc_descri', upper(sucdescri), 
 				'ordcom_estado', orden.ordcomestado
 		    )||','
-	    WHERE ordcom_cod = ordcomcod;
+	    where ordcom_cod = ordcomcod;
 	end loop;		
 end
 $$
 language plpgsql;
+
 
 --sp_compra_det (ORDEN COMPRA DETALLE)
 CREATE OR REPLACE FUNCTION sp_compra_det
@@ -1738,37 +1868,38 @@ $$
 language plpgsql;
 
 --sp_libro_compras (LIBRO COMPRAS)
-create or replace function sp_libro_compras 
-(comcod integer,
-libcomnrocomprobante varchar,
-exenta numeric,
-iva5 numeric,
-iva10 numeric,
-tipcompcod integer,
-operacion integer,
-usucod integer,
-usulogin varchar)
-returns void
-as $$
+create or replace function sp_libro_compras(
+	comcod integer,
+	libcomnrocomprobante character varying,
+	exenta numeric,
+	iva5 numeric,
+	iva10 numeric,
+	tipcompcod integer,
+	operacion integer,
+	usucod integer,
+	usulogin character varying) returns void as 
+$$
 declare
 	cu_libcom cursor is
 		select lc.* from libro_compras lc
 		where lc.com_cod = comcod and lc.libcom_nro_comprobante = libcomnrocomprobante and lc.tipcomp_cod = tipcompcod;
 begin
-	if operacion = 1 then
-		update libro_compras
-		set libcom_exenta = libcom_exenta + exenta,
-		libcom_iva5 = libcom_iva5 + iva5,
-		libcom_iva10 = libcom_iva10 + iva10
-		where com_cod = comcod and libcom_nro_comprobante = libcomnrocomprobante and tipcomp_cod = tipcompcod;
-	end if;
-	if operacion = 2 then
-		update libro_compras
-		set libcom_exenta = libcom_exenta - exenta,
-		libcom_iva5 = libcom_iva5 - iva5,
-		libcom_iva10 = libcom_iva10 - iva10
-		where com_cod = comcod and libcom_nro_comprobante = libcomnrocomprobante and tipcomp_cod = tipcompcod;
-	end if;
+	update libro_compras
+		set libcom_exenta = case
+								when operacion = 1 then libcom_exenta + exenta
+								when operacion = 2 then libcom_exenta - exenta
+							end,
+		libcom_iva5 = case
+							when operacion = 1 then libcom_iva5 + iva5
+							when operacion = 2 then libcom_iva5 - iva5
+						end,
+		libcom_iva10 = case
+							when operacion = 1 then libcom_iva10 + iva10
+							when operacion = 2 then libcom_iva10 - iva10
+						end
+	where com_cod = comcod 
+		and libcom_nro_comprobante = libcomnrocomprobante 
+		and tipcomp_cod = tipcompcod;
 
 	--se abre el cursor de libro_compras
 	for libro in cu_libcom loop
@@ -1793,36 +1924,32 @@ end
 $$
 language plpgsql;
 
-
 --sp_cuentas_pagar (CUENTAS A PAGAR)
-create or replace function sp_cuentas_pagar 
-(comcod integer,
-monto integer,
-saldo integer,
-operacion integer,
-usucod integer,
-usulogin varchar)
-returns void
-as $$
+create or replace function sp_cuentas_pagar(
+	comcod integer,
+	monto numeric,
+	saldo numeric,
+	operacion integer,
+	usucod integer,
+	usulogin varchar) returns void as 
+$$
 declare
 	cu_cuenpag cursor is
 		select cp.* from cuentas_pagar cp
 		where cp.com_cod = comcod;
 begin
-	if operacion = 1 then
-		update cuentas_pagar
-		set cuenpag_monto = cuenpag_monto + monto,
-		cuenpag_saldo = cuenpag_saldo + saldo
-		where com_cod = comcod;
-	end if;
-	if operacion = 2 then
-		update cuentas_pagar
-		set cuenpag_monto = cuenpag_monto - monto,
-		cuenpag_saldo = cuenpag_saldo - saldo
-		where com_cod = comcod;
-	end if;
+	update cuentas_pagar
+		set cuenpag_monto = case
+								when operacion = 1 then cuenpag_monto + monto
+								when operacion = 2 then cuenpag_monto - monto
+							end,
+		cuenpag_saldo = case
+							when operacion = 1 then cuenpag_saldo + saldo
+							when operacion = 2 then cuenpag_saldo - saldo
+						end 
+	where com_cod = comcod;
 
---se abre el cursor de cuentas_pagar
+	--se abre el cursor de cuentas_pagar
 	for cuenta in cu_cuenpag loop
 	--se actualiza la auditoria de cuentas_pagar
 		update cuentas_pagar
@@ -1836,7 +1963,7 @@ begin
 			'cuenpag_saldo', cuenta.cuenpag_saldo,
 			'cuenpag_estado', cuenta.cuenpag_estado
 		)||','
-	    WHERE com_cod = comcod;
+	    where com_cod = comcod;
 	end loop;
 end
 $$
@@ -3149,6 +3276,94 @@ language plpgsql;
 create trigger tg_compra_det_auditoria
 after insert or delete on compra_det
 for each row execute function sp_compra_det_auditoria();
+
+--tg_cuenta_libro_compra (Actualizacion de cuentas a pagar y libro compras despues de insertar datos en compra_det)
+create or replace function sp_cuentas_libro_compra()
+returns trigger as 
+$$
+declare
+    op integer; -- operacion: 1=insert, 2=delete
+    usucod integer; -- codigo de usuario
+    usulogin varchar; -- login del usuario
+    libcomnrocomprobante varchar; -- numero de factura
+    tipimpcod integer; -- codigo tipo impuesto
+    exenta numeric := 0;
+    iva5 numeric := 0;
+    iva10 numeric := 0;
+    monto numeric := 0;
+begin
+    -- definir la operación
+    if TG_OP = 'INSERT' then
+        op := 1;
+    elsif TG_OP = 'DELETE' then
+        op := 2;
+    else
+        -- si es update u otro tipo, retornar sin hacer nada
+        return null;
+    end if;
+
+    -- obtener usucod (codigo usuario)
+    select usu_cod into usucod
+    from compra_cab 
+    where com_cod = case when op = 1 then new.com_cod else old.com_cod end;
+    
+    -- obtener usulogin
+    select usu_login into usulogin
+    from usuarios
+    where usu_cod = usucod;
+    
+    -- obtener numero de factura
+    select com_nrofac into libcomnrocomprobante
+    from compra_cab 
+    where com_cod = case when op = 1 then new.com_cod else old.com_cod end;
+
+    -- obtener codigo tipo impuesto
+    select tipimp_cod into tipimpcod
+    from items 
+    where itm_cod = case when op = 1 then new.itm_cod else old.itm_cod end;
+
+    -- calcular monto según tipo de item y operación
+    if op = 1 then
+        if new.tipitem_cod = 1 then
+            monto := new.comdet_precio;
+        else
+            monto := new.comdet_cantidad * new.comdet_precio;
+        end if;
+    else
+        if old.tipitem_cod = 1 then
+            monto := old.comdet_precio;
+        else
+            monto := old.comdet_cantidad * old.comdet_precio;
+        end if;
+    end if;
+
+    -- definir montos discriminados según tipo impuesto
+    if tipimpcod = 1 then
+        exenta := monto;
+    elsif tipimpcod = 2 then
+        iva5 := monto;
+    elsif tipimpcod = 3 then
+        iva10 := monto;
+    end if;
+
+    -- ejecutar funciones correspondientes segun operacion
+    if op = 1 then
+        perform sp_cuentas_pagar(new.com_cod, monto, monto, op, usucod, cast(usulogin as varchar));
+        perform sp_libro_compras(new.com_cod, libcomnrocomprobante, exenta, iva5, iva10, 4, op, usucod, usulogin);
+    else
+        perform sp_cuentas_pagar(old.com_cod, monto, monto, op, usucod, usulogin);
+        perform sp_libro_compras(old.com_cod, libcomnrocomprobante, exenta, iva5, iva10, 4, op, usucod, usulogin);
+    end if;
+
+    return null; -- función de trigger always returns null
+end;
+$$
+language plpgsql;
+
+
+create trigger tg_cuenta_libro_compra 
+after insert or delete on compra_det 
+for each row execute procedure sp_cuentas_libro_compra();
 
 --tg_ajuste_inventario_det_auditoria (Aduitoria de ajuste inventario detalle)
 create or replace function sp_ajuste_inventario_det_auditoria() 

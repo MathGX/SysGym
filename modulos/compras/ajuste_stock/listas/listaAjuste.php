@@ -2,18 +2,18 @@
 //Establecemos la salida en formato json
 header("Content-type: application/json; charset=utf-8");
 //Establecemos el array de array asociativos
-$ajinv_tipoajuste = [array('ajinv_tipoajuste' => "POSITIVO"), 
-                        array('ajinv_tipoajuste' => "NEGATIVO")];
+$ajus_tipoajuste = [array('ajus_tipoajuste' => "POSITIVO"), 
+                        array('ajus_tipoajuste' => "NEGATIVO")];
 
 // Obtener el valor enviado por POST
-$input_data = $_POST['ajinv_tipoajuste'];
+$input_data = $_POST['ajus_tipoajuste'];
 
 // Inicializar una variable para almacenar las coincidencias
 $resultados = [];
 
 // buscar coincidencias
-foreach ($ajinv_tipoajuste as $condicion) {
-        if (stripos($condicion['ajinv_tipoajuste'], $input_data) !== false) { // Comparar sin distinguir mayúsculas/minúsculas
+foreach ($ajus_tipoajuste as $condicion) {
+        if (stripos($condicion['ajus_tipoajuste'], $input_data) !== false) { // Comparar sin distinguir mayúsculas/minúsculas
                 $resultados[] = $condicion; // Agregar coincidencias al array de resultados
         }
 }

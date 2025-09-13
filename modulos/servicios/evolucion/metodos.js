@@ -258,6 +258,7 @@ let habilitarBotones2 = (operacion_det) => {
 //funcion agregar
 let agregar = () => {
     $("#operacion_det").val(1);
+    $("#evodet_fecha").val(formatoFecha(ahora));
     $("#param_descri, #evodet_registro_ant, #evodet_registro_act, #uni_simbolo, #param_formula").val('');
     $(".disabledno").removeAttr("disabled");
     $(".foc").attr("class", "form-line foc focused");
@@ -290,6 +291,7 @@ function grabar2() {
             param_cod: $("#param_cod").val(),           
             evodet_registro_ant: $("#evodet_registro_ant").val(),
             evodet_registro_act: $("#evodet_registro_act").val(),
+            evodet_fecha: $("#evodet_fecha").val(),
             operacion_det: $("#operacion_det").val(),
             med_cod: $("#med_cod").val()
         }

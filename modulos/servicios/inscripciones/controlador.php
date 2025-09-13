@@ -27,6 +27,8 @@ if (isset($_POST['operacion_cab'])) {
         {$_POST['suc_cod']},
         {$_POST['emp_cod']},
         {$_POST['cli_cod']},
+        '{$_POST['ins_hora_ini']}',
+        '{$_POST['ins_hora_fin']}',
         {$_POST['operacion_cab']},
         '$usu_login',
         '$suc_descri',

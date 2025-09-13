@@ -27,20 +27,41 @@ if (isset($_POST['operacion_det'])) {
             {$_POST['com_cod']},
             $comdet_cantidad,
             $comdet_precio,
-            {$_POST['operacion_det']}
+            {$_POST['operacion_det']},
+            {$_POST['usu_cod']}
         );";
 
         pg_query($conexion, $sql);
         $error = pg_last_error($conexion);
         //Si ocurre un error lo capturamos y lo enviamos al front-end
-        if (strpos($error, "1") !== false) {
+        if (strpos($error, "err_det") !== false) {
             $response = array(
                 "mensaje" => "ESTE ITEM YA ESTÁ CARGADO",
                 "tipo" => "error"
             );
         } else {
+            //Se consulta la cantidad y maximo de item
+            $sqlCant = "select 
+                            s.sto_cantidad cant, 
+                            i.itm_stock_max max,
+                            i.itm_descri descri
+                        from stock s
+                            join items i on i.itm_cod = s.itm_cod
+                        where s.itm_cod = {$_POST['itm_cod']}
+                            and s.dep_cod = {$_POST['dep_cod']};";
+            //se envia la consulta a la BD
+            $cantidad = pg_query($conexion, $sqlCant);
+            //Se convierte a array la respuesta de la consulta
+            $stoCant = pg_fetch_assoc($cantidad);
+            //Se verifica si se alcanzó el stock maximo permitido
+            if ($stoCant['cant'] >= $stoCant['max']) {
+                $msj = pg_last_notice($conexion).", Y SE HA ALCANZADO LA CANTIDAD MAXIMA DE ".$stoCant['descri']." EN STOCK";
+            } else {
+                $msj = pg_last_notice($conexion);
+            }
+            
             $response = array(
-                "mensaje" => pg_last_notice($conexion),
+                "mensaje" => $msj,
                 "tipo" => "success"
             );
         }
@@ -100,6 +121,16 @@ if (isset($_POST['operacion_det'])) {
 
         pg_query($conexion, $sqlCuenta);
     }
+
+} else if (isset($_POST['validacion_det']) == 1) {
+    //Se consulta si la compra esta asociado a un presupuesto
+    $comCod = "select 1 validar from nota_compra_cab ncc 
+                where ncc.com_cod = {$_POST['com_cod']}
+                    and ncc.notacom_estado != 'ANULADO';";
+
+    $codigo = pg_query($conexion, $comCod);
+    $codigocom = pg_fetch_assoc($codigo);
+    echo json_encode($codigocom);
 
 } else if (isset($_POST['com_cod'])){
 
