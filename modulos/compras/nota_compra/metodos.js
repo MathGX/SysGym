@@ -1,4 +1,4 @@
-
+// datos del usuario y empresa
 let datusUsuarios = () => {
     $.ajax({
         method: "POST",
@@ -13,6 +13,7 @@ let datusUsuarios = () => {
         });
 };
 
+//funcion para obtener la fecha actual
 let formatoFecha = (fecha) => {
     let dia = fecha.getDate();
     let mes = fecha.getMonth() + 1;
@@ -21,11 +22,130 @@ let formatoFecha = (fecha) => {
     mes = mes < 10 ? '0' + mes : mes;
     dia = dia < 10 ? '0' + dia : dia;
 
-    return `${dia}/${mes}/${ano}`;
+    return `${ano}-${mes}-${dia}`;
 }
 
 let ahora = new Date();
 $("#notacom_fecha").val(formatoFecha(ahora));
+
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+// Variable para rastrear si se hizo clic en la lista
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno, .disabledno2, .disa").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numéricos";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    if (idInput === "#pro_razonsocial") {
+        caracteres = /['_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/; //acepta guion
+    } else {
+        caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    }
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no acepta caracteres especiales";
+        if (idInput === "#pro_razonsocial") {
+            mensaje += "a parte del guión"; // concatena la cadena extra
+        }
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
 
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 
@@ -41,6 +161,7 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
+//funcion para limpiar la cabecera
 let limpiarCab = () =>{
     $(".tblcab input").each(function(){
         $(this).val('');
@@ -56,6 +177,7 @@ let limpiarCab = () =>{
     });
 }
 
+//funcion para obtener el nuevo codigo
 let getCod = () => {
     $.ajax({
         method: "POST",
@@ -74,7 +196,7 @@ let nuevo = () => {
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
     $("#notacom_estado").val('ACTIVO');
-    $(".tbl, .tbldet").attr("style", "display:none");
+    $(".tbl, .tbldet, .nota_remision").attr("style", "display:none");
     getCod();
     habilitarBotones(true);
     datusUsuarios();
@@ -112,19 +234,35 @@ let grabar = () => {
             notacom_nronota: $("#notacom_nronota").val(),
             notacom_concepto: $("#notacom_concepto").val(),
             notacom_estado: $("#notacom_estado").val(),
-            pro_cod: $("#pro_cod").val(),
-            tiprov_cod: $("#tiprov_cod").val(),
+            com_cod: $("#com_cod").val(),
             suc_cod: $("#suc_cod").val(),
             emp_cod: $("#emp_cod").val(),
             usu_cod: $("#usu_cod").val(),
-            com_cod: $("#com_cod").val(),
             tipcomp_cod: $("#tipcomp_cod").val(),
+            pro_cod: $("#pro_cod").val(),
+            tiprov_cod: $("#tiprov_cod").val(),
+            notacom_timbrado: $("#notacom_timbrado").val(),
+            notacom_timb_fec_venc: $("#notacom_timb_fec_venc").val(),
+            funprov_cod: $("#funprov_cod").val() || 0,
+            chapve_cod: $("#chapve_cod").val() || 0,
             operacion_cab: $("#operacion_cab").val(),
             pro_razonsocial: $("#pro_razonsocial").val(),
             usu_login: $("#usu_login").val(),
             suc_descri: $("#suc_descri").val(),
             emp_razonsocial: $("#emp_razonsocial").val(),
-            transaccion: $("#transaccion").val()
+            transaccion: $("#transaccion").val(),
+            //datos de para funcionario_proveedor
+            funprov_nombres: $("#funprov_nombres").val(),
+            funprov_apellidos: $("#funprov_apellidos").val(),
+            funprov_nro_doc: $("#funprov_nro_doc").val(),
+            //datos para marca_vehiculo
+            marcve_cod: $("#marcve_cod").val() || 0,
+            marcve_descri: $("#marcve_descri").val(),
+            //datos para modelo_vehiculo
+            modve_cod: $("#modve_cod").val() || 0,
+            modve_descri: $("#modve_descri").val(),
+            //datos para chapa_vehiculo
+            chapve_chapa: $("#chapve_chapa").val()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
         .done(function (respuesta) {
@@ -197,34 +335,39 @@ let confirmar = () => {
 
 //funcion control vacio
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los inputs .form-control dentro de cualquier .focus
+    let camposVacios = [];
 
-    if ($("#notacom_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#com_nrofac").val() == "") {
-        condicion = "i";
-    } else if ($("#pro_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#tipcomp_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#notacom_nronota").val() == "") {
-        condicion = "i";
-    } else if ($("#notacom_fecha").val() == "") {
-        condicion = "i";
-    } else if ($("#notacom_estado").val() == "") {
-        condicion = "i";
-    }
+    $(".focus .form-control").each(function () {
+        let $input = $(this);
+        let valor = $input.val().trim();
+        let $formLine = $input.closest('.form-line');
 
-    if (condicion === "i") {
+        // Caso especial: si el .form-line está dentro de .nota_remision y el tipcomp_cod es 3 (remision)
+        let dentroNotaRemision = $formLine.closest('.nota_remision').length > 0;
+
+        if (dentroNotaRemision) {
+            if ($('#tipcomp_cod').val() === "3" && valor === "") {
+                // Si está dentro de nota_remision y tipcomp_cod=3 y está vacío
+                let nombreInput = $formLine.find('.form-label').text() || $input.attr('id');
+                if (nombreInput !== "C.I. Funcionario") {
+                    camposVacios.push(nombreInput);
+                }
+            }
+        } else {
+            // Para form-lines fuera de nota_remision, se verifica siempre
+            if (valor === "") {
+                let nombreInput = $formLine.find('.form-label').text() || $input.attr('id');
+                camposVacios.push(nombreInput);
+            }
+        }
+    });
+
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "CARGUE TODOS LOS CAMPOS EN BLANCO",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
     } else {
@@ -264,11 +407,10 @@ let habilitarBotones2 = (operacion_det) => {
 //funcion agregar
 let agregar = () => {
     $("#operacion_det").val(1);
-    $(".disabledno").removeAttr("disabled");
-    $("#itm_cod, #itm_descri, #tipitem_cod, #tipimp_cod, #dep_cod, #dep_descri, #notacomdet_cantidad, #uni_descri, #notacomdet_precio").val('');
+    $(".disabledno2").removeAttr("disabled");
+    $(".foc").find(".form-control").val('');
     $(".foc").attr("class", "form-line foc focused");
     habilitarBotones2(true);
-    window.scroll(0, -100);
 };
 
 //funcion eliminar
@@ -279,58 +421,58 @@ let eliminar = () => {
 };
 
 //funcion para actualizar libro de compras
-let libro_compras = () => {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            method: "POST",
-            url: "controladorDetalles.php",
-            data: {
-                com_cod: $("#com_cod").val(),
-                operacion_det: $("#operacion_det").val(),
-                tipimp_cod: $("#tipimp_cod").val(),
-                tipitem_cod: $("#tipitem_cod").val(),
-                notacomdet_cantidad: $("#notacomdet_cantidad").val(),
-                notacomdet_precio: $("#notacomdet_precio").val(),
-                usu_cod: $("#usu_cod").val(),
-                usu_login: $("#usu_login").val(),
-                notacom_nronota: $("#notacom_nronota").val(),
-                tipcomp_cod: $("#tipcomp_cod").val(),
-                case: "libro"
-            }
-        });
-        setTimeout(() => {
-            resolve(); // Llama a resolve cuando se complete
-        }, 1000);
-    });
-};
+// let libro_compras = () => {
+//     return new Promise((resolve, reject) => {
+//         $.ajax({
+//             method: "POST",
+//             url: "controladorDetalles.php",
+//             data: {
+//                 com_cod: $("#com_cod").val(),
+//                 operacion_det: $("#operacion_det").val(),
+//                 tipimp_cod: $("#tipimp_cod").val(),
+//                 tipitem_cod: $("#tipitem_cod").val(),
+//                 notacomdet_cantidad: $("#notacomdet_cantidad").val(),
+//                 notacomdet_precio: $("#notacomdet_precio").val(),
+//                 usu_cod: $("#usu_cod").val(),
+//                 usu_login: $("#usu_login").val(),
+//                 notacom_nronota: $("#notacom_nronota").val(),
+//                 tipcomp_cod: $("#tipcomp_cod").val(),
+//                 case: "libro"
+//             }
+//         });
+//         setTimeout(() => {
+//             resolve(); // Llama a resolve cuando se complete
+//         }, 1000);
+//     });
+// };
 
 //funcion para actualizar cuentas a pagar
-let cuentas_pagar = () => {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            method: "POST",
-            url: "controladorDetalles.php",
-            data: {
-                com_cod: $("#com_cod").val(),
-                operacion_det: $("#operacion_det").val(),
-                tipitem_cod: $("#tipitem_cod").val(),
-                notacomdet_cantidad: $("#notacomdet_cantidad").val(),
-                notacomdet_precio: $("#notacomdet_precio").val(),
-                usu_cod: $("#usu_cod").val(),
-                usu_login: $("#usu_login").val(),
-                tipcomp_cod: $("#tipcomp_cod").val(),
-                case: "cuentas"
-            }
-        });
-        setTimeout(() => {
-            resolve(); // Llama a resolve cuando se complete
-        }, 1000);
-    });
-};
+// let cuentas_pagar = () => {
+//     return new Promise((resolve, reject) => {
+//         $.ajax({
+//             method: "POST",
+//             url: "controladorDetalles.php",
+//             data: {
+//                 com_cod: $("#com_cod").val(),
+//                 operacion_det: $("#operacion_det").val(),
+//                 tipitem_cod: $("#tipitem_cod").val(),
+//                 notacomdet_cantidad: $("#notacomdet_cantidad").val(),
+//                 notacomdet_precio: $("#notacomdet_precio").val(),
+//                 usu_cod: $("#usu_cod").val(),
+//                 usu_login: $("#usu_login").val(),
+//                 tipcomp_cod: $("#tipcomp_cod").val(),
+//                 case: "cuentas"
+//             }
+//         });
+//         setTimeout(() => {
+//             resolve(); // Llama a resolve cuando se complete
+//         }, 1000);
+//     });
+// };
 
 /*enviamos por POST a la base de datos los datos cargados los input para grabar un nuevo detalle de inscripción*/
 function grabar2() {
-    return new Promise((resolve, reject) => {
+    //return new Promise((resolve, reject) => {
         $.ajax({
             method: "POST",
             url: "controladorDetalles.php",
@@ -360,7 +502,11 @@ function grabar2() {
                 function () {
                     //Si la respuesta devuelve un success recargamos la pagina
                     if (respuesta.tipo == "success") {
-                        location.reload(true);
+                        listar2(); //actualizamos la grilla
+                        $(".foc").find(".form-control").val(''); //limpiamos los input
+                        $(".foc").attr("class", "form-line foc"); //se bajan los labels quitando el focused
+                        $(".disabledno2").attr("disabled", "disabled"); //deshabilitamos los input
+                        habilitarBotones2(false); //deshabilitamos los botones
                     }
                 }
             );
@@ -381,48 +527,48 @@ function grabar2() {
                 });
             }
         });
-        setTimeout(() => {
-            resolve(); // Llama a resolve cuando se complete
-        }, 1000);
-    });
+        // setTimeout(() => {
+        //     resolve(); // Llama a resolve cuando se complete
+        // }, 1000);
+    //});
 };
 
-async function ejecutarFunciones() {
-    await libro_compras();
-    await cuentas_pagar();
-    await grabar2();
-}
+// async function ejecutarFunciones() {
+//     await libro_compras();
+//     await cuentas_pagar();
+//     await grabar2();
+// }
 
 /*funcion para verificar que no se repita el item en el detalle*/
-let aprueba_mov = () => {
-    $.ajax({
-        type: "POST",
-        url: "controladorDetalles.php",
-        data: {
-            tipcomp_cod: $("#tipcomp_cod").val(),
-            itm_cod: $("#itm_cod").val(),
-            notacom_cod: $("#notacom_cod").val(),
-            operacion_det: $("#operacion_det").val(),
-            consulta: "consulItem"
-        }
-    }).done(
-        function (respuesta) {
-            if (respuesta.itm == 1) {
-                swal({
-                    title: "ERROR!!",
-                    text: "ESTE ITEM YA ESTÁ CARGADO",
-                    type: "error",
-                })
-            } else if (respuesta.itm == 0) {
-                if ($("#tipcomp_cod").val() != 3) {
-                    ejecutarFunciones();
-                } else {
-                    grabar2();
-                }
-            }
-        }
-    );
-}
+// let aprueba_mov = () => {
+//     $.ajax({
+//         type: "POST",
+//         url: "controladorDetalles.php",
+//         data: {
+//             tipcomp_cod: $("#tipcomp_cod").val(),
+//             itm_cod: $("#itm_cod").val(),
+//             notacom_cod: $("#notacom_cod").val(),
+//             operacion_det: $("#operacion_det").val(),
+//             consulta: "consulItem"
+//         }
+//     }).done(
+//         function (respuesta) {
+//             if (respuesta.itm == 1) {
+//                 swal({
+//                     title: "ERROR!!",
+//                     text: "ESTE ITEM YA ESTÁ CARGADO",
+//                     type: "error",
+//                 })
+//             } else if (respuesta.itm == 0) {
+//                 if ($("#tipcomp_cod").val() != 3) {
+//                     ejecutarFunciones();
+//                 } else {
+//                     grabar2();
+//                 }
+//             }
+//         }
+//     );
+// }
 
 /*funcion para verificar que la cantidad de items en el detalle no sea mayor a lo del detalle de compra */
 let cantItem = () => {
@@ -476,7 +622,7 @@ let confirmar2 = () => {
         function (isConfirm) {
             //Si la operacion es correcta llamamos al metodo grabar
             if (isConfirm) {
-                aprueba_mov();
+                grabar2();
             } else {
                 //Si cancelamos la operacion realizamos un reload
                 cancelar();
@@ -485,40 +631,38 @@ let confirmar2 = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio2 = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".foc").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#notacom_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#itm_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#tipitem_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#notacomdet_cantidad").val() == "") {
-        condicion = "i";
-    } else if ($("#uni_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#notacomdet_precio").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "CARGUE TODOS LOS CAMPOS EN BLANCO",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
+    } else if (($("#tipitem_cod").val() == "1") && $("#pedcomdet_cantidad").val() !== "0") {
+        alertaLabel("El campo <b>Cantidad</b> debe ser 0 (cero) para los servicios.");
     } else {
-        if (($("#tipitem_cod").val() == "1") && $("#notacomdet_cantidad").val() !== "0") {
-            swal({
-                title: "RESPUESTA!!",
-                text: "LA CANTIDAD DEBE SER 0",
-                type: "error",
-            });
-        } else {
-            confirmar2();
-        }
+        confirmar2();
     }
 };
 
@@ -570,12 +714,12 @@ let listar2 = () => {
                 totalI10 += parseFloat (impuesto10);
                 tabla += "<tr onclick='seleccionarFila2(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
                     tabla += "<td>" + objeto.itm_descri + "</td>";
-                    tabla += "<td>" + objeto.notacomdet_cantidad + "</td>";
+                    tabla += "<td align='right'>" + objeto.notacomdet_cantidad + "</td>";
                     tabla += "<td>" + objeto.uni_descri + "</td>";
-                    tabla += "<td>" + new Intl.NumberFormat('us-US').format(objeto.notacomdet_precio) + "</td>";
-                    tabla += "<td>" + new Intl.NumberFormat('us-US').format(objeto.exenta) + "</td>";
-                    tabla += "<td>" + new Intl.NumberFormat('us-US').format(objeto.iva5) + "</td>";
-                    tabla += "<td>" + new Intl.NumberFormat('us-US').format(impuesto10) + "</td>";
+                    tabla += "<td align='right'>" + new Intl.NumberFormat('us-US').format(objeto.notacomdet_precio) + "</td>";
+                    tabla += "<td align='right'>" + new Intl.NumberFormat('us-US').format(objeto.exenta) + "</td>";
+                    tabla += "<td align='right'>" + new Intl.NumberFormat('us-US').format(objeto.iva5) + "</td>";
+                    tabla += "<td align='right'>" + new Intl.NumberFormat('us-US').format(impuesto10) + "</td>";
                 tabla += "</tr>";
             }
             discrIva5 = parseFloat (totalI5/21);
@@ -584,12 +728,12 @@ let listar2 = () => {
             totalGral = (totalExe + totalI5 + totalI10);
 
             let subt = "<th colspan='4' style='font-weight: bold;'> SUBTOTAL: </th>";
-                subt += "<th>" + new Intl.NumberFormat('us-US').format(totalExe) + "</th>";
-                subt += "<th>" + new Intl.NumberFormat('us-US').format(totalI5) + "</th>";
-                subt += "<th>" + new Intl.NumberFormat('us-US').format(totalI10) + "</th>";
+                subt += "<th style='text-align:right;'>" + new Intl.NumberFormat('us-US').format(totalExe) + "</th>";
+                subt += "<th style='text-align:right;'>" + new Intl.NumberFormat('us-US').format(totalI5) + "</th>";
+                subt += "<th style='text-align:right;'>" + new Intl.NumberFormat('us-US').format(totalI10) + "</th>";
 
             let tot = "<th colspan='6' style='font-weight: bold;'> TOTAL A PAGAR: </th>";
-                tot += "<th>" + new Intl.NumberFormat('us-US').format(totalGral) + "</th>";
+                tot += "<th style='text-align:right;'>" + new Intl.NumberFormat('us-US').format(totalGral) + "</th>";
 
             let imp = "<th colspan='2' style='font-weight: bold;'> IVA 5%: " + new Intl.NumberFormat('us-US').format(discrIva5.toFixed(2)) + "</th>";
                 imp += "<th colspan='3' style='font-weight: bold;'> IVA 10%: " + new Intl.NumberFormat('us-US').format(discrIva10.toFixed(2)) + "</th>";
@@ -617,17 +761,21 @@ let seleccionarFila = (objetoJSON) => {
     $(".tbldet").removeAttr("style", "display:none;");
     datusUsuarios();
     listar2();
-    //validar si es nota de debito para mostrar el input de deposito
+    //validar si es nota de debito para mostrar el input de deposito y permitir modificar el precio
     if ($("#tipcomp_cod").val() == 2) {
         $(".depo").removeAttr("style", "display:none;");
+        $("#notacomdet_precio").removeAttr("readonly");
     } else {
         $(".depo").attr("style", "display:none;");
+        $("#notacomdet_precio").attr("readonly","");
     }
     //validar si es nota de remision para evitar modificar la cantidad de items
     if ($("#tipcomp_cod").val() == 3) {
         $("#notacomdet_cantidad").attr("readonly","");
+        $(".nota_remision").removeAttr("style");
     } else {
         $("#notacomdet_cantidad").removeAttr("readonly");
+        $(".nota_remision").attr("style", "display:none;");
     }
 };
 
@@ -641,7 +789,7 @@ let listar = () => {
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
                     tabla += "<td>" + objeto.notacom_cod + "</td>";
-                    tabla += "<td>" + objeto.notacom_fecha + "</td>";
+                    tabla += "<td>" + objeto.notacom_fecha2 + "</td>";
                     tabla += "<td>" + objeto.usu_login + "</td>";
                     tabla += "<td>" + objeto.suc_descri + "</td>";
                     tabla += "<td>" + objeto.pro_razonsocial + "</td>";
@@ -663,6 +811,45 @@ let listar = () => {
 listar();
 
 /*---------------------------------------------------- AUTOCOMPLETADOS ----------------------------------------------------*/
+
+//_________________________________capturamos los datos de la tabla chapa_vehiculo en un JSON a través de POST para listarlo_________________________________
+function getChapa() {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/modulos/compras/nota_compra/listas/listaChapa.php",
+        data: {
+            chapve_chapa:$("#chapve_chapa").val()
+        }
+        //en base al JSON traído desde el listaChapa arrojamos un resultado
+    }).done(function(lista) {
+        //el JSON de respuesta es mostrado en una lista
+        let fila = "";
+        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{    
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionChapa("+JSON.stringify(item)+")'>"+item.vehiculo+"</li>";
+            });
+        }
+        //enviamos a los input correspondientes de el conjunto de filas
+        $("#ulChapa").html(fila);
+        //le damos un estilo a la lista de Chapa
+        $("#listaChapa").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+    }).fail(function (a,b,c) {
+        swal("ERROR",c,"error");
+    })
+}
+
+//seleccionamos el Chapa por su key y enviamos el dato al input correspondiente
+function seleccionChapa (datos) {
+    Object.keys(datos).forEach(key =>{
+        $("#"+key).val(datos[key]);
+    });
+    $("#ulChapa").html();
+    $("#listaChapa").attr("style", "display:none;");
+    $(".focus").attr("class", "form-line focus focused");
+}
 
 //_________________________________capturamos los datos de la tabla Compra_cab en un JSON a través de POST para listarlo_________________________________
 function getCompra() {
@@ -701,46 +888,8 @@ function seleccionCompra (datos) {
     $("#ulCompra").html();
     $("#listaCompra").attr("style", "display:none;");
     $(".focus").attr("class", "form-line focus focused");
+    $(".disa").removeAttr("disabled");
 }
-
-//_________________________________funcion para obtener Concepto_________________________________
-function getConcepto () {
-    $.ajax({
-        //Enviamos datos para poder filtrar
-        method: "POST",
-        url: "/SysGym/modulos/compras/nota_compra/listas/listaConcepto.php",
-        data: {
-            tipcomp_cod: $("#tipcomp_cod").val()
-        }
-    }) //Cargamos la lista
-        .done(function (lista) {
-            let fila = "";
-            //recorremos el array de objetos
-            $.each(lista, function (i, objeto) {
-                fila +=
-                    "<li class='list-group-item' onclick='seleccionConcepto(" + JSON.stringify(objeto) + ")'>" + objeto.notacom_concepto + "</li>";
-            });
-            //cargamos la lista
-            $("#ulConcepto").html(fila);
-            //hacemos visible la lista
-            $("#listaConcepto").attr("style", "display: block; position:absolute; z-index: 3000; width:100%;");
-        })
-        .fail(function (a, b, c) {
-            swal("ERROR", c, "error");
-        });
-};
-
-//funcion selecccionar Concepto
-function seleccionConcepto (datos) {
-    //Enviamos los datos a su respectivo input
-    Object.keys(datos).forEach((key) => {
-        $("#" + key).val(datos[key]);
-    });
-    /* Vaciamos y ocultamos la lista */
-    $("#ulConcepto").html();
-    $("#listaConcepto").attr("style", "display: none;");
-    $(".focus").attr("class", "form-line focus focused");
-};
 
 //_________________________________capturamos los datos de la tabla Deposito en un JSON a través de POST para listarlo_________________________________
 function getDeposito() {
@@ -781,8 +930,47 @@ function seleccionDeposito (datos) {
     $("#ulDeposito").html();
     $("#listaDeposito").attr("style", "display:none;");
     $(".foc").attr("class", "form-line foc focused");
-    $(".disa").removeAttr("disabled");
 
+}
+
+//_________________________________capturamos los datos de la tabla funcionario_proveedor en un JSON a través de POST para listarlo_________________________________
+function getFunProv() {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/modulos/compras/nota_compra/listas/listaFunProv.php",
+        data: {
+            pro_cod:$("#pro_cod").val(),
+            funprov_nro_doc:$("#funprov_nro_doc").val()
+        }
+        //en base al JSON traído desde el listaFunProv arrojamos un resultado
+    }).done(function(lista) {
+        //el JSON de respuesta es mostrado en una lista
+        let fila = "";
+        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{    
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionFunProv("+JSON.stringify(item)+")'>"+item.funcionario+"</li>";
+            });
+        }
+        //enviamos a los input correspondientes de el conjunto de filas
+        $("#ulFunProv").html(fila);
+        //le damos un estilo a la lista de FunProv
+        $("#listaFunProv").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+    }).fail(function (a,b,c) {
+        swal("ERROR",c,"error");
+    })
+}
+
+//seleccionamos el FunProv por su key y enviamos el dato al input correspondiente
+function seleccionFunProv (datos) {
+    Object.keys(datos).forEach(key =>{
+        $("#"+key).val(datos[key]);
+    });
+    $("#ulFunProv").html();
+    $("#listaFunProv").attr("style", "display:none;");
+    $(".focus").attr("class", "form-line focus focused");
 }
 
 //_________________________________capturamos los datos de la tabla items en un JSON a través de POST para listarlo_________________________________
@@ -821,15 +1009,96 @@ function seleccionItems (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
-    if ($("#tipcomp_cod").val() == 3) {
-        $("#notacomdet_cantidad").attr("readonly","");
-    } else {
-        $("#notacomdet_cantidad").removeAttr("readonly");
-    }
     $("#ulItems").html();
     $("#listaItems").attr("style", "display:none;");
     $(".foc").attr("class", "form-line foc focused");
     itemServicio();
+    //validar si es nota de debito para mostrar el input de deposito y permitir modificar el precio
+    if ($("#tipcomp_cod").val() == 2) {
+        $(".depo").removeAttr("style", "display:none;");
+        $("#notacomdet_precio").removeAttr("readonly");
+    } else {
+        $(".depo").attr("style", "display:none;");
+        $("#notacomdet_precio").attr("readonly","");
+    }
+}
+
+//_________________________________capturamos los datos de la tabla marca_vehiculo en un JSON a través de POST para listarlo_________________________________
+function getMarca() {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/modulos/compras/nota_compra/listas/listaMarca.php",
+        data: {
+            marcve_descri:$("#marcve_descri").val()
+        }
+        //en base al JSON traído desde el listaMarca arrojamos un resultado
+    }).done(function(lista) {
+        //el JSON de respuesta es mostrado en una lista
+        let fila = "";
+        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{    
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionMarca("+JSON.stringify(item)+")'>"+item.marcve_descri+"</li>";
+            });
+        }
+        //enviamos a los input correspondientes de el conjunto de filas
+        $("#ulMarca").html(fila);
+        //le damos un estilo a la lista de Marca
+        $("#listaMarca").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+    }).fail(function (a,b,c) {
+        swal("ERROR",c,"error");
+    })
+}
+
+//seleccionamos el Marca por su key y enviamos el dato al input correspondiente
+function seleccionMarca (datos) {
+    Object.keys(datos).forEach(key =>{
+        $("#"+key).val(datos[key]);
+    });
+    $("#ulMarca").html();
+    $("#listaMarca").attr("style", "display:none;");
+    $(".focus").attr("class", "form-line focus focused");
+}
+
+//_________________________________capturamos los datos de la tabla Modelo_vehiculo en un JSON a través de POST para listarlo_________________________________
+function getModelo() {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/modulos/compras/nota_compra/listas/listaModelo.php",
+        data: {
+            modve_descri:$("#modve_descri").val()
+        }
+        //en base al JSON traído desde el listaModelo arrojamos un resultado
+    }).done(function(lista) {
+        //el JSON de respuesta es mostrado en una lista
+        let fila = "";
+        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{    
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionModelo("+JSON.stringify(item)+")'>"+item.marca_modelo+"</li>";
+            });
+        }
+        //enviamos a los input correspondientes de el conjunto de filas
+        $("#ulModelo").html(fila);
+        //le damos un estilo a la lista de Modelo
+        $("#listaModelo").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+    }).fail(function (a,b,c) {
+        swal("ERROR",c,"error");
+    })
+}
+
+//seleccionamos el Modelo por su key y enviamos el dato al input correspondiente
+function seleccionModelo (datos) {
+    Object.keys(datos).forEach(key =>{
+        $("#"+key).val(datos[key]);
+    });
+    $("#ulModelo").html();
+    $("#listaModelo").attr("style", "display:none;");
+    $(".focus").attr("class", "form-line focus focused");
 }
 
 //_________________________________capturamos los datos de la tabla Nota en un JSON a través de POST para listarlo_________________________________
@@ -869,5 +1138,9 @@ function seleccionNota (datos) {
     $("#ulNota").html();
     $("#listaNota").attr("style", "display:none;");
     $(".focus").attr("class", "form-line focus focused");
-    getConcepto(datos.notven_concepto);
+    if ($("#tipcomp_cod").val() == 3) {
+        $(".nota_remision").removeAttr("style");
+    } else {
+        $(".nota_remision").attr("style", "display:none;");
+    }
 }

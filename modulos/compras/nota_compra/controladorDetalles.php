@@ -9,27 +9,7 @@ $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
 
-if (isset($_POST['consulta']) == "consulItem") { //--> se consulta si existe el item
-
-    if ($_POST['tipcomp_cod'] == '1' && $_POST['operacion_det'] == '1') {
-
-        $sql = "select coalesce (
-                    (select 1 from 
-                        (select ncd.itm_cod 
-                        from nota_compra_det ncd
-                        where ncd.itm_cod = {$_POST['itm_cod']} and ncd.notacom_cod = {$_POST['notacom_cod']}
-                        ) g
-                    ), 0
-                ) as itm;";
-    } else {
-        $sql = "select 0 as itm;";
-    }
-            
-    $resultado = pg_query($conexion, $sql);
-    $datos = pg_fetch_assoc($resultado);
-    echo json_encode($datos);
-    
-} else if (isset($_POST['operacion_det'])) { //--> Consultamos si existe la variable operacion
+if (isset($_POST['operacion_det'])) { //--> Consultamos si existe la variable operacion
 
     $notacomdet_cantidad = str_replace(",", ".", $_POST['notacomdet_cantidad']);
     $notacomdet_precio = str_replace(",", ".", $_POST['notacomdet_precio']);
@@ -63,7 +43,7 @@ if (isset($_POST['consulta']) == "consulItem") { //--> se consulta si existe el 
         pg_query($conexion, $sql);
         $error = pg_last_error($conexion);
         //Si ocurre un error lo capturamos y lo enviamos al front-end
-        if (strpos($error, "rep") !== false) {
+        if (strpos($error, "err_rep") !== false) {
             $response = array(
                 "mensaje" => "ESTE ITEM YA ESTÁ CARGADO",
                 "tipo" => "error"

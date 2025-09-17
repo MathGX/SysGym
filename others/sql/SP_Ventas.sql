@@ -635,6 +635,72 @@ end--finalizar
 $$
 language plpgsql;
 
+--sp_abm_marca_vehiculo (MARCAS DE VEHICULOS)
+create or replace function sp_abm_marca_vehiculo (
+	marcvecod integer, 
+	marcvedescri varchar, 
+	marcveestado varchar,
+	operacion integer,
+	usucod integer,
+	usulogin varchar,
+	transaccion varchar) returns void as 
+$$
+declare marcveaudit text;
+begin --iniciar
+	--se designan validaciones
+	if operacion in (1,2) then
+		perform * from marca_vehiculo
+		where marcve_descri = upper(marcvedescri) 
+			and marcve_cod != marcvecod;
+		if found then
+			raise exception 'err_marca';
+		-- realizamos un insert
+		elseif operacion = 1 then 
+			insert into marca_vehiculo (
+				marcve_cod, 
+				marcve_descri, 
+				marcve_estado) 
+			values (
+				marcvecod, 
+				upper(marcvedescri), 
+				'ACTIVO');
+			raise notice 'LA MARCA DE VEHICULO FUE REGISTRADA EXITOSAMENTE';
+		-- realizamos un update
+		elseif operacion = 2 then  
+			update marca_vehiculo 
+				set marcve_descri = upper(marcvedescri), 
+				marcve_estado = 'ACTIVO'
+			where marcve_cod = marcvecod;
+			raise notice 'LA MARCA DE VEHICULO FUE MODIFICADA EXITOSAMENTE';
+		end if;
+	end if;
+	-- realizamos un update
+	if operacion = 3 then  
+		update marca_vehiculo
+			set marcve_estado = 'INACTIVO'
+			where marcve_cod = marcvecod ;
+		raise notice 'LA MARCA DE VEHICULO FUE BORRADA EXITOSAMENTE';
+	end if;
+	--se selecciona la ultima auditoria
+	select coalesce(marcve_audit,'') into marcveaudit
+	from marca_vehiculo
+	where marcve_cod = marcvecod;
+
+	--se actualiza la auditoria
+	update marca_vehiculo
+    set marcve_audit = marcveaudit||' '||json_build_object(
+        'usu_cod', usucod,
+		'usu_login', usulogin,
+        'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+        'transaccion', upper(transaccion),
+		'marcve_descri', upper(marcvedescri), 
+		'marcve_estado', upper(marcveestado)
+    )||','
+    where marcve_cod = marcvecod;
+end--finalizar
+$$
+language plpgsql;
+
 --sp_abm_modelo_vehiculo (MODELO VEHICULO)
 create or replace function sp_abm_modelo_vehiculo (
 	modvecod integer, 

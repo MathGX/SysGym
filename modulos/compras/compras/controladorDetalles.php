@@ -67,60 +67,60 @@ if (isset($_POST['operacion_det'])) {
         }
         echo json_encode($response);
 
-    } else if ($case == "libro") {
-        //establecemos los montos a pasar pra el sp_libro_compras segun el tipo de impuesto
-        $tipimp_cod = $_POST["tipimp_cod"];
-        if ($tipimp_cod == "1") {
-            $exenta = $total;
-            $iva5 = 0;
-            $iva10 = 0;
-        } else if ($tipimp_cod == "2") {
-            $exenta = 0;
-            $iva5 = $total;
-            $iva10 = 0;
-        } else if ($tipimp_cod == "3") {
-            $exenta = 0;
-            $iva5 = 0;
-            if ($_POST['tipitem_cod'] == "1") {
-                $iva10 = (float)$comdet_precio;
-            } else {
-                $iva10 = $total;
-            }
-        }
-        //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
-        $sqlLibro = "select sp_libro_compras(
-            {$_POST['com_cod']},
-            '{$_POST['com_nrofac']}',
-            $exenta,
-            $iva5,
-            $iva10,
-            {$_POST['tipcomp_cod']},
-            {$_POST['operacion_det']},
-            {$_POST['usu_cod']},
-            '{$_POST['usu_login']}'
-        );";
+    } //else if ($case == "libro") {
+    //     //establecemos los montos a pasar pra el sp_libro_compras segun el tipo de impuesto
+    //     $tipimp_cod = $_POST["tipimp_cod"];
+    //     if ($tipimp_cod == "1") {
+    //         $exenta = $total;
+    //         $iva5 = 0;
+    //         $iva10 = 0;
+    //     } else if ($tipimp_cod == "2") {
+    //         $exenta = 0;
+    //         $iva5 = $total;
+    //         $iva10 = 0;
+    //     } else if ($tipimp_cod == "3") {
+    //         $exenta = 0;
+    //         $iva5 = 0;
+    //         if ($_POST['tipitem_cod'] == "1") {
+    //             $iva10 = (float)$comdet_precio;
+    //         } else {
+    //             $iva10 = $total;
+    //         }
+    //     }
+    //     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
+    //     $sqlLibro = "select sp_libro_compras(
+    //         {$_POST['com_cod']},
+    //         '{$_POST['com_nrofac']}',
+    //         $exenta,
+    //         $iva5,
+    //         $iva10,
+    //         {$_POST['tipcomp_cod']},
+    //         {$_POST['operacion_det']},
+    //         {$_POST['usu_cod']},
+    //         '{$_POST['usu_login']}'
+    //     );";
         
-        pg_query($conexion, $sqlLibro);
+    //     pg_query($conexion, $sqlLibro);
 
-    } else if ($case == "cuentas") {
-        //establecemos el monto a pasar para el sp_cuentas_pagar
-        if ($_POST['tipitem_cod'] == "1") {
-            $totalCuenta = (float)$comdet_precio;
-        } else {
-            $totalCuenta = $total;
-        }
-        //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
-        $sqlCuenta = "select sp_cuentas_pagar(
-            {$_POST['com_cod']},
-            $totalCuenta,
-            $totalCuenta,
-            {$_POST['operacion_det']},
-            {$_POST['usu_cod']},
-            '{$_POST['usu_login']}'
-        );";
+    // } else if ($case == "cuentas") {
+    //     //establecemos el monto a pasar para el sp_cuentas_pagar
+    //     if ($_POST['tipitem_cod'] == "1") {
+    //         $totalCuenta = (float)$comdet_precio;
+    //     } else {
+    //         $totalCuenta = $total;
+    //     }
+    //     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
+    //     $sqlCuenta = "select sp_cuentas_pagar(
+    //         {$_POST['com_cod']},
+    //         $totalCuenta,
+    //         $totalCuenta,
+    //         {$_POST['operacion_det']},
+    //         {$_POST['usu_cod']},
+    //         '{$_POST['usu_login']}'
+    //     );";
 
-        pg_query($conexion, $sqlCuenta);
-    }
+    //     pg_query($conexion, $sqlCuenta);
+    // }
 
 } else if (isset($_POST['validacion_det']) == 1) {
     //Se consulta si la compra esta asociado a un presupuesto
