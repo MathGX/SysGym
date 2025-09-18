@@ -74,7 +74,7 @@ let grabar = () => {
             funprov_cod: $("#funprov_cod").val(),
             funprov_nombres: $("#funprov_nombres").val(),
             funprov_apellidos: $("#funprov_apellidos").val(),
-            funprov_nro_doc: $("#funprov_nro_doc").val() ?? null,
+            funprov_nro_doc: $("#funprov_nro_doc").val(),
             pro_cod: $("#pro_cod").val(),
             tiprov_cod: $("#tiprov_cod").val(),
             funprov_estado: $("#funprov_estado").val(),

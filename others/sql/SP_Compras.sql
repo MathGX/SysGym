@@ -749,10 +749,10 @@ declare funprovaudit text;
 begin --iniciar
 	--se designan validaciones
 	if operacion in (1,2) then
-		if funprovnrodoc is null then
+		if length(funprovnrodoc) < 1 or funprovnrodoc is null or funprovnrodoc = '' then
 			perform 1 from funcionario_proveedor
-			where funprov_nombres = funprovnombres 
-				and funprov_apellidos = funprovapellidos 
+			where funprov_nombres = upper(funprovnombres)
+				and funprov_apellidos = upper(funprovapellidos)
 				and pro_cod = procod 
 				and funprov_cod != funprovcod;
 		else

@@ -26,6 +26,7 @@ if (isset($_POST['operacion_cab'])) {
     //modelo_vehiculo
     $modve_descri = pg_escape_string($conexion, $_POST['modve_descri']);
 
+
     //Obtener el nuevo codigo de funcionario_proveedor
     $sqlCodFun = "select coalesce(max(funprov_cod),0)+1 funprov_cod from funcionario_proveedor;";
     $resFun = pg_query($conexion, $sqlCodFun);
@@ -47,7 +48,7 @@ if (isset($_POST['operacion_cab'])) {
     $cod_chapa = pg_fetch_assoc($resChapa);
 
     //Asignarle el valor a funprov_cod
-    if ($_POST['funprov_cod'] == 0) {
+    if ($_POST['funprov_cod'] == 0 && $_POST['tipcomp_cod'] == 3) {
         $funprov_cod = $cod_fun['funprov_cod'];
         //Insertar datos en funcionario_proveedor
         $sqlFun = "select sp_abm_funcionario_proveedor (
@@ -65,13 +66,13 @@ if (isset($_POST['operacion_cab'])) {
                         '$pro_razonsocial'
                     );";
         pg_query($conexion, $sqlFun);
-        echo json_encode(pg_last_notice($conexion));
+        //echo json_encode(pg_last_notice($conexion));
     } else {
         $funprov_cod = $_POST['funprov_cod'];
     }
     
     //Asignarle el valor a marcve_cod
-    if ($_POST['marcve_cod'] == 0) {
+    if ($_POST['marcve_cod'] == 0 && $_POST['tipcomp_cod'] == 3) {
         $marcve_cod = $cod_marca['marcve_cod'];
         //Insertar datos en marca_vehiculo
         $sqlMarca = "select sp_abm_marca_vehiculo (
@@ -84,13 +85,13 @@ if (isset($_POST['operacion_cab'])) {
                         '{$_POST['transaccion']}'
                     );";
         pg_query($conexion, $sqlMarca);
-        echo json_encode(pg_last_notice($conexion));
+        //echo json_encode(pg_last_notice($conexion));
     } else {
         $marcve_cod = $_POST['marcve_cod'];
     }
     
     //Asignarle el valor a modve_cod
-    if ($_POST['modve_cod'] == 0) {
+    if ($_POST['modve_cod'] == 0 && $_POST['tipcomp_cod'] == 3) {
         $modve_cod = $cod_mode['modve_cod'];
         //Insertar datos en modelo_vehiculo
         $sqlMode = "select sp_abm_modelo_vehiculo (
@@ -105,13 +106,13 @@ if (isset($_POST['operacion_cab'])) {
                         '{$_POST['transaccion']}'
                     );";
         pg_query($conexion, $sqlMode);
-        echo json_encode(pg_last_notice($conexion));
+        //echo json_encode(pg_last_notice($conexion));
     } else {
         $modve_cod = $_POST['modve_cod'];
     }
     
     //Asignarle el valor a chapve_cod
-    if ($_POST['chapve_cod'] == 0) {
+    if ($_POST['chapve_cod'] == 0 && $_POST['tipcomp_cod'] == 3) {
         $chapve_cod = $cod_chapa['chapve_cod'];
         //Insertar datos en chapa_vehiculo
         $sqlChapa = "select sp_abm_chapa_vehiculo (
@@ -128,7 +129,7 @@ if (isset($_POST['operacion_cab'])) {
                         '{$_POST['transaccion']}'
                     );";
         pg_query($conexion, $sqlChapa);
-        echo json_encode(pg_last_notice($conexion));
+        //echo json_encode(pg_last_notice($conexion));
     } else {
         $chapve_cod = $_POST['chapve_cod'];
     }

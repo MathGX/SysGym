@@ -58,7 +58,7 @@ let completarDatos = (nombreInput, idInput) => {
 }
 
 // Evento blur para inputs con clase .disabledno
-$(".disabledno, .disabledno2, .disa").each(function() {
+$(".disabledno, .disabledno2").each(function() {
     $(this).on("blur", function() {
         let idInput = "#" + $(this).attr("id");
         let nombreInput = $(this).closest('.form-line').find('.form-label').text();
