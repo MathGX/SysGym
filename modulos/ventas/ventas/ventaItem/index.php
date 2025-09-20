@@ -303,7 +303,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="vendet_cantidad" class="form-control" disabled>
+                                            <input type="text" id="vendet_cantidad" class="form-control disabledno" disabled>
                                             <label class="form-label">Cantidad</label>
                                         </div>
                                     </div>

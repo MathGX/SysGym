@@ -16,16 +16,15 @@ $cliente = $_POST['cliente'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
 $sql = "select 
-pvc.pedven_cod,
-pvc.cli_cod,
+0 pedven_cod,
+c.cli_cod,
 p.per_nrodoc,
 p.per_nombres||' '||p.per_apellidos as cliente
-from pedido_venta_cab pvc
-        join clientes c on c.cli_cod = pvc.cli_cod 
-                join personas p on p.per_cod = c.per_cod 
-where pvc.pedven_estado = 'ACTIVO'
+from clientes c 
+        join personas p on p.per_cod = c.per_cod 
+where c.cli_estado = 'ACTIVO'
 	and (p.per_nrodoc ilike '%$cliente%' or p.per_nombres||' '||p.per_apellidos ilike '%$cliente%')
-order by pvc.pedven_cod;";
+order by per_nombres;";
         
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);

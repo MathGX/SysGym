@@ -2185,7 +2185,9 @@ create or replace function sp_nota_compra_cab(
     usulogin varchar,
     sucdescri varchar,
     emprazonsocial varchar,
-    transaccion varchar) returns void as 
+    transaccion varchar,
+    comcuotas integer
+    ) returns void as 
 $$
 declare
     notacomaudit text;
@@ -2198,7 +2200,14 @@ declare
 										end),0) from nota_compra_det where notacom_cod = notacomcod);
     -- registro auxiliar para actualizar stock en bloque
     rec_item record;
+	-- variable que guarda la cantidad de items en stoc
 	cant_stock numeric;
+	-- bandera para auditar compra
+	auditcom boolean := false;
+	-- variable que guarda el monto de cuentas a pagar
+	cuenpagmonto numeric;
+	-- variable que guarda el tipo de compra (contado o credito)
+	comtipfac tipofac;
 begin
     -- ===========================================================
     -- operación = 1 -> insertar / registrar nota
@@ -2277,8 +2286,7 @@ begin
         end if;
 
         raise notice 'LA NOTA FUE REGISTRADA CON EXITOSAMENTE';
-        RETURN;
-    ENd if;
+    end if;
 
     -- ===========================================================
     -- operación = 2 -> anular nota
@@ -2286,7 +2294,7 @@ begin
     if operacion = 2 then
         -- marcar la nota como anulada
         update nota_compra_cab
-        set notacom_estado = 'anulado',
+        set notacom_estado = 'ANULADO',
             usu_cod = usucod
         where notacom_cod = notacomcod;
 
@@ -2309,10 +2317,9 @@ begin
                 dep_cod,
                 suc_cod,
                 emp_cod,
-                sum(notarec_item_cantidad) as cant
+                notacomdet_cantidad as cant
             from nota_compra_det
             where notacom_cod = notacomcod
-            group by itm_cod, tipitem_cod, dep_cod, suc_cod, emp_cod
         loop
             if tipcompcod = 1 then
                 -- nota de crédito: se devuelven productos al stock
@@ -2329,7 +2336,7 @@ begin
             end if;
 			--
 			cant_stock = (select sto_cantidad from stock
-						where itm_cod = rec_item.itm_cod
+							where itm_cod = rec_item.itm_cod
 							and dep_cod = rec_item.dep_cod);
 			--
 			perform sp_abm_stock_auditoria(
@@ -2355,20 +2362,120 @@ begin
                 where com_cod = comcod;
 
                 -- llamada al sp que actualiza cuentas a pagar
-                perform sp_cuentas_pagar(
-                    comcod,
-                    total,
-                    total,
-                    1,
-                    usucod,
-                    usulogin);
+                perform sp_cuentas_pagar(comcod, total, total, 1, usucod, usulogin);
 
-                -- reactivar compra_cab y actualizar auditoría
-                update compra_cab cc
-                set
+                -- reactivar compra_cab y activar bandera de auditoría
+                update compra_cab set
                     com_estado = 'ACTIVO',
-                    usu_cod = usucod,
-                    com_audit = coalesce(cc.com_audit,'') || ' ' || json_build_object(
+                    usu_cod = usucod
+				where com_cod = comcod;
+		
+				auditcom := true;              
+
+            elsif tipcompcod = 2 then
+                -- nota de débito -> descuento en cuentas a pagar
+                perform sp_cuentas_pagar(comcod, total, total, 2, usucod, usulogin);
+            end if;
+        end if;
+
+		if tipcompcod in (1,2) then 
+			-- Se captura el monto actual de la cuenta y se divide con la cantidad de cuotas
+			select round(cuenpag_monto/comcuotas) into cuenpagmonto
+			from cuentas_pagar where com_cod = comcod;
+			
+			-- se actualizan cuotas y monto, y se activa la bandera de auditoria
+			update compra_cab set
+				com_cuotas = comcuotas,
+				com_montocuota = cuenpagmonto,
+				usu_cod = usucod
+			where com_cod = comcod;
+	
+			auditcom := true;
+		end if;
+		--
+        raise notice 'LA NOTA FUE ANULADA EXITOSAMENTE';
+    end if;
+
+    -- ===========================================================
+    -- operación = 3 -> actualizar compras
+    -- ===========================================================
+	if operacion = 3 then
+		-- Se obtiene el tipo de compra
+		select com_tipfac into comtipfac from compra_cab where com_cod = comcod;
+
+		if comtipfac = 'CONTADO' and comcuotas > 1 then
+			raise exception 'err_cuota';
+		else
+			-- Se captura el monto actual de la cuenta y se divide con la cantidad de cuotas
+			select round(cuenpag_monto/comcuotas) into cuenpagmonto
+			from cuentas_pagar where com_cod = comcod;
+			
+			-- se actualizan cuotas y monto, y se activa la bandera de auditoria
+			update compra_cab set
+				com_cuotas = comcuotas,
+				com_montocuota = cuenpagmonto,
+				usu_cod = usucod
+			where com_cod = comcod;
+
+			auditcom := true;
+		end if;
+		raise notice 'FINANCIACION ACTUALIZADA A %', comcuotas||' x '||cuenpagmonto;
+	end if;
+	-- Se audita nota compra y libro compra cuando es operacion 1 o 2
+	if operacion in (1,2) then
+	    -- ===========================================================
+	    -- auditoría en nota_compra_cab
+	    -- ===========================================================
+	    update nota_compra_cab
+	    set notacom_audit = coalesce(notacom_audit,'')||' '||json_build_object(
+	            'usu_cod', usucod,
+	            'usu_login', usulogin,
+	            'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+	            'transaccion', upper(transaccion),
+	            'notacom_fecha', to_char(notacomfecha,'dd-mm-yyyy'),
+	            'notacom_nronota', notacomnronota,
+	            'notacom_timbrado', notacomtimbrado,
+	            'notacom_timb_fec_venc', to_char(notacomtimbfecvenc,'dd-mm-yyyy'),
+	            'notacom_funcionario', notacomfuncionario,
+	            'notacom_chapa_vehi', notacomchapavehi,
+	            'notacom_concepto', upper(notacomconcepto),
+	            'pro_cod', procod,
+	            'tiprov_cod', tiprovcod,
+	            'pro_razonsocial', upper(prorazonsocial),
+	            'com_cod', comcod,
+	            'emp_cod', empcod,
+	            'emp_razonsocial', upper(emprazonsocial),
+	            'suc_cod', succod,
+	            'suc_descri', upper(sucdescri),
+	            'notacom_estado', upper(notacomestado)
+	        )|| ','
+	    where notacom_cod = notacomcod;
+	    -- ===========================================================
+	    -- auditoría en libro_compras (si existe relación con la nota)
+	    -- ===========================================================
+	    update libro_compras lc
+	    set libcom_audit = coalesce(lc.libcom_audit,'') || ' ' || json_build_object(
+	            'usu_cod', usucod,
+	            'usu_login', usulogin,
+	            'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
+	            'transaccion', upper(transaccion),
+	            'com_cod', lc.com_cod,
+	            'libcom_fecha', to_char(lc.libcom_fecha,'dd-mm-yyyy'),
+	            'tipcomp_cod', lc.tipcomp_cod,
+	            'libcom_nro_comprobante', lc.libcom_nro_comprobante,
+	            'libcom_exenta', lc.libcom_exenta,
+	            'libcom_iva5', lc.libcom_iva5,
+	            'libcom_iva10', lc.libcom_iva10,
+	            'libcom_estado', lc.libcom_estado
+	        )|| ','
+	    where lc.com_cod = comcod
+	      and lc.libcom_nro_comprobante = notacomnronota
+	      and lc.tipcomp_cod = tipcompcod;
+	end if;
+	-- si la bandera de auditoría de compras está arriba
+	if auditcom is true then
+		update compra_cab cc set
+			com_audit = coalesce(cc.com_audit,'') || ' ' || json_build_object(
                         'usu_cod', usucod,
                         'usu_login', usulogin,
                         'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
@@ -2391,88 +2498,18 @@ begin
                         'suc_descri', upper(s.suc_descri),
                         'com_estado', upper('ACTIVO')
                     ) || ','
-                from sucursales s
-                	join empresa e on e.emp_cod = s.emp_cod
-                	join proveedor p on p.pro_cod = cc.pro_cod and p.tiprov_cod = cc.tiprov_cod
-                	join tipo_proveedor tp on tp.tiprov_cod = p.tiprov_cod
-                where cc.com_cod = comcod
-                  and s.suc_cod = cc.suc_cod
-                  and s.emp_cod = cc.emp_cod;
-
-            elsif tipcompcod = 2 then
-                -- nota de débito -> descuento en cuentas a pagar
-                perform sp_cuentas_pagar(
-                    comcod,
-                    total,
-                    total,
-                    2,
-                    usucod,
-                    usulogin
-                );
-            end if;
-        end if;
-
-        raise notice 'LA NOTA FUE ANULADA EXITOSAMENTE';
-    end if;
-
-    -- ===========================================================
-    -- auditoría en nota_compra_cab
-    -- ===========================================================
-    select coalesce(notacom_audit,'') into notacomaudit
-    from nota_compra_cab
-    where notacom_cod = notacomcod;
-
-    update nota_compra_cab
-    SET notacom_audit = coalesce(notacom_audit,'') || ' ' || json_build_object(
-            'usu_cod', usucod,
-            'usu_login', usulogin,
-            'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
-            'transaccion', upper(transaccion),
-            'notacom_fecha', to_char(notacomfecha,'dd-mm-yyyy'),
-            'notacom_nronota', notacomnronota,
-            'notacom_timbrado', notacomnronota,
-            'notacom_timb_fec_venc', to_char(notacomtimbfecvenc,'dd-mm-yyyy'),
-            'notacom_funcionario', notacomfuncionario,
-            'notacom_chapa_vehi', notacomchapavehi,
-            'notacom_concepto', upper(notacomconcepto),
-            'pro_cod', procod,
-            'tiprov_cod', tiprovcod,
-            'pro_razonsocial', upper(prorazonsocial),
-            'com_cod', comcod,
-            'emp_cod', empcod,
-            'emp_razonsocial', upper(emprazonsocial),
-            'suc_cod', succod,
-            'suc_descri', upper(sucdescri),
-            'notacom_estado', upper(notacomestado)
-        )|| ','
-    Where notacom_cod = notacomcod;
-
-    -- ===========================================================
-    -- auditoría en libro_compras (si existe relación con la nota)
-    -- ===========================================================
-    update libro_compras lc
-    set libcom_audit = coalesce(lc.libcom_audit,'') || ' ' || json_build_object(
-            'usu_cod', usucod,
-            'usu_login', usulogin,
-            'fecha y hora', to_char(current_timestamp,'dd-mm-yyyy hh24:mi:ss'),
-            'transaccion', upper(transaccion),
-            'com_cod', lc.com_cod,
-            'libcom_fecha', to_char(lc.libcom_fecha,'dd-mm-yyyy'),
-            'tipcomp_cod', lc.tipcomp_cod,
-            'libcom_nro_comprobante', lc.libcom_nro_comprobante,
-            'libcom_exenta', lc.libcom_exenta,
-            'libcom_iva5', lc.libcom_iva5,
-            'libcom_iva10', lc.libcom_iva10,
-            'libcom_estado', lc.libcom_estado
-        )|| ','
-    where lc.com_cod = comcod
-      and lc.libcom_nro_comprobante = notacomnronota
-      and lc.tipcomp_cod = tipcompcod;
-
+	            from sucursales s, empresa e, proveedor p, tipo_proveedor tp
+				where cc.com_cod = comcod
+				  	and p.pro_cod = cc.pro_cod 
+				   	and p.tiprov_cod = cc.tiprov_cod
+	               	and s.suc_cod = cc.suc_cod
+	               	and s.emp_cod = cc.emp_cod
+				   	and e.emp_cod = cc.emp_cod 
+				   	and tp.tiprov_cod = cc.tiprov_cod;
+	end if;
 end;
 $$ 
 language plpgsql;
-
 
 --sp_nota_compra_det (NOTA COMPRA DETALLE)
 create or replace function sp_nota_compra_det(
@@ -2492,13 +2529,6 @@ $$
 declare
     -- tipo de comprobante de la nota (1 = nota crédito, 2 = nota débito)
     tipcompcod integer;
-
-    -- monto y estado de la cuenta por pagar vinculada a la compra
-    monto_cuenta numeric;
-    estado_cuenta text;
-
-    -- flag para indicar si se modificó compra_cab y se debe auditar
-    compra_changed boolean := false;
 	
 	-- cantidad en stock post actualizaciones
 	cant_stock numeric;
@@ -2512,23 +2542,6 @@ begin
     from nota_compra_cab ncc
     where ncc.notacom_cod = notacomcod
     limit 1;
-
-    /*
-     * Obtener información de cuentas_pagar asociada a la compra (si existe).
-     * Se usan coalesce / valores nulos manejables más abajo.
-     */
-    select 
-		cp.cuenpag_monto, 
-		cp.cuenpag_estado
-    into 
-		monto_cuenta, 
-		estado_cuenta
-    from cuentas_pagar cp
-    where cp.com_cod = comcod
-    limit 1;
-
-    monto_cuenta := coalesce(monto_cuenta, 0);
-    estado_cuenta := coalesce(estado_cuenta, '');
 
     /* -----------------------
        operacion = 1 -> insert
@@ -2572,71 +2585,19 @@ begin
             update stock
             set sto_cantidad = sto_cantidad - notacomdetcantidad
             where itm_cod = itmcod
-              and tipitem_cod = tipitemcod
-              and dep_cod = depcod
-              and suc_cod = succod
-              and emp_cod = empcod;
-
-            -- si el total de la cuenta es 0 -> se anula la compra (com_estado = 'ANULADO')
-            if monto_cuenta = 0 then
-                update cuentas_pagar
-                set cuenpag_estado = 'ANULADO'
-                where com_cod = comcod;
-
-                -- auditar cuentas_pagar 
-                perform sp_cuentas_pagar(
-                    comcod,
-                    0,
-                    0,
-                    3,
-                    usucod,
-                    usulogin
-                );
-
-                update compra_cab
-                	set com_estado = 'ANULADO',
-                    usu_cod = usucod
-                where com_cod = comcod;
-
-                compra_changed := true;
-            end if;
-
+              and dep_cod = depcod;
         elsif tipcompcod = 2 then
             -- nota de débito: sumar stock
             update stock
             	set sto_cantidad = sto_cantidad + notacomdetcantidad
             where itm_cod = itmcod
               and dep_cod = depcod;
-
-            -- si existe monto en la cuenta y la cuenta estaba ANULADO, volver a ACTIVAR
-            if monto_cuenta > 0 and upper(estado_cuenta) = 'ANULADO' then
-                update cuentas_pagar
-                	set cuenpag_estado = 'ACTIVO'
-                where com_cod = comcod;
-
-                perform sp_cuentas_pagar(
-                    comcod,
-                    0,
-                    0,
-                    3,
-                    usucod,
-                    usulogin
-                );
-
-                update compra_cab
-                	set com_estado = 'ACTIVO',
-                    usu_cod = usucod
-                where com_cod = comcod;
-
-                compra_changed := true;
-            end if;
         end if;
 
-        raise notice 'EL DETALLE FUE REGISTRADO CON EXITO';
+        raise notice 'EL DETALLE FUE REGISTRADO CON EXITO%',
+			case when tipcompcod in (1,2) then ', NO OLVIDE ACTUALIZAR LAS CUOTAS EN CABECERA' end;
 
     end if; -- fin operacion = 1
-
-
     /* -----------------------
        operacion = 2 -> delete
        ----------------------- */
@@ -2658,30 +2619,6 @@ begin
             set sto_cantidad = sto_cantidad + notacomdetcantidad
             where itm_cod = itmcod
               and dep_cod = depcod;
-
-            -- si hay monto en cuentas y compra estaba ANULADA -> reactivar
-            if monto_cuenta > 0 and upper(estado_cuenta) = 'ANULADO' then
-                update cuentas_pagar
-                set cuenpag_estado = 'ACTIVO'
-                where com_cod = comcod;
-
-                perform sp_cuentas_pagar(
-                    comcod,
-                    0,
-                    0,
-                    3,
-                    usucod,
-                    usulogin
-                );
-
-                update compra_cab
-                	set com_estado = 'ACTIVO',
-                    usu_cod = usucod
-                where com_cod = comcod;
-
-                compra_changed := true;
-            end if;
-
         elsif tipcompcod = 2 then
             -- nota de débito: al borrar detalle restamos stock (revertir la suma)
             update stock
@@ -2691,14 +2628,15 @@ begin
               and dep_cod = depcod;
         end if;
 
-        raise notice 'EL DETALLE FUE ELIMINADO CON EXITO';
+        raise notice 'EL DETALLE FUE ELIMINADO CON EXITO%',
+			case when tipcompcod in (1,2) then ', NO OLVIDE ACTUALIZAR LAS CUOTAS EN CABECERA' end;
 
     end if; -- fin operacion = 2
 	
 	-- auditoria stock si se trata de nota de credito o debito
 	if tipcompcod in (1,2) then
 		cant_stock = (select sto_cantidad from stock
-					  	where itm_cod = itmcod
+					  where itm_cod = itmcod
 					  	 and dep_cod = depcod);
 		--
 		perform sp_abm_stock_auditoria(
@@ -2712,46 +2650,6 @@ begin
 			usucod, 
 			usulogin);
 	end if;
-
-    /*
-     * Si se modificó compra_cab en alguno de los procesos anteriores,
-     * agregamos la entrada de auditoría (com_audit) en un solo lugar.
-     */
-    if compra_changed then
-        update compra_cab cc
-			set com_audit = coalesce(cc.com_audit, '') || ' ' ||
-			    json_build_object(
-			        'usu_cod', usucod,
-			        'usu_login', usulogin,
-			        'fecha y hora', to_char(current_timestamp, 'dd-mm-yyyy hh24:mi:ss'),
-			        'transaccion', 'MODIFICACION (NOTA COMPRA N° ' || notacomcod || ')',
-			        'com_fecha', to_char(cc.com_fecha, 'dd-mm-yyyy'),
-			        'tipcomp_cod', cc.tipcomp_cod,
-			        'com_nrofac', cc.com_nrofac,
-			        'com_tipfac', cc.com_tipfac,
-			        'com_cuotas', cc.com_cuotas,
-			        'com_intefecha', upper(cc.com_intefecha),
-			        'com_montocuota', cc.com_montocuota,
-			        'pro_cod', cc.pro_cod,
-			        'tiprov_cod', cc.tiprov_cod,
-			        'pro_razonsocial', upper(p.pro_razonsocial || ' - ' || tp.tiprov_descripcion),
-			        'com_timbrado', cc.com_timbrado,
-					'com_timb_fec_venc', cc.com_timb_fec_venc,
-			        'emp_cod', e.emp_cod,
-			        'emp_razonsocial', upper(e.emp_razonsocial),
-			        'suc_cod', s.suc_cod,
-			        'suc_descri', upper(s.suc_descri),
-			        'com_estado', upper(cc.com_estado)
-			    ) || ','
-		from sucursales s
-			join empresa e on e.emp_cod = s.emp_cod
-			join proveedor p on p.pro_cod = cc.pro_cod and p.tiprov_cod = cc.tiprov_cod
-				join tipo_proveedor tp on tp.tiprov_cod = p.tiprov_cod
-		where cc.com_cod = comcod
-		  and s.suc_cod = cc.suc_cod
-		  and s.emp_cod = cc.emp_cod;
-	end if;
-    return;
 
 exception
     when others then

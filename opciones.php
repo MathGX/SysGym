@@ -876,11 +876,11 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/modulos/ventas/apertura_cierre/index.php">Apertura, Arqueo de Control y Cierre de Caja</a>
                                 </li>
                                 <?php } ?>
-                                <?php if ($accesoInterfaz['PEDIDOS_VENTAS']) { ?>
+                                <!-- <?php if ($accesoInterfaz['PEDIDOS_VENTAS']) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/ventas/pedidos_venta/index.php">Pedidos de Venta</a>
                                 </li>
-                                <?php } ?>
+                                <?php } ?> -->
                                 <?php 
                                 if (($accesoInterfaz['VENTAS']) && (($apertura['apcier_estado'] === 'ABIERTA') || ($u['perf_descri'] == 'ADMINISTRADOR'))) { ?>
                                 <li>

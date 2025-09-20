@@ -187,6 +187,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="com_cod" value="0">
+                                            <input type="hidden" id="com_tipfac" value="">
                                             <input type="text" id="com_nrofac" class="form-control" disabled>
                                             <label class="form-label">Factura Nro.</label>
                                         </div>
@@ -198,6 +199,15 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line focus">
                                             <input type="text" id="notacom_estado" class="form-control" disabled>
                                             <label class="form-label">Estado</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2 cant_cuotas" style="display:none;">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="com_cuotas" class="form-control disabledno soloNum" disabled>
+                                            <label class="form-label">Nueva Cant. Cuotas</label>
                                         </div>
                                     </div>
                                 </div>
@@ -286,6 +296,12 @@ $u = $_SESSION['usuarios'];
                                     <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="nuevo()">
                                         <i class="material-icons">create_new_folder</i>
                                         <span>NUEVO</span>
+                                    </button>
+                                <?php } ?>
+                                <?php if ($botNuevo == true) { ?>
+                                    <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="actCuotas()">
+                                        <i class="material-icons">update</i>
+                                        <span>ACT. CUOTAS</span>
                                     </button>
                                 <?php } ?>
                                 <?php if ($botAnular == true) { ?>

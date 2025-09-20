@@ -142,7 +142,7 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line focus ">
                                             <input type="hidden" id="tipcomp_cod" value="4">
                                             <input type="hidden" id="caj_cod" value= "<?php echo $apertura['caj_cod']?>">
-                                            <input type="text" id="ven_nrofac" class="form-control disabledno" disabled>
+                                            <input type="text" id="ven_nrofac" class="form-control" disabled>
                                             <label class="form-label">Factura nro.</label>
                                         </div>
                                     </div>

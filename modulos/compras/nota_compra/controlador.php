@@ -162,7 +162,8 @@ if (isset($_POST['operacion_cab'])) {
         '$usu_login',
         '$suc_descri',
         '$emp_razonsocial',
-        '{$_POST['transaccion']}'
+        '{$_POST['transaccion']}',
+        {$_POST['com_cuotas']}
     );";
 
     pg_query($conexion, $sql);
@@ -173,7 +174,12 @@ if (isset($_POST['operacion_cab'])) {
             "mensaje" => "ESTA NOTA YA ESTÁ CARGADA",
             "tipo" => "error"
         );
-    } else {
+    } else if (strpos($error, "err_cuota") !== false) {
+        $response = array(
+            "mensaje" => "PARA COMPRAS AL CONTADO LA CANTIDAD DE CUOTAS DEBE SER 1",
+            "tipo" => "error"
+        );
+    } else{
         $response = array(
             "mensaje" => pg_last_notice($conexion),
             "tipo" => "success"

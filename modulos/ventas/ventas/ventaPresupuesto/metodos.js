@@ -377,7 +377,11 @@ function grabar2() {
             if (respuesta.tipo == "success") {
                 libro_ventas();
                 cuentas_cobrar();
-                location.reload(true);
+                listar2(); //actualizamos la grilla
+                $(".foc").find(".form-control").val(''); //limpiamos los input
+                $(".foc").attr("class", "form-line foc"); //
+                $(".disabledno").attr("disabled", "disabled"); //deshabilitamos los input
+                habilitarBotones2(false); //deshabilitamos los botones
             }
         }
     );

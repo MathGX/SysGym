@@ -31,7 +31,7 @@ if (isset($_POST['operacion_cab'])) {
         {$_POST['emp_cod']},
         '{$_POST['ven_timbrado']}',
         {$_POST['tipcomp_cod']},
-        {$_POST['pedven_cod']},
+        0,
         '0',
         {$_POST['operacion_cab']}
     );";

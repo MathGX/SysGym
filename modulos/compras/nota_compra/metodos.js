@@ -203,13 +203,31 @@ let nuevo = () => {
     window.scroll(0, -100);
 };
 
-//anular anular
+//funcion anular
 let anular = () => {
     $("#operacion_cab").val(2);
     $("#transaccion").val('BORRADO');
     $("#notacom_estado").val('ANULADO');
     habilitarBotones(true);
     window.scroll(0, -100);
+};
+
+//funcion actualizar cuotas de compra
+let actCuotas = () => {
+    if ($("#com_cod").val() === "0" || $("#com_cod").val() === "") {
+        alertaLabel("SELCCIONE UNA NOTA DE DEBITO O CREDITO");
+    } else if ($("#tipcomp_cod").val() == 3) {
+        alertaLabel("NO SE PUEDEN ACTUALIZAR LAS CUOTAS POR UNA <b> NOTA DE REMISION </b>");
+    } else if ($("#grilla_det tr").length < 1) {
+        alertaLabel("EL REGISTRO SELECCIONADO NO TIENE DETALLES");
+    } else {
+        $("#operacion_cab").val(3);
+        $(".cant_cuotas").removeAttr("style","").find(".focus").attr("class", "form-line focus focused");
+        $("#transaccion").val('MODIFICACION');
+        $("#com_cuotas").removeAttr("disabled");
+        habilitarBotones(true);
+        window.scroll(0, -100);
+    }
 };
 
 //funcion cancelar
@@ -251,6 +269,7 @@ let grabar = () => {
             suc_descri: $("#suc_descri").val(),
             emp_razonsocial: $("#emp_razonsocial").val(),
             transaccion: $("#transaccion").val(),
+            com_cuotas: $("#com_cuotas").val(),
             //datos de para funcionario_proveedor
             funprov_nombres: $("#funprov_nombres").val(),
             funprov_apellidos: $("#funprov_apellidos").val(),

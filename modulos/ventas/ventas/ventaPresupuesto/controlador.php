@@ -55,7 +55,7 @@ if (isset($_POST['operacion_cab'])) {
             $fac_nro_new = substr($_POST['ven_nrofac'],8,7);
     
             $upFac="update facturas set
-            fac_nro = lpad($fac_nro_new,7,'0')
+            fac_nro = lpad(cast($fac_nro_new as varchar),7,'0')
             where suc_cod = {$_POST['suc_cod']} and caj_cod = {$_POST['caj_cod']}";
             
             pg_query($conexion, $upFac);

@@ -20,7 +20,9 @@ $sql = "select
         cc.com_nrofac,
         cc.pro_cod,
         cc.tiprov_cod,
-        p.pro_razonsocial||' - '||tp.tiprov_descripcion as pro_razonsocial
+        p.pro_razonsocial||' - '||tp.tiprov_descripcion as pro_razonsocial,
+        cc.com_cuotas,
+        cc.com_tipfac
         from compra_cab cc 
         join proveedor p on p.pro_cod = cc.pro_cod and p.tiprov_cod = cc.tiprov_cod 
                 join tipo_proveedor tp on tp.tiprov_cod = p.tiprov_cod  

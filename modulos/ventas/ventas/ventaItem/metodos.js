@@ -143,7 +143,7 @@ let grabar = () => {
             emp_cod: $("#emp_cod").val(),
             ven_timbrado: $("#ven_timbrado").val(),
             tipcomp_cod: $("#tipcomp_cod").val(),
-            pedven_cod: $("#pedven_cod").val(),
+            //pedven_cod: $("#pedven_cod").val(),
             operacion_cab: $("#operacion_cab").val(),
             caj_cod: $("#caj_cod").val(),
         },
@@ -244,8 +244,8 @@ let controlVacio = () => {
         condicion = "i";
     } else if ($("#ven_intefecha").val() == "") {
         condicion = "i";
-    } else if ($("#pedven_cod").val() == "") {
-        condicion = "i";
+    // } else if ($("#pedven_cod").val() == "") {
+    //     condicion = "i";
     } else if ($("#per_nrodoc").val() == "") {
         condicion = "i";
     } else if ($("#cliente").val() == "") {
@@ -377,7 +377,11 @@ function grabar2() {
             if (respuesta.tipo == "success") {
                 libro_ventas();
                 cuentas_cobrar();
-                location.reload(true);
+                listar2(); //actualizamos la grilla
+                $(".foc").find(".form-control").val(''); //limpiamos los input
+                $(".foc").attr("class", "form-line foc"); //
+                $(".disabledno").attr("disabled", "disabled"); //deshabilitamos los input
+                habilitarBotones2(false); //deshabilitamos los botones
             }
         }
     );
@@ -648,7 +652,7 @@ function getItems() {
         method: "POST",
         url: "/SysGym/modulos/ventas/ventas/ventaItem/listas/listaItems.php",
         data: {
-            pedven_cod: $("#pedven_cod").val(),
+            //pedven_cod: $("#pedven_cod").val(),
             itm_descri:$("#itm_descri").val(),
             dep_cod:$("#dep_cod").val(),
             suc_cod:$("#suc_cod").val(),
