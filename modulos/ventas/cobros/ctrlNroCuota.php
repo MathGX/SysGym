@@ -44,6 +44,7 @@ if ($_POST['case'] == 1) {
     if ($_POST['operacion_det'] == 1) {
     
         $ven_cod = $_POST['ven_cod'];
+        $cuencob_cuotas = $_POST['cuencob_cuotas'];
         $cobr_cod = $_POST['cobr_cod'];
         $ven_montocuota = $_POST['ven_montocuota'];
         $cuencob_monto = $_POST['cuencob_monto'];
@@ -69,12 +70,12 @@ if ($_POST['case'] == 1) {
         da un mensaje de error, si no, da un mensaje correcto*/
         if ($montos > $ven_montocuota) {
             $response = array(
-                "mensaje" => "EL MONTO EXCEDE EL VALOR DE LA CUOTA",
+                "mensaje" => "EL MONTO EXCEDE EL VALOR DE LA CUOTA DE GS.".number_format($ven_montocuota, 0,',','.'),
                 "tipo" => "error"
             );
-        } else if ($montos > $saldo) {
+        } else if ($montos > ($saldo/$cuencob_cuotas)) {
             $response = array(
-                "mensaje" => "EL MONTO EXCEDE EL VALOR DEL SALDO",
+                "mensaje" => "EL MONTO EXCEDE EL SALDO DE GS.".number_format(($saldo/$cuencob_cuotas), 0,',','.'),
                 "tipo" => "error"
             );
         } else {

@@ -456,6 +456,7 @@ function ctrlMontoCuota() {
             ven_montocuota: $("#ven_montocuota").val(),
             forcob_cod: $("#forcob_cod").val(),
             cuencob_monto: $("#cuencob_monto").val(),
+            cuencob_cuotas: $("#cuencob_cuotas").val(),
             operacion_det: $("#operacion_det").val(),
             case: "2"
         }

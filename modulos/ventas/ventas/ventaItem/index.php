@@ -327,14 +327,14 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-12">
+                                <!-- <div class="col-sm-12">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="text" id="vendet_cantidad" class="form-control" disabled>
                                             <label class="form-label">Promoción</label>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
 
                             </div>
 

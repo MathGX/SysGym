@@ -17,7 +17,7 @@ $tipcomp_cod = $_POST['tipcomp_cod'];
 $com_cod = $_POST['com_cod'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
-if ($tipcomp_cod == "1" || $tipcomp_cod == "3") {
+if ($tipcomp_cod == "3") {
         $sql = "select 
         i.itm_cod,
         i.tipitem_cod,
@@ -51,6 +51,30 @@ if ($tipcomp_cod == "1" || $tipcomp_cod == "3") {
                 join unidad_medida um on um.uni_cod = i.uni_cod 
         where itm_descri ilike '%$itm_descri%' and i.itm_estado ilike 'ACTIVO'
         order by i.itm_descri;";
+} else if ($tipcomp_cod == "1") {
+        $sql = "select 
+                        c.itm_cod,
+                        c.tipitem_cod,
+                        i.tipimp_cod,
+                        i.itm_descri,
+                        c.dep_cod,
+                        d.dep_descri,
+                        sum(c.cant) notacomdet_cantidad,
+                        um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri,
+                        c.precio notacomdet_precio
+                from(select itm_cod, tipitem_cod, dep_cod, comdet_cantidad cant, comdet_precio precio from compra_det where com_cod = $com_cod
+                        union all
+                        select ncd.itm_cod, ncd.tipitem_cod, ncd.dep_cod, ncd.notacomdet_cantidad cant, ncd.notacomdet_precio precio from nota_compra_det ncd 
+                                join nota_compra_cab ncc on ncc.notacom_cod = ncd.notacom_cod
+                        where ncc.com_cod = $com_cod 
+                                and ncc.tipcomp_cod = $com_cod
+                                and ncc.notacom_estado = 'ACTIVO') c
+                        join items i on i.itm_cod = c.itm_cod
+                join unidad_medida um on um.uni_cod = i.uni_cod 
+                join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
+                join depositos d on d.dep_cod = c.dep_cod 
+                where i.itm_descri ilike '%$itm_descri%'
+                group by 1,2,3,4,5,6,8,9;";
 }
         
 //consultamos a la base de datos y guardamos el resultado
