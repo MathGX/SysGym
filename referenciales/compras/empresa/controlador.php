@@ -26,9 +26,6 @@ if (isset($_POST['operacion'])) {
         '$emp_email',
         '$emp_actividad',
         '$emp_estado',
-        '{$_POST['emp_timbrado']}',
-        '{$_POST['emp_timb_fec_ini']}',
-        '{$_POST['emp_timb_fec_venc']}',
         {$_POST['operacion']},
         {$_POST['usu_cod']},
         '{$_POST['usu_login']}',
@@ -41,11 +38,6 @@ if (isset($_POST['operacion'])) {
     if (strpos($error, "codigo") !== false) {
         $response = array(
             "mensaje" => "ESTA EMPRESA YA EXISTE",
-            "tipo" => "error"
-        );
-    } else if (strpos($error, "fecha") !== false) {
-        $response = array(
-            "mensaje" => "LA FECHA DE VENCIMIENTO DE VIGENCIA DE TIMBRADO NO PUEDE SER MENOR A LA FECHA DE INICIO",
             "tipo" => "error"
         );
     } else {
@@ -71,14 +63,10 @@ if (isset($_POST['operacion'])) {
                 e.emp_cod,
                 e.emp_razonsocial,
                 e.emp_ruc,
-                e.emp_timbrado,
-                to_date(to_char(e.emp_timb_fec_ini, 'dd/mm/yyyy'), 'dd/mm/yyyy') emp_timb_fec_ini,
-                to_date(to_char(e.emp_timb_fec_venc, 'dd/mm/yyyy'), 'dd/mm/yyyy') emp_timb_fec_venc,
                 e.emp_telefono,
                 e.emp_email,
                 e.emp_actividad,
-                e.emp_estado,
-                to_char(emp_timb_fec_ini, 'dd/mm/yyyy')||' - '||to_char(emp_timb_fec_venc, 'dd/mm/yyyy') vigencia
+                e.emp_estado
             from empresa e 
             order by e.emp_cod;";
     $resultado = pg_query($conexion, $sql);

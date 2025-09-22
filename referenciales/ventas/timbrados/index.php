@@ -48,23 +48,35 @@ $datos = pg_fetch_all($resultado);
                             </h2>
                         </div>
                         <div class="body">
+                            <input type="hidden" id="operacion" value="0">
                             <div class="row clearfix">
 
-                                <div class="col-sm-3">
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="tim_cod" class="form-control" disabled>
+                                            <label class="form-label">Código</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
                                             <input type="hidden" id="emp_cod" value="<?php echo $u['emp_cod'];?>">
+                                            <input type="hidden" id="usu_cod" value="<?php echo $u['usu_cod'];?>">
+                                            <input type="hidden" id="usu_login" value="<?php echo $u['usu_login'];?>">
                                             <input type="text" id="emp_razonsocial" class="form-control" value="<?php echo $u['emp_razonsocial']; ?> " disabled>
                                             <label class="form-label">Empresa</label> 
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="suc_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="suc_descri" onkeyup="getSucursales()" disabled>
+                                            <input type="text" id="suc_descri" class="form-control disabledno soloTxt" disabled onkeyup="getSucursales()">
                                             <label class="form-label">Sucursal</label>
                                             <div id="listaSucursales" style="display:none;">
                                                 <ul class="list-group" id="ulSucursales" style="height:60px; overflow:auto;"></ul>
@@ -73,11 +85,11 @@ $datos = pg_fetch_all($resultado);
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="caj_cod" value= "0">
-                                            <input type="text" class="form-control disabledno" id="caj_descri" onkeyup="getCajas()" disabled>
+                                            <input type="text" id="caj_descri" class="form-control disabledno sinCarac" disabled onkeyup="getCajas()">
                                             <label class="form-label">Caja</label>
                                             <div id="listaCajas" style="display: none;">
                                                 <ul class="list-group" id="ulCajas" style="height:60px; overflow:auto;"></ul>
@@ -86,11 +98,78 @@ $datos = pg_fetch_all($resultado);
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="fac_nro" class="form-control" readonly>
-                                            <label class="form-label">Nro de Factura</label>
+                                            <input type="hidden" id="tipcomp_cod" value= "0">
+                                            <input type="text" id="tipcomp_descri" class="form-control disabledno soloTxt" disabled onkeyup="getTipComp()">
+                                            <label class="form-label">Tipo de comprobante</label>
+                                            <div id="listaTipComp" style="display: none;">
+                                                <ul class="list-group" id="ulTipComp" style="height:60px; overflow:auto;"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="tim_nro" class="form-control disabledno soloNum" disabled>
+                                            <label class="form-label">Timbrado</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focused">
+                                            <input type="date" id="tim_fec_ini" class="form-control disabledno" disabled>
+                                            <label class="form-label">Emisión</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focused">
+                                            <input type="date" id="tim_fec_venc" class="form-control disabledno" disabled>
+                                            <label class="form-label">Vencimiento</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="tim_com_nro" class="form-control disabledno soloNum" disabled>
+                                            <label class="form-label">Comprobante Nro.</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="tim_com_nro_ini" class="form-control disabledno soloNum" disabled>
+                                            <label class="form-label">Inicio</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="tim_com_nro_lim" class="form-control disabledno soloNum" disabled>
+                                            <label class="form-label">Límite</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="tim_estado" class="form-control" disabled>
+                                            <label class="form-label">Estado</label>
                                         </div>
                                     </div>
                                 </div>
@@ -105,15 +184,25 @@ $datos = pg_fetch_all($resultado);
                                             <i class="material-icons">file_upload</i>
                                             <span>AGREGAR</span>
                                         </button>
+                                    <?php } ?>  
+                                    <?php if (($boton['permi_descri'] == 'MODIFICAR') && ($boton['asigusu_estado'] == 'ACTIVO')) { ?>
+                                        <button type="button" class="btn bg-indigo waves-effect btnOperacion1" onclick="modificar()">
+                                            <i class="material-icons">edit</i>
+                                            <span>MODIFICAR</span>
+                                        </button>
+                                    <?php } ?>
+                                    <?php if (($boton['permi_descri'] == 'BORRAR') && ($boton['asigusu_estado'] == 'ACTIVO')) { ?>
+                                        <button type="button" class="btn bg-indigo waves-effect btnOperacion1" onclick="eliminar()">
+                                            <i class="material-icons">delete_sweep</i>
+                                            <span>BORRAR</span>
+                                        </button>
                                     <?php } 
                                 } ?>
-                                <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2"
-                                    onclick="controlVacio()">
+                                <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">archive</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2"
-                                    onclick="cancelar()">
+                                <button type="button" style=display:none class="btn bg-red waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -139,9 +228,15 @@ $datos = pg_fetch_all($resultado);
                                 <table class="table table-hover table-borderer table-striped dataTable js-exportable">
                                     <thead>
                                         <tr>
+                                            <th>CODIGO</th>
                                             <th>SUCURSAL</th>
                                             <th>CAJA</th>
-                                            <th>NRO DE FACTURA</th>
+                                            <th>TIPO DE COMPROBANTE</th>
+                                            <th>TIMBRADO</th>
+                                            <th>VIGENCIA DEL TIMBRADO</th>
+                                            <th>COMPROBANTE</th>
+                                            <th>RANGO DE COMPROBANTE</th>
+                                            <th>ESTADO</th>
                                         </tr>
                                     </thead>
                                     <tbody id="grilla_datos">

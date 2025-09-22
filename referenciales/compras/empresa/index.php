@@ -68,7 +68,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="emp_razonsocial" class="form-control disabledno" disabled>
+                                            <input type="text" id="emp_razonsocial" class="form-control disabledno sinCarac" disabled>
                                             <label class="form-label">Razón Social</label>
                                         </div>
                                     </div>
@@ -77,7 +77,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="emp_ruc" class="form-control disabledno" disabled>
+                                            <input type="text" id="emp_ruc" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">RUC</label>
                                         </div>
                                     </div>
@@ -86,34 +86,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="emp_timbrado" class="form-control disabledno" disabled>
-                                            <label class="form-label">Timbrado</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-3">
-                                    <div class="form-group form-float">
-                                        <div class="form-line focus focused">
-                                            <input type="date" id="emp_timb_fec_ini" class="form-control disabledno" disabled>
-                                            <label class="form-label">Incio Vigencia del Timbrado</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-3">
-                                    <div class="form-group form-float">
-                                        <div class="form-line focus focused">
-                                            <input type="date" id="emp_timb_fec_venc" class="form-control disabledno" disabled>
-                                            <label class="form-label">Vencim. Vigencia de Timbrado</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-md-3">
-                                    <div class="form-group form-float">
-                                        <div class="form-line focus">
-                                            <input type="text" id="emp_telefono" class="form-control disabledno" disabled>
+                                            <input type="text" id="emp_telefono" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Teléfono</label>
                                         </div>
                                     </div>
@@ -131,7 +104,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="emp_actividad" class="form-control disabledno" disabled>
+                                            <input type="text" id="emp_actividad" class="form-control disabledno soloTxt" disabled>
                                             <label class="form-label">Actividad</label>
                                         </div>
                                     </div>
@@ -174,7 +147,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">archive</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2" onclick="cancelar()">
+                                <button type="button" style=display:none class="btn bg-red waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -203,8 +176,6 @@ $u = $_SESSION['usuarios'];
                                             <th>CÓDIGO</th>
                                             <th>RAZÓN SOCIAL</th>
                                             <th>RUC</th>
-                                            <th>TIMBRADO</th>
-                                            <th>VIGENCIA TIMBRADO</th>
                                             <th>TELÉFONO</th>
                                             <th>E-MAIL</th>
                                             <th>ACTIVIDAD</th>

@@ -213,7 +213,7 @@ function formatoTabla() {
 //funcion para alertar campos vacios de forma individual
 let completarDatos = (nombreInput, idInput) => {
     mensaje = "";
-    caracteres = /[°/\-'_¡!@#$%^&*(),.¿?":{}|<>;~`]/;
+    caracteres = /[°/\-'_¡!@#$%^&*(),.¿?":{}|<>;~`+]/;
     numeros = /[0-9]/;
 
     //En caso de que el campo esté vacío

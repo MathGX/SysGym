@@ -168,7 +168,7 @@ $datos = pg_fetch_all($resultado);
                                     <i class="material-icons">archive</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style=display:none class="btn bg-pink waves-effect btnOperacion2"
+                                <button type="button" style=display:none class="btn bg-red waves-effect btnOperacion2"
                                     onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>

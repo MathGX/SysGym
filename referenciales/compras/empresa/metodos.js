@@ -78,9 +78,6 @@ let grabar = () => {
             emp_email: $("#emp_email").val(),
             emp_actividad: $("#emp_actividad").val(),
             emp_estado: $("#emp_estado").val(),
-            emp_timbrado: $("#emp_timbrado").val(),
-            emp_timb_fec_ini: $("#emp_timb_fec_ini").val(),
-            emp_timb_fec_venc: $("#emp_timb_fec_venc").val(),
             //Campos para auditar
             operacion: $("#operacion").val(),
             usu_cod: $("#usu_cod").val(),
@@ -218,27 +215,125 @@ function formatoTabla() {
     });
 }
 
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
 //funcion para alertar campos vacios de forma individual
 let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
     //si el input está vacío mostramos la alerta
     if ($(idInput).val().trim() === "") {
-        swal({
-            html: true,
-            title: "ATENCIÓN!!",
-            text: "El campo <b>" + nombreInput + "</b> no puede quedar vacío.",
-            type: "error",
-        });
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
     }
 }
 
-//ejecución del método completarDatos al perder el foco de los inputs con clase .disabledno
-$(".disabledno").on("blur", function() {
-    //capturamos el id del input que perdió el foco
-    let idInput = "#" + $(this).attr("id");
-    //capturamos el texto de la etiqueta label asociada al input
-    let nombreInput = $(this).closest('.form-line').find('.form-label').text();
-    //llamamos a la función pasarle el nombre del input y su id
-    completarDatos(nombreInput, idInput);
+// Evento blur para inputs con clase .disabledno
+$(".disabledno").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;+]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    if (idInput === "#emp_ruc") {
+        caracteres = /['_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    } else {
+        caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    }
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numericos";
+        if (idInput === "#emp_ruc") {
+            mensaje += " y guión"; // concatena la cadena extra
+        }
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede aceptar caracteres especiales.",
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
 });
 
 //funcion listar
@@ -253,8 +348,6 @@ let listar = () => {
                     tabla += "<td>" + objeto.emp_cod + "</td>";
                     tabla += "<td>" + objeto.emp_razonsocial + "</td>";
                     tabla += "<td>" + objeto.emp_ruc + "</td>";
-                    tabla += "<td>" + objeto.emp_timbrado + "</td>";
-                    tabla += "<td>" + objeto.vigencia + "</td>";
                     tabla += "<td>" + objeto.emp_telefono + "</td>";
                     tabla += "<td>" + objeto.emp_email + "</td>";
                     tabla += "<td>" + objeto.emp_actividad + "</td>";

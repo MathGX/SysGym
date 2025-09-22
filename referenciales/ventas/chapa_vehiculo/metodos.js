@@ -261,7 +261,7 @@ $(".disabledno").each(function() {
 //-----------------------------------------------------------------------------------------------------------------------
 //funcion para alertar campos que solo acepten texto
 let soloTexto = (nombreInput, idInput) => {
-    caracteres = /[-'_¡!°/\@#$%^&*().¿?":{}|<>;~`]/;
+    caracteres = /[-'_¡!°/\@#$%^&*().¿?":{}|<>;~`+]/;
     numeros = /[0-9]/;
     valor = $(idInput).val().trim();
     mensaje = "";
@@ -285,7 +285,7 @@ $(".soloTxt").each(function() {
 //-----------------------------------------------------------------------------------------------------------------------
 //funcion para alertar campos que no acepten caracteres especiales
 let sinCaracteres = (nombreInput, idInput) => {
-    caracteres = /[-'_¡´°/\!@#$%^&*(),¿?":{}.|<>;~`]/;
+    caracteres = /[-'_¡´°/\!@#$%^&*(),¿?":{}.|<>;~`+]/;
     valor = $(idInput).val().trim();
     mensaje = "";
     //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta

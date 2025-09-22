@@ -188,7 +188,7 @@ let controlVacio = () => {
 //funcion para alertar campos vacios de forma individual
 let completarDatos = (nombreInput, idInput) => {
     mensaje = "";
-    caracteres = /[°/\-'_¡!@#$^&*(),.¿?":{}|<>;~`]/;
+    caracteres = /[°/\-'_¡!@#$^&*(),.¿?":{}|<>;~`+]/;
 
     //En caso de que el campo esté vacío
     if ($(idInput).val().trim() === "") {
