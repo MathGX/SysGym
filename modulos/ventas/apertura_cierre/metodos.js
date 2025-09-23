@@ -26,7 +26,7 @@ let datusUsuarios = () => {
         });
 };
 
-
+// fecha y hora actuales
 let formatoFecha = (fecha) => {
     let dia = fecha.getDate();
     let mes = fecha.getMonth() + 1;
@@ -37,13 +37,105 @@ let formatoFecha = (fecha) => {
 
     mes = mes < 10 ? '0' + mes : mes;
     dia = dia < 10 ? '0' + dia : dia;
+    horas = horas < 10 ? '0' + horas : horas;
+    minutos = minutos < 10 ? '0' + minutos : minutos;
+    segundos = segundos < 10 ? '0' + segundos : segundos;
 
-    return `${dia}/${mes}/${ano} ${horas}:${minutos}:${segundos}`;
+    return `${ano}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
 }
 
 let ahora = new Date();
 
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
 
+
+// Variable para rastrear si se hizo clic en la lista
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+let soloNumeros = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numéricos";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no acepta caracteres especiales";
+        if (idInput === "#pro_razonsocial") {
+            mensaje += "a parte del guión"; // concatena la cadena extra
+        }
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
 
 /*-------------------------------------------- METODOS --------------------------------------------*/
 
@@ -59,6 +151,7 @@ let habilitarBotones = (operacion) => {
     }
 };
 
+//funcion para obtener el siguiente codigo
 const getCod = () => {
     $.ajax({
         method: "GET",
@@ -68,12 +161,11 @@ const getCod = () => {
     });
 }
 
-
 //funcion abrir
 let abrir = () => {
     $("#operacion").val(1);
     $("#apcier_estado").val('ABIERTA');
-    $("#apcier_fechahora_cierre, #apcier_monto_cierre").val(null);
+    $(".disabledno").val('');
     $(".aper").attr("style", "display:block"); 
     $(".disabledno").removeAttr("disabled");
     $("#apcier_fechahora_aper").val(formatoFecha(ahora));
@@ -258,6 +350,40 @@ let controlVacioAper = () => {
         confirmar();
     }
 };
+
+//funcion control vacio
+let controlVacio = () => {
+    let camposVacios = [];
+
+    // Selecciona los inputs con clase .form-control que estén dentro de .cab, .aper o .cier
+    $(".cab .form-control, .aper .form-control, .cier .form-control").each(function () {
+        let $input = $(this);
+        let valor = $input.val().trim();
+        let $formLine = $input.closest('.form-line');
+        
+        let estaEnApertura = $formLine.closest('.aper').length > 0;
+
+        // Se evalúa según estado y si el campo está vacío
+        if ((estaEnApertura && $("#apcier_estado").val() === "ABIERTA" && valor === "") ||
+            (!estaEnApertura && $("#apcier_estado").val() === "CERRADA" && valor === "")) {
+            
+            let nombreInput = $formLine.find('.form-label').text() || $input.attr('id');
+            camposVacios.push(nombreInput.trim());
+        }
+    });
+
+    if (camposVacios.length > 0) {
+        swal({
+            html: true,
+            title: "RESPUESTA!!",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
+            type: "error",
+        });
+    } else {
+        confirmar();
+    }
+};
+
 
 //funcion control vacio
 let controlVacioCierre = () => {

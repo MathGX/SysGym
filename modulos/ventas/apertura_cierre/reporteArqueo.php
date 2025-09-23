@@ -183,8 +183,8 @@ $datosEmp = pg_fetch_all($resEmp);
                 <table>
                     <thead>
                         <tr>
-                            <td style="width:38%;">MOVIMIENTOS SEGÚN FORMA DE COBRO</td>
-                            <td style="width:12%;">IMPORTE</td>
+                            <td style="width:auto;">MOVIMIENTOS SEGÚN FORMA DE COBRO</td>
+                            <td style="width:auto;">IMPORTE</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -195,12 +195,8 @@ $datosEmp = pg_fetch_all($resEmp);
                                 <td>EFECTIVO</td>
                                 <td class="right"> 
                                     <?php 
-                                        if (isset( $cabecera['efectivo'])) { 
-                                            echo number_format($cabecera['efectivo']);
-                                            $monto_efectivo = number_format($cabecera['efectivo']);
-                                        } else {
-                                            echo '-';
-                                        }
+                                        echo number_format($cabecera['efectivo'], 0, ',', '.');
+                                        $monto_efectivo = $cabecera['efectivo'];
                                     ?>
                                 </td>
                             </tr>
@@ -210,12 +206,8 @@ $datosEmp = pg_fetch_all($resEmp);
                                 <td>CHEQUE</td>
                                 <td class="right"> 
                                     <?php 
-                                        if (isset( $cabecera['cheque'])) { 
-                                            echo number_format($cabecera['cheque']); 
-                                            $monto_cheque = number_format($cabecera['cheque']);
-                                        } else {
-                                            echo '-';
-                                        }
+                                        echo number_format($cabecera['cheque'], 0, ',', '.'); 
+                                        $monto_cheque = $cabecera['cheque'];
                                     ?>
                                 </td>
                             </tr>
@@ -225,12 +217,8 @@ $datosEmp = pg_fetch_all($resEmp);
                                 <td>TARJETA</td>
                                 <td class="right"> 
                                     <?php 
-                                        if (isset( $cabecera['tarjeta'])) { 
-                                            echo number_format($cabecera['tarjeta']); 
-                                            $monto_tarjeta = number_format($cabecera['tarjeta']);
-                                        } else {
-                                            echo '-';
-                                        }
+                                        echo number_format($cabecera['tarjeta'], 0, ',', '.'); 
+                                        $monto_tarjeta = $cabecera['tarjeta'];
                                     ?>
                                 </td>
                             </tr>
@@ -238,7 +226,7 @@ $datosEmp = pg_fetch_all($resEmp);
                     </tbody>
                     <tfoot>
                             <td style="text-align:center;"> IMPORTE TOTAL</td>
-                            <td class="right"> <?php echo $monto_efectivo + $monto_cheque + $monto_tarjeta?> </td>
+                            <td class="right"> <?php echo number_format(($monto_efectivo + $monto_cheque + $monto_tarjeta), 0, ',', '.')?> </td>
                         </tr>
                     </tfoot>
                 </table>
@@ -272,7 +260,7 @@ $dompdf = new Dompdf\Dompdf();
 $dompdf->loadHtml($html);
 
 //Dar el formato horizontal y tamaño de hoja A4 al pdf
-$dompdf->setPaper('A5', 'portrait');
+$dompdf->setPaper('A4', 'portrait');
 
 // Renderizar el contenido HTML a PDF
 $dompdf->render();

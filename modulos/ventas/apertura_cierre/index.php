@@ -95,7 +95,7 @@ $u = $_SESSION['usuarios'];
                                 APERTURA Y CIERRE<small>Movimientos de caja</small>
                             </h2>
                         </div>
-                        <div class="body">
+                        <div class="body cab">
                             <input type="hidden" id="operacion" value="0">
                             <div class="row clearfix">
 
@@ -142,7 +142,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus focused">
                                             <input type="hidden" id="caj_cod" value= "<?php echo $apertura['caj_cod']?>">
-                                            <input type="text" class="form-control disabledno" id="caj_descri" value= "<?php echo $apertura['caj_descri']?>" onkeyup="getCajas()" disabled>
+                                            <input type="text" class="form-control disabledno sinCarac" id="caj_descri" value= "<?php echo $apertura['caj_descri'] ?? null ?>" onkeyup="getCajas()" disabled>
                                             <label class="form-label">Caja</label>
                                             <div id="listaCajas" style="display: none;">
                                                 <ul class="list-group" id="ulCajas" style="height:60px; overflow:auto;"></ul>
@@ -204,7 +204,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="text" id="apcier_fechahora_aper" class= "form-control" disabled>
+                                            <input type="datetime-local" id="apcier_fechahora_aper" class= "form-control" disabled>
                                             <label class="form-label">Fecha y hora de apertura</label>
                                         </div>
                                     </div>
@@ -213,7 +213,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="number" id="apcier_monto_aper" class= "form-control">
+                                            <input type="number" id="apcier_monto_aper" class= "form-control disabledno soloNum">
                                             <label class="form-label">Monto de apertura</label>
                                         </div>
                                     </div>
@@ -222,7 +222,7 @@ $u = $_SESSION['usuarios'];
                             </div>
                             <!-- botones del formulario de ciudades -->
                             <div class="icon-and-text-button-demo">
-                                <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacioAper()">
+                                <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
                                 </button>
@@ -248,7 +248,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="date_timestamp_get" id="apcier_fechahora_cierre" class= "form-control " disabled>
+                                            <input type="datetime-local" id="apcier_fechahora_cierre" class= "form-control " disabled>
                                             <label class="form-label">Fecha y hora de cierre</label>
                                         </div>
                                     </div>
@@ -257,7 +257,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="number" id="apcier_monto_cierre" class= "form-control">
+                                            <input type="number" id="apcier_monto_cierre" class= "form-control soloNum">
                                             <label class="form-label">Monto al cierre</label>
                                         </div>
                                     </div>
@@ -326,7 +326,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="per_cod" value="0">
-                                            <input type="text" class="form-control" id="per_nrodoc" onkeyup="getFuncionarios()">
+                                            <input type="text" class="form-control disabledno ctrlVacioArq soloNum" id="per_nrodoc" onkeyup="getFuncionarios()">
                                             <label class="form-label">C.I.</label>
                                             <div id="listaFuncionarios" style="display: none;">
                                                 <ul class="list-group" id="ulFuncionarios" style="height:60px; overflow:auto;"></ul>
@@ -339,7 +339,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="fun_cod" value="0">
-                                            <input type="text" class="form-control" id="funcionarios" disabled>
+                                            <input type="text" class="form-control ctrlVacioArq" id="funcionarios" disabled>
                                             <label class="form-label">Funcionario</label>
                                         </div>
                                     </div>
@@ -348,7 +348,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-5">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" class="form-control" id="arq_obs">
+                                            <input type="text" class="form-control disabledno ctrlVacioArq sinCarac" id="arq_obs">
                                             <label class="form-label">Observacion</label>
                                         </div>
                                     </div>

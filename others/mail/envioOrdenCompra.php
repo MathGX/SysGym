@@ -303,9 +303,9 @@ try {
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
     $mail->Username = 'orbus.gym0@gmail.com'; // Tu dirección de correo
-    $mail->Password = 'ahop dcgg wdze uloy'; // La contraseña de aplicación
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // Habilitar SSL
-    $mail->Port = 465; // Puerto para SSL
+    $mail->Password = 'vrug vzrr syrn njzl'; // La contraseña de aplicación
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Habilitar SSL
+    $mail->Port = 587; // Puerto para SSL
 
     // Remitente y destinatario
     $mail->setFrom('orbus.gym0@gmail.com', 'Orbus Gym');
