@@ -28,7 +28,7 @@ $u = $_SESSION['usuarios'];
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>TIPO DE IMPUESOT</title>
+    <title>MOTIVOS DE RECLAMO</title>
     <!--Se icluyen los estilos CSS ingresando desde la carpeta raíz hacia el importCSS-->
     <?php include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importCSS.php"; ?>
 </head>
@@ -45,7 +45,7 @@ $u = $_SESSION['usuarios'];
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                FORMULARIO DE TIPOS DE IMPUESTO<small>Registrar los de tipos de impuesto</small>
+                                FORMULARIO DE MOTIVOS DE RECLAMO<small>Registrar los de motivos o causales de reclamos</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -58,7 +58,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="tipimp_cod" class="form-control" disabled>
+                                            <input type="text" id="motrec_cod" class="form-control" disabled>
                                             <label class="form-label">Código</label>
                                         </div>
                                     </div>
@@ -67,7 +67,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="tipimp_descri" class="form-control disabledno" disabled>
+                                            <input type="text" id="motrec_descri" class="form-control disabledno" disabled>
                                             <label class="form-label">Descripción</label>
                                         </div>
                                     </div>
@@ -76,7 +76,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="tipimp_estado" class="form-control" disabled>
+                                            <input type="text" id="motrec_estado" class="form-control" disabled>
                                             <label class="form-label">Estado</label>
                                         </div>
                                     </div>
@@ -128,7 +128,7 @@ $u = $_SESSION['usuarios'];
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>
-                                LISTADO DE TIPOS DE IMPUESTO<small>Tipos de impuesto vigentes</small>
+                                LISTADO DE MOTIVOS DE RECLAMO<small>Motivos o causales de reclamos vigentes</small>
                             </h2>
                         </div>
                         <div class="body">
@@ -137,7 +137,7 @@ $u = $_SESSION['usuarios'];
                                     <thead>
                                         <tr>
                                             <th>CÓDIGO</th>
-                                            <th>TIPO DE IMPUESTO</th>
+                                            <th>MOTIVO O CAUSAL DEL RECLAMO</th>
                                             <th>ESTADO</th>
                                         </tr>
                                     </thead>

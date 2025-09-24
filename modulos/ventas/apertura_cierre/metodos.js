@@ -232,18 +232,18 @@ let grabar = () => {
         method: "POST",
         url: "controlador.php",
         data: {
-            caj_cod: $("#caj_cod").val(),
-            caj_descri: $("#caj_descri").val(),
-            suc_cod: $("#suc_cod").val(),
-            emp_cod: $("#emp_cod").val(),
-            usu_cod: $("#usu_cod").val(),
-            apcier_cod: $("#apcier_cod").val(),
+            caj_cod: $("#caj_cod").val().trim(),
+            caj_descri: $("#caj_descri").val().trim(),
+            suc_cod: $("#suc_cod").val().trim(),
+            emp_cod: $("#emp_cod").val().trim(),
+            usu_cod: $("#usu_cod").val().trim(),
+            apcier_cod: $("#apcier_cod").val().trim(),
             apcier_fechahora_aper: $("#apcier_fechahora_aper").val(),
             apcier_fechahora_cierre: $("#apcier_fechahora_cierre").val(),
-            apcier_monto_aper: $("#apcier_monto_aper").val(),
-            apcier_monto_cierre: $("#apcier_monto_cierre").val(),
-            apcier_estado: $("#apcier_estado").val(),
-            operacion: $("#operacion").val()
+            apcier_monto_aper: $("#apcier_monto_aper").val().trim(),
+            apcier_monto_cierre: $("#apcier_monto_cierre").val().trim(),
+            apcier_estado: $("#apcier_estado").val().trim(),
+            operacion: $("#operacion").val().trim()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
         .done(function (respuesta) {
@@ -318,106 +318,45 @@ let confirmar = () => {
     );
 };
 
-//funcion control vacio
-let controlVacioAper = () => {
-    let condicion = "c";
-
-    if ($("#apcier_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#caj_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#apcier_fechahora_aper").val() == "") {
-        condicion = "i";
-    } else if ($("#apcier_monto_aper").val() == "") {
-        condicion = "i";
-    } else if ($("#apcier_estado").val() == "") {
-        condicion = "i";
-    }
-
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
-    } else {
-        confirmar();
-    }
-};
-
-//funcion control vacio
+//funcion control vacio de apertura y cierre
 let controlVacio = () => {
     let camposVacios = [];
+    let estadoActual = $("#apcier_estado").val().trim().toUpperCase();
 
-    // Selecciona los inputs con clase .form-control que estén dentro de .cab, .aper o .cier
+    // Selecciona todos los inputs relevantes en todas las secciones (cab, aper, cier)
     $(".cab .form-control, .aper .form-control, .cier .form-control").each(function () {
         let $input = $(this);
         let valor = $input.val().trim();
         let $formLine = $input.closest('.form-line');
-        
-        let estaEnApertura = $formLine.closest('.aper').length > 0;
+        let nombreInput = $formLine.find('.form-label').text().trim();
 
-        // Se evalúa según estado y si el campo está vacío
-        if ((estaEnApertura && $("#apcier_estado").val() === "ABIERTA" && valor === "") ||
-            (!estaEnApertura && $("#apcier_estado").val() === "CERRADA" && valor === "")) {
-            
-            let nombreInput = $formLine.find('.form-label').text() || $input.attr('id');
-            camposVacios.push(nombreInput.trim());
+        // Determina si el campo es de la sección 'aper' o 'cier'
+        let esDeApertura = $input.closest('.aper').length > 0;
+        let esDeCierre = $input.closest('.cier').length > 0;
+
+        // Reglas de validación:
+        // 1. Validar si el input no está deshabilitado.
+        // 2. Validar siempre los campos del encabezado (.cab).
+        // 3. Validar los campos de apertura solo si el estado es "ABIERTA".
+        // 4. Validar los campos de cierre solo si el estado es "CERRADA".
+        if (!$input.prop('disabled') && valor === "") {
+            if ($input.closest('.cab').length > 0) {
+                camposVacios.push(nombreInput);
+            } else if (esDeApertura && estadoActual === "ABIERTA") {
+                camposVacios.push(nombreInput);
+            } else if (esDeCierre && estadoActual === "CERRADA") {
+                camposVacios.push(nombreInput);
+            }
         }
     });
 
     if (camposVacios.length > 0) {
+        let mensaje = "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.";
         swal({
             html: true,
             title: "RESPUESTA!!",
-            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
-            type: "error",
-        });
-    } else {
-        confirmar();
-    }
-};
-
-
-//funcion control vacio
-let controlVacioCierre = () => {
-    let condicion = "c";
-
-    if ($("#apcier_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#caj_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#apcier_fechahora_cierre").val() == "") {
-        condicion = "i";
-    } else if ($("#apcier_monto_cierre").val() == "") {
-        condicion = "j";
-    } else if ($("#apcier_estado").val() == "") {
-        condicion = "i";
-    }
-
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
-    } else if (condicion === "j") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "No existen cobros registrados",
-            type: "error",
+            text: mensaje,
+            type: "error"
         });
     } else {
         confirmar();
@@ -449,21 +388,29 @@ let reabrir = () => {
     });
 }
 
+//funcion para validar que no haya campos vacios al grabar
 let controlVacioReabrir = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".reapertura, .cab").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#apcier_cod").val() == "0") {
-        condicion = "i";
-    } else if ($("#caj_descri").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0 ) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>");
     } else {
         reabrir();
     }
@@ -568,42 +515,40 @@ let arqueo = () => {
     });
 }
 
+//funcion para validar que no haya campos vacios al grabar
 let controlVacioArqueo = () => {
-    let condicion = "c";
+    //Verificar si por lo menos un check está seleccionado
     let medPago = false;
-
-    const medios = document.querySelectorAll('input[type="checkbox"]');
-    medios.forEach(function (chek) {
-        if (chek.checked) {
+    
+    $('input[type="checkbox"]').each(function() {
+        if ($(this).is(':checked')) {
             medPago = true;
         }
     });
-        
-
-    if ($("#per_nrodoc").val() == "") {
-        condicion = "i";
-    } else if ($("#fun_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#funcionarios").val() == "") {
-        condicion = "i";
-    } else if ($("#arq_obs").val() == "") {
-        condicion = "i";
-    } else if (medPago == false){
-        condicion = "j";
-    }
     
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
-    } else if (condicion === "j") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Seleccione los medios de pago",
-            type: "error",
-        });
+    // Obtener todos los ids de los elementos hijos de arqueo
+    let campos = $(".arqueo").find('.form-control').map(function() {
+        return this.id;
+    }).get();
+
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
+
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0 ) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>");
+    } else if (medPago == false ) {
+        alertaLabel("Seleccione por lo menos un <b>Medio de pago</b>");
     } else {
         arqueo();
     }

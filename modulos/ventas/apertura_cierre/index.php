@@ -111,8 +111,8 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="hidden" id="emp_cod" value="<?php echo $u['emp_cod']; ?> ">
-                                            <input type="text" id="emp_razonsocial" class="form-control" value="<?php echo $u['emp_razonsocial']; ?> " disabled>
+                                            <input type="hidden" id="emp_cod" value="<?php echo $u['emp_cod'];?> ">
+                                            <input type="text" id="emp_razonsocial" class="form-control" value="<?php echo $u['emp_razonsocial'];?> " disabled>
                                             <label class="form-label">Empresa</label> 
                                         </div>
                                     </div>
@@ -121,8 +121,8 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="hidden" id="suc_cod" value="<?php echo $u['suc_cod']; ?> ">
-                                            <input type="text" id="suc_descri" class="form-control" value="<?php echo $u['suc_descri']; ?> " disabled>
+                                            <input type="hidden" id="suc_cod" value="<?php echo $u['suc_cod'];?> ">
+                                            <input type="text" id="suc_descri" class="form-control" value="<?php echo $u['suc_descri'];?>" disabled>
                                             <label class="form-label">Sucursal</label> 
                                         </div>
                                     </div>
@@ -131,8 +131,8 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="hidden" id="usu_cod" value="<?php echo $u['usu_cod']; ?> ">
-                                            <input type="text" id="usu_login" class="form-control" value="<?php echo $u['usu_login']; ?> " disabled>
+                                            <input type="hidden" id="usu_cod" value="<?php echo $u['usu_cod'];?> ">
+                                            <input type="text" id="usu_login" class="form-control" value="<?php echo $u['usu_login'];?>" disabled>
                                             <label class="form-label">Usuario</label> 
                                         </div>
                                     </div>
@@ -226,7 +226,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="cancelar()">
+                                <button type="button" style="display:none;" class="btn bg-red waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -266,11 +266,11 @@ $u = $_SESSION['usuarios'];
                             </div>
                             <!-- botones del formulario de ciudades -->
                             <div class="icon-and-text-button-demo">
-                                <button type="button" style="width:12.5%;" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacioCierre()">
+                                <button type="button" style="width:12.5%;" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style="width:12.5%;" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="cancelar()">
+                                <button type="button" style="width:12.5%;" style="display:none;" class="btn bg-red waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>

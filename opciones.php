@@ -662,6 +662,11 @@ if(isset($_SESSION['numApcier'])){
                                     <a href="/SysGym/referenciales/servicios/horarios_comida/index.php">Horarios de Comida</a>
                                 </li>
                                 <?php } ?>
+                                <?php if ($accesoInterfaz['REF_MOTIVO_RECLAMO']){?>
+                                <li>
+                                    <a href="/SysGym/referenciales/servicios/motivo_reclamo/index.php">Motivos de reclamo</a>
+                                </li>
+                                <?php } ?>
                             </ul>
                         </li>
                     <?php } ?>

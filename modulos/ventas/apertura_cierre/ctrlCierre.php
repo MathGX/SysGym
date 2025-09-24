@@ -32,31 +32,28 @@ if ($_POST['caso'] == 'cierre') {
     if ($_POST['motivo'] == 'recaudacion') { 
 
         $sqlRecaudacion = "
-        do
-        $$
-        declare 
-            ultcod integer := (select coalesce (max(rec_cod),0)+1 from recaudaciones_depositar);
+        do $$
         begin
             insert into recaudaciones_depositar 
-            (rec_cod,
-            caj_cod,
-            suc_cod,
-            emp_cod,
-            usu_cod,
-            apcier_cod,
-            rec_montoefec,
-            rec_montocheq,
-            rec_estado)
+                (rec_cod,
+                caj_cod,
+                suc_cod,
+                emp_cod,
+                usu_cod,
+                apcier_cod,
+                rec_montoefec,
+                rec_montocheq,
+                rec_estado)
             values 
-            (ultcod,
-            {$_POST['caj_cod']},
-            {$_POST['suc_cod']},
-            {$_POST['emp_cod']},
-            {$_POST['usu_cod']},
-            {$_POST['apcier_cod']},
-            {$montoCierre['efectivo']},            
-            {$montoCierre['cheque']},
-            'ACTIVO');
+                ((select coalesce (max(rec_cod),0)+1 from recaudaciones_depositar),
+                {$_POST['caj_cod']},
+                {$_POST['suc_cod']},
+                {$_POST['emp_cod']},
+                {$_POST['usu_cod']},
+                {$_POST['apcier_cod']},
+                {$montoCierre['efectivo']},            
+                {$montoCierre['cheque']},
+                'ACTIVO');
         end
         $$;";
         
@@ -65,10 +62,7 @@ if ($_POST['caso'] == 'cierre') {
     
 } else if ($_POST['caso'] == 'arqueo') {
     $sqlArqueo = "
-    do
-    $$
-    declare 
-        ultcod integer := (select coalesce (max(arq_cod),0)+1 from arqueo_control);
+    do $$;
     begin
         insert into arqueo_control 
             (caj_cod,
@@ -86,7 +80,7 @@ if ($_POST['caso'] == 'cierre') {
             {$_POST['emp_cod']},
             {$_POST['usu_cod']},
             {$_POST['apcier_cod']},
-            ultcod,            
+            (select coalesce (max(arq_cod),0)+1 from arqueo_control),            
             upper('{$_POST['arq_obs']}'),
             {$_POST['fun_cod']},
             current_date);

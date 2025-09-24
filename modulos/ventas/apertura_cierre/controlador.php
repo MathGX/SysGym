@@ -35,10 +35,10 @@ if ((isset($_POST['operacion']))) {
         );";
     } else if ($_POST['operacion'] == 2) {
         $sql = "select sp_apertura_cierre(
-            null,
-            null,
-            null,
-            null,
+            {$_POST['caj_cod']},
+            {$_POST['suc_cod']},
+            {$_POST['emp_cod']},
+            {$_POST['usu_cod']},
             {$_POST['apcier_cod']},
             null,
             '{$_POST['apcier_fechahora_cierre']}',
@@ -49,22 +49,22 @@ if ((isset($_POST['operacion']))) {
         );";
     }
 
-    $numApcier = ["codigo" => "{$_POST['apcier_cod']}",
-                "caja"=> "{$_POST['caj_cod']}",
-                "cajDescri"=> "{$_POST['caj_descri']}",
-                "estado" => "$apcier_estado"];
-        
-    $_SESSION['numApcier'] = $numApcier;
-
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_cab") !== false) {
         $response = array(
             "mensaje" => "ESTA CAJA YA ESTÁ ABIERTA",
             "tipo" => "error"
         );
     } else {
+        $numApcier = ["codigo" => "{$_POST['apcier_cod']}",
+            "caja"=> "{$_POST['caj_cod']}",
+            "cajDescri"=> "{$_POST['caj_descri']}",
+            "estado" => "$apcier_estado"];
+    
+        $_SESSION['numApcier'] = $numApcier;
+
         $response = array(
             "mensaje" => pg_last_notice($conexion),
             "tipo" => "success"
