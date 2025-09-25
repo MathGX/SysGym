@@ -130,8 +130,8 @@ $u = $_SESSION['usuarios'];
 
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
-                                        <div class="form-line focus focused">
-                                            <input type="text" id="ven_timbrado" class="form-control" value="<?php echo $u['emp_timbrado'];?>" readonly>
+                                        <div class="form-line focus">
+                                            <input type="text" id="ven_timbrado" class="form-control" disabled>
                                             <label class="form-label">Timbrado</label>
                                         </div>
                                     </div>
@@ -139,7 +139,7 @@ $u = $_SESSION['usuarios'];
 
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
-                                        <div class="form-line focus ">
+                                        <div class="form-line focus">
                                         <input type="hidden" id="tipcomp_cod" value="4">
                                             <input type="hidden" id="caj_cod" value= "<?php echo $apertura['caj_cod']?>">
                                             <input type="text" id="ven_nrofac" class="form-control" disabled>

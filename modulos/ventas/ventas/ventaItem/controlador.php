@@ -79,8 +79,11 @@ if (isset($_POST['operacion_cab'])) {
         lpad(cast(f.suc_cod as text), 3, '0')|| '-' || 
         lpad(cast(f.caj_cod as text), 3, '0')|| '-' ||
         lpad(cast((coalesce(max(cast(fac_nro as integer)),0)+1) as text), 7, '0') as factura 
-    from facturas f
-    where f.suc_cod = {$_POST['suc_cod']} and f.caj_cod = {$_POST['caj_cod']}
+    from timbrados f
+    where f.suc_cod = {$_POST['suc_cod']} 
+        and f.emp_cod = {$_POST['emp_cod']} 
+        and f.caj_cod = {$_POST['caj_cod']} 
+        and f.tipcomp_cod = {$_POST['tipcomp_cod']}
     group by f.suc_cod, f.caj_cod;";
 
     $nroFactura = pg_query($conexion, $factura);

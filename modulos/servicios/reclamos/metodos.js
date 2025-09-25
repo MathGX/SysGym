@@ -1,4 +1,3 @@
-
 let datusUsuarios = () => {
     $.ajax({
         method: "POST",
@@ -21,13 +20,105 @@ let formatoFecha = (fecha) => {
     mes = mes < 10 ? '0' + mes : mes;
     dia = dia < 10 ? '0' + dia : dia;
 
-    return `${dia}/${mes}/${ano}`;
+    return `${ano}-${mes}-${dia}`;
 }
 
 let ahora = new Date();
-$("#asis_fecha").val(formatoFecha(ahora));
-/*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
+$("#rec_fecha").val(formatoFecha(ahora));
 
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+// Variable para rastrear si se hizo clic en la lista
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "" && idInput !== "#cliente") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    if (idInput === "#cliente") {
+        caracteres = /['_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/ //permite guion; 
+    } else {
+        caracteres = /[-'_¡´°/\!@#$%^&*().¿?":{}|<>;~`+]/ //permite coma;
+    }
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede aceptar caracteres especiales.",
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+/*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 //funcion habilitar inputs
 let habilitarBotones = (operacion_cab) => {
     /* Segun el parametro sea verdadero o falso deshabilitamos o habilitamos los botones */
@@ -40,37 +131,26 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
-let limpiarCab = () =>{
-    $(".tblcab input").each(function(){
-        $(this).val('');
-    });
-    $(".tblcab .body #asis_fecha").each(function(){
-        $(this).val(formatoFecha(ahora));
-    });
-    $(".tblcab .header .focus").each(function() {
-        $(this).attr("class", "form-line focus")
-    });
-    $(".tblcab .body .focus").each(function() {
-        $(this).attr("class","form-line focus" )
-    });
-}
-
+//funcion para obtener el siguiente codigo
 let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
         data: {consulCod: 1}
     }).done(function (respuesta){
-        $("#asis_cod").val(respuesta.codigo);
+        $("#rec_cod").val(respuesta.codigo);
     });
 }
 
 //funcion nuevo
 let nuevo = () => {
-    limpiarCab();
+    $(".focus").find(".form-control").val('');
     $("#operacion_cab").val(1);
-    $(".disabledno").removeAttr("disabled");
+    $("#rec_fecha").val(formatoFecha(ahora));
+    $("#transaccion").val('INSERCION');
     $(".focus").attr("class", "form-line focus focused");
+    $("#rec_estado").val('ACTIVO');
+    $(".disabledno").removeAttr("disabled");
     $(".tbl").attr("style", "display:none");
     getCod();
     habilitarBotones(true);
@@ -79,8 +159,10 @@ let nuevo = () => {
 };
 
 //anular anular
-let eliminar = () => {
+let anular = () => {
     $("#operacion_cab").val(2);
+    $("#transaccion").val('BORRADO');
+    $("#rec_estado").val('ANULADO');
     habilitarBotones(true);
     window.scroll(0, -100);
 };
@@ -102,15 +184,23 @@ let grabar = () => {
         method: "POST",
         url: "controlador.php",
         data: {
-            asis_cod: $("#asis_cod").val(),
-            asis_fecha: $("#asis_fecha").val(),
-            asis_horaentrada: $("#asis_horaentrada").val(),
-            asis_horasalida: $("#asis_horasalida").val(),
-            cli_cod: $("#cli_cod").val(),
-            usu_cod: $("#usu_cod").val(),
-            suc_cod: $("#suc_cod").val(),
-            emp_cod: $("#emp_cod").val(),
-            operacion_cab: $("#operacion_cab").val()
+            rec_cod: $("#rec_cod").val().trim(),
+            rec_fecha: $("#rec_fecha").val().trim(),
+            rec_descri: $("#rec_descri").val().trim(),
+            cli_cod: $("#cli_cod").val().trim(),
+            rec_estado:$("#rec_estado").val(),
+            suc_cod: $("#suc_cod").val().trim(),
+            emp_cod: $("#emp_cod").val().trim(),
+            usu_cod: $("#usu_cod").val().trim(),
+            motrec_cod: $("#motrec_cod").val().trim(),
+            operacion_cab: $("#operacion_cab").val().trim(),
+            per_nrodoc: $("#per_nrodoc").val().trim(),
+            cliente: $("#cliente").val().trim(),
+            usu_login: $("#usu_login").val().trim(),
+            suc_descri: $("#suc_descri").val().trim(),
+            emp_razonsocial: $("#emp_razonsocial").val().trim(),
+            motrec_descri: $("#motrec_descri").val().trim(),
+            transaccion: $("#transaccion").val().trim()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
         .done(function (respuesta) {
@@ -155,7 +245,7 @@ let confirmar = () => {
 
     /* De acuerdo si la operacion es 2 o 3 modificamos la pregunta */
     if (oper == 2) {
-        preg = "¿Desea eliminar el registro?";
+        preg = "¿Desea anular el registro?";
     }
     swal(
         {
@@ -181,34 +271,32 @@ let confirmar = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".focus").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#asis_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#asis_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#asis_fecha").val() == "") {
-        condicion = "i";
-    } else if ($("#cliente").val() == "") {
-        condicion = "i";
-    } else if ($("#asis_horaentrada").val() == "") {
-        condicion = "i";
-    } else if ($("#asis_horasalida").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "" && id !== "cliente") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
     } else {
@@ -220,7 +308,7 @@ let controlVacio = () => {
 function formatoTabla() {
     $(".js-exportable").DataTable({
         language: {
-            url: "//cdn.datatables.net/plug-asis/1.10.16/i18n/Spanish.json",
+            url: "/SysGym/others/extension/Spanish.json",
         },
         dom:
             "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
@@ -230,6 +318,7 @@ function formatoTabla() {
         buttons: [],
     });
 }
+
 /*---------------------------------------------------- LISTAR Y SELECCION ----------------------------------------------------*/
 
 //funcion seleccionar Fila
@@ -241,8 +330,8 @@ let seleccionarFila = (objetoJSON) => {
 
     $(".focus").attr("class", "form-line focus focused");
     $(".tbldet").removeAttr("style", "display:none;");
-    listar2();
     datusUsuarios();
+    listar2();
 };
 
 //funcion listar
@@ -254,13 +343,13 @@ let listar = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>" + objeto.asis_cod + "</td>";
-                    tabla += "<td>" + objeto.asis_fecha + "</td>";
-                    tabla += "<td>" + objeto.suc_descri + "</td>";
+                    tabla += "<td>" + objeto.rec_cod + "</td>";
+                    tabla += "<td>" + objeto.rec_fecha2 + "</td>";
                     tabla += "<td>" + objeto.usu_login + "</td>";
+                    tabla += "<td>" + objeto.suc_descri + "</td>";
+                    tabla += "<td>" + objeto.motrec_descri + "</td>";
                     tabla += "<td>" + objeto.cliente + "</td>";
-                    tabla += "<td>" + objeto.asis_horaentrada + "</td>";
-                    tabla += "<td>" + objeto.asis_horasalida + "</td>";
+                    tabla += "<td>" + objeto.rec_descri + "</td>";
                 tabla += "</tr>";
             }
             $("#grilla_cab").html(tabla);
@@ -279,7 +368,7 @@ listar();
 function getClientes() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/modulos/servicios/asistencias/listas/listaClientes.php",
+        url: "/SysGym/modulos/servicios/presupuesto_preparacion/listas/listaClientes.php",
         data: {
             cliente:$("#cliente").val()
         }
@@ -313,3 +402,40 @@ function seleccionClientes (datos) {
     $(".focus").attr("class", "form-line focus focused");
 }
 
+//capturamos los datos de la tabla motivo_reclamo en un JSON a través de POST para listarlo
+function getMotivos() {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/modulos/servicios/reclamos/listas/listaMotivos.php",
+        data: {
+            motrec_descri:$("#motrec_descri").val()
+        }
+        //en base al JSON traído desde el listaMotivos arrojamos un resultado
+    }).done(function(lista) {
+        //el JSON de respuesta es mostrado en una lista
+        var fila = "";
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionMotivos("+JSON.stringify(item)+")'>"+item.motrec_descri+"</li>";
+            });
+        }
+        //enviamos a los input correspondientes de el conjunto de filas
+        $("#ulMotivos").html(fila);
+        //le damos un estilo a la lista de GUI
+        $("#listaMotivos").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+    }).fail(function (a,b,c) {
+        swal("ERROR",c,"error");
+    })
+}
+
+//seleccionamos el funcionario por su key y enviamos el dato al input correspondiente
+function seleccionMotivos (datos) {
+    Object.keys(datos).forEach(key =>{
+        $("#"+key).val(datos[key]);
+    });
+    $("#ulMotivos").html();
+    $("#listaMotivos").attr("style", "display:none;");
+    $(".focus").attr("class", "form-line focus focused");
+}

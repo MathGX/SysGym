@@ -10,7 +10,6 @@ let datusUsuarios = () => {
             $("#suc_descri").val(datos.suc_descri);
             $("#emp_cod").val(datos.emp_cod);
             $("#emp_razonsocial").val(datos.emp_razonsocial);
-            $("#ven_timbrado").val(datos.emp_timbrado);
             $("#caj_cod").val(datos.caj_cod);
         });
 };
@@ -80,7 +79,9 @@ let getFactura = () => {
         data: {
             consulFactura: 1,
             suc_cod: $("#suc_cod").val(),
-            caj_cod: $("#caj_cod").val()
+            emp_cod: $("#emp_cod").val(),
+            caj_cod: $("#caj_cod").val(),
+            tipcomp_cod: $("#tipcomp_cod").val()
         }
     }).done(function (respuesta){
         $("#ven_nrofac").val(respuesta.factura);

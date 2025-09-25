@@ -69,12 +69,13 @@ $u = $_SESSION['usuarios'];
                         </div>
                         <div class="body">
                             <input type="hidden" id="operacion_cab" value="0">
+                            <input type="hidden" id="transaccion" value="">
                             <div class="row clearfix">
 
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="asis_cod" class="form-control" disabled>
+                                            <input type="text" id="rec_cod" class="form-control" disabled>
                                             <label class="form-label">Reclamo Nro.</label>
                                         </div>
                                     </div>
@@ -113,8 +114,21 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="asis_fecha" class="form-control" disabled>
+                                            <input type="date" id="rec_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="hidden" id="motrec_cod" value="0">
+                                            <input type="text" id="motrec_descri" class="form-control disabledno soloTxt" disabled onkeyup="getMotivos()">
+                                            <label class="form-label">Causa</label>
+                                            <div id="listaMotivos" style="display: none;">
+                                                <ul class="list-group" id="ulMotivos" style="height:60px; overflow:auto;"></ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -122,9 +136,9 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="hidden" id="per_nrodoc" value="0">
                                             <input type="hidden" id="cli_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="cliente" disabled onkeyup="getClientes()">
+                                            <input type="hidden" id="per_nrodoc" value="0">
+                                            <input type="text" class="form-control disabledno sinCarac" id="cliente" disabled onkeyup="getClientes()">
                                             <label class="form-label">C.I. - Cliente</label>
                                             <div id="listaClientes" style="display: none;">
                                                 <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>
@@ -133,19 +147,10 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-2">
+                                <div class="col-sm-7">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" class="form-control disabledno" id="asis_horaentrada" disabled>
-                                            <label class="form-label">Causa</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-5">
-                                    <div class="form-group form-float">
-                                        <div class="form-line focus">
-                                            <input type="text" class="form-control disabledno" id="asis_horasalida" disabled>
+                                            <input type="text" class="form-control disabledno sinCarac" id="rec_descri" disabled>
                                             <label class="form-label">Descripción</label>
                                         </div>
                                     </div>
@@ -154,7 +159,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="pedven_estado" class="form-control" disabled>
+                                            <input type="text" id="rec_estado" class="form-control" disabled>
                                             <label class="form-label">Estado</label>
                                         </div>
                                     </div>
@@ -170,17 +175,17 @@ $u = $_SESSION['usuarios'];
                                         <span>NUEVO</span>
                                     </button>
                                 <?php } ?>
-                                <?php if ( $botEliminar == true) { ?>
-                                    <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="eliminar()">
-                                        <i class="material-icons">delete</i>
-                                        <span>ELIMINAR</span>
+                                <?php if ($botAnular == true) { ?>
+                                    <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="anular()">
+                                        <i class="material-icons">highlight_off</i>
+                                        <span>ANULAR</span>
                                     </button>
                                 <?php } ?>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="cancelar()">
+                                <button type="button" style="display:none;" class="btn bg-red waves-effect btnOperacion2" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -208,9 +213,10 @@ $u = $_SESSION['usuarios'];
                                         <tr>
                                             <th>NRO.</th>
                                             <th>FECHA</th>
-                                            <th>SUCURSAL</th>
                                             <th>USUARIO</th>
+                                            <th>SUCURSAL</th>
                                             <th>CAUSA</th>
+                                            <th>CLIENTE</th>
                                             <th>RECLAMO</th>
                                         </tr>
                                     </thead>
