@@ -27,18 +27,40 @@ $conexion = $objConexion->getConexion();
 
 $desde = $_GET['desde'];
 $hasta = $_GET['hasta'];
+$pro_cod = $_GET['pro_cod'];
+$tipcomp_cod = $_GET['tipcomp_cod'];
 
 
-$sql = "select 
-        lc.*,
-        p.pro_razonsocial,
-        p.pro_ruc 
+$sql = "select
+            lc.libcom_fecha,
+            p.pro_ruc,
+            p.pro_razonsocial,
+            tc.tipcomp_descri,
+            lc.libcom_nro_comprobante,
+            (lc.libcom_exenta+lc.libcom_iva5+lc.libcom_iva10) facturado,
+            round(lc.libcom_iva10/1.1) gravada10,
+            round(lc.libcom_iva10/11) cf10,
+            round(lc.libcom_iva5/1.05) gravada5,
+            round(lc.libcom_iva5/21) cf5,
+            lc.libcom_exenta 
         from libro_compras lc 
-        join compra_cab cc on cc.com_cod = lc.com_cod
-            join proveedor p on p.pro_cod = cc.pro_cod
-        where lc.libcom_fecha between '$desde' and '$hasta' and lc.libcom_estado ilike '%ACTIVO%'
-        order by lc.com_cod;";
+            join 	(select cc.com_cod, cc.pro_cod, cc.com_nrofac comprobante, cc.tipcomp_cod
+                    from compra_cab cc 
+                    union all 
+                    select ncc.com_cod, ncc.pro_cod, ncc.notacom_nronota, ncc.tipcomp_cod
+                    from nota_compra_cab ncc) c on lc.com_cod = c.com_cod and lc.libcom_nro_comprobante = comprobante and lc.tipcomp_cod = c.tipcomp_cod
+                join proveedor p on p.pro_cod = c.pro_cod
+            join tipo_comprobante tc on tc.tipcomp_cod = lc.tipcomp_cod
+        where lc.libcom_fecha between '$desde' and '$hasta'";
 
+//En caso de que el proveedor no esté vacío
+if (!empty($pro_cod)) {
+    $sql .= " and p.pro_cod = $pro_cod";
+}
+//En caso de que el tipo de comprobante no esté vacío
+if (!empty($tipcomp_cod)) {
+    $sql .= "lc.tipcomp_cod = $tipcomp_cod";
+}
 $resultado = pg_query($conexion, $sql);
 $datos = pg_fetch_all($resultado);
 

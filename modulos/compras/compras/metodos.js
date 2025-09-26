@@ -853,6 +853,7 @@ let seleccionTipFac = (datos) => {
     $("#listaTipFac").attr("style", "display: none;");
     $(".focus").attr("class", "form-line focus focused");
 };
+
 //capturamos los datos de la tabla Orden_copra_cab en un JSON a través de POST para listarlo
 function getOrden() {
     $.ajax({

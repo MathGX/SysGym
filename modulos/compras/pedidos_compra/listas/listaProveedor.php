@@ -22,7 +22,10 @@ $sql = "select
                 p.pro_email solpre_email
         from proveedor p
                 join tipo_proveedor tp on tp.tiprov_cod = p.tiprov_cod 
-        where p.pro_estado = 'ACTIVO' and (p.pro_razonsocial ilike '%$pro_razonsocial%' or p.pro_ruc ilike '%$pro_razonsocial%')
+        where p.pro_estado = 'ACTIVO' 
+                and (p.pro_razonsocial ilike '%$pro_razonsocial%' 
+                        or p.pro_ruc ilike '%$pro_razonsocial%' 
+                        or p.pro_razonsocial||' - RUC: '||p.pro_ruc ilike '%$pro_razonsocial%')
         order by p.pro_razonsocial ;";
         
 //consultamos a la base de datos y guardamos el resultado
