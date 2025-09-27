@@ -12,15 +12,15 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$pedcom_cod = $_POST['pedcom_cod'];
+$cuenpag_estado = $_POST['cuenpag_estado'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
-$sql = "select 
-                pedcom_cod as pedcom_cod_sol
-        from pedido_compra_cab
-        where pedcom_estado = 'ACTIVO'
-                and cast(pedcom_cod as varchar) like '$pedcom_cod%';";
-        
+$sql = "select distinct
+                cuenpag_estado
+        from cuentas_pagar
+        where cuenpag_estado ilike '%$cuenpag_estado%' 
+        order by cuenpag_estado;";
+                
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);
 //convertimos el resultado en un array asociativo

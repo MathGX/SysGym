@@ -62,7 +62,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2 presup_compras" style="display:none;">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" class="form-control obligatorio" id="pedcom_cod" onkeyup="getPedCom()">
+                                            <input type="text" class="form-control obligatorio" id="pedcom_cod_sol" onkeyup="getPedCom()">
                                             <label class="form-label">Pedido Nro. (Obligatorio)</label>
                                             <div id="listaPedCom" style="display: none;">
                                                 <ul class="list-group" id="ulPedCom" style="height:60px; overflow:auto;"></ul>

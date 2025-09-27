@@ -16,7 +16,7 @@ ob_start();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte libro de compras</title>
+    <title>Reporte libro de ventas</title>
 </head>
 <?php
 require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
@@ -27,37 +27,37 @@ $conexion = $objConexion->getConexion();
 
 $desde = $_GET['desde'];
 $hasta = $_GET['hasta'];
-$pro_cod = $_GET['pro_cod'];
+$cli_cod = $_GET['cli_cod'];
 $tipcomp_cod = $_GET['tipcomp_cod'];
 
 
 $sql = "select
-            row_number() over (order by lc.libcom_fecha, lc.libcom_cod) id,
-            to_char(lc.libcom_fecha, 'dd/mm/yyyy') libcom_fecha,
+            row_number() over (order by lc.libven_fecha, lc.libven_cod) id,
+            to_char(lc.libven_fecha, 'dd/mm/yyyy') libven_fecha,
             p.pro_ruc,
             p.pro_razonsocial,
             tc.tipcomp_descri,
-            lc.libcom_nro_comprobante,
-            (lc.libcom_exenta+lc.libcom_iva5+lc.libcom_iva10) facturado,
-            round(lc.libcom_iva10/1.1) grav10,
-            round(lc.libcom_iva10/11) cf10,
-            round(lc.libcom_iva5/1.05) grav5,
-            round(lc.libcom_iva5/21) cf5,
-            lc.libcom_exenta 
-        from libro_compras lc 
-            join 	(select cc.com_cod, cc.pro_cod, cc.com_nrofac comprobante, cc.tipcomp_cod
-                    from compra_cab cc 
+            lc.libven_nrocomprobante,
+            (lc.libven_exenta+lc.libven_iva5+lc.libven_iva10) facturado,
+            round(lc.libven_iva10/1.1) grav10,
+            round(lc.libven_iva10/11) cf10,
+            round(lc.libven_iva5/1.05) grav5,
+            round(lc.libven_iva5/21) cf5,
+            lc.libven_exenta 
+        from libro_ventas lc 
+            join 	(select vc.ven_cod, vc.cli_cod, vc.ven_nrofac comprobante, vc.tipcomp_cod
+                    from ventas_cab vc 
                     union all 
-                    select ncc.com_cod, ncc.pro_cod, ncc.notacom_nronota, ncc.tipcomp_cod
-                    from nota_compra_cab ncc) c on lc.com_cod = c.com_cod and lc.libcom_nro_comprobante = comprobante and lc.tipcomp_cod = c.tipcomp_cod
-                join proveedor p on p.pro_cod = c.pro_cod
+                    select nvc.ven_cod, nvc.cli_cod, nvc.notven_nronota, nvc.tipcomp_cod
+                    from nota_venta_cab nvc) c on lc.ven_cod = c.ven_cod and lc.libven_nrocomprobante = comprobante and lc.tipcomp_cod = c.tipcomp_cod
+                join clientes p on p.cli_cod = c.cli_cod
             join tipo_comprobante tc on tc.tipcomp_cod = lc.tipcomp_cod
-        where lc.libcom_estado = 'ACTIVO'
-            and lc.libcom_fecha between '$desde' and '$hasta'";
+        where lc.libven_estado = 'ACTIVO'
+            and lc.libven_fecha between '$desde' and '$hasta'";
 
-//En caso de que el proveedor no esté vacío
-if (!empty($pro_cod)) {
-    $sql .= " and p.pro_cod = $pro_cod";
+//En caso de que el clientes no esté vacío
+if (!empty($cli_cod)) {
+    $sql .= " and p.cli_cod = $cli_cod";
 }
 //En caso de que el tipo de comprobante no esté vacío
 if (!empty($tipcomp_cod)) {
@@ -68,27 +68,27 @@ $datos = pg_fetch_all($resultado);
 
 //-------------------------------------------------------------SQL DE SUMA-------------------------------------------------------------
 $sqlSuma = "select
-            sum(lc.libcom_exenta+lc.libcom_iva5+lc.libcom_iva10) sum_facturado,
-            sum(round(lc.libcom_iva10/1.1)) sum_grav10,
-            sum(round(lc.libcom_iva10/11)) sum_cf10,
-            sum(round(lc.libcom_iva5/1.05)) sum_grav5,
-            sum(round(lc.libcom_iva5/21)) sum_cf5,
-            sum(lc.libcom_exenta) sum_exenta,
+            sum(lc.libven_exenta+lc.libven_iva5+lc.libven_iva10) sum_facturado,
+            sum(round(lc.libven_iva10/1.1)) sum_grav10,
+            sum(round(lc.libven_iva10/11)) sum_cf10,
+            sum(round(lc.libven_iva5/1.05)) sum_grav5,
+            sum(round(lc.libven_iva5/21)) sum_cf5,
+            sum(lc.libven_exenta) sum_exenta,
             upper(to_char('$desde'::date, 'TMMonth')||' '||extract(year from '$desde'::date)) periodo
-        from libro_compras lc 
-            join 	(select cc.com_cod, cc.pro_cod, cc.com_nrofac comprobante, cc.tipcomp_cod
-                    from compra_cab cc 
+        from libro_ventas lc 
+            join 	(select vc.ven_cod, vc.cli_cod, vc.ven_nrofac comprobante, vc.tipcomp_cod
+                    from ventas_cab vc 
                     union all 
-                    select ncc.com_cod, ncc.pro_cod, ncc.notacom_nronota, ncc.tipcomp_cod
-                    from nota_compra_cab ncc) c on lc.com_cod = c.com_cod and lc.libcom_nro_comprobante = comprobante and lc.tipcomp_cod = c.tipcomp_cod
-                join proveedor p on p.pro_cod = c.pro_cod
+                    select nvc.ven_cod, nvc.cli_cod, nvc.notven_nronota, nvc.tipcomp_cod
+                    from nota_venta_cab nvc) c on lc.ven_cod = c.ven_cod and lc.libven_nrocomprobante = comprobante and lc.tipcomp_cod = c.tipcomp_cod
+                join clientes p on p.cli_cod = c.cli_cod
             join tipo_comprobante tc on tc.tipcomp_cod = lc.tipcomp_cod 
-        where lc.libcom_estado = 'ACTIVO'
-            and lc.libcom_fecha between '$desde' and '$hasta'";
+        where lc.libven_estado = 'ACTIVO'
+            and lc.libven_fecha between '$desde' and '$hasta'";
 
-//En caso de que el proveedor no esté vacío
-if (!empty($pro_cod)) {
-    $sql .= " and p.pro_cod = $pro_cod";
+//En caso de que el clientes no esté vacío
+if (!empty($cli_cod)) {
+    $sql .= " and p.cli_cod = $cli_cod";
 }
 //En caso de que el tipo de comprobante no esté vacío
 if (!empty($tipcomp_cod)) {
@@ -143,7 +143,7 @@ $datoSuma = pg_fetch_assoc($resultadoSuma);
 
     <div class="titulo">
         <div style="text-align: center; font-weight: bold; font-size: 10px; margin-bottom: 12px; color: #000000ff;">
-            Libro de Compras
+            Libro de Ventas
         </div>
         <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 10px; color: #333;">
             <div style="line-height: 1.4;">
@@ -190,7 +190,7 @@ $datoSuma = pg_fetch_assoc($resultadoSuma);
                         <?php echo number_format($fila['id']);?>
                     </td>
                     <td style="text-align:right;">
-                        <?php echo $fila['libcom_fecha']; ?>
+                        <?php echo $fila['libven_fecha']; ?>
                     </td>
                     <td>
                         <?php echo $fila['pro_ruc'] ?>
@@ -202,7 +202,7 @@ $datoSuma = pg_fetch_assoc($resultadoSuma);
                         <?php echo $fila['tipcomp_descri'] ?>
                     </td>
                     <td>
-                        <?php echo $fila['libcom_nro_comprobante'] ?>
+                        <?php echo $fila['libven_nrocomprobante'] ?>
                     </td>
                     <td style="text-align:right;">
                         <?php echo number_format($fila['facturado'],0, ',', '.') ?>
@@ -220,7 +220,7 @@ $datoSuma = pg_fetch_assoc($resultadoSuma);
                         <?php echo number_format($fila['cf5'], 0, '', '.') ?>
                     </td>
                     <td style="text-align:right;">
-                        <?php echo number_format($fila['libcom_exenta'], 0, '', '.') ?>
+                        <?php echo number_format($fila['libven_exenta'], 0, '', '.') ?>
                     </td>
                 </tr>
             <?php } ?>
@@ -272,5 +272,5 @@ $dompdf->setPaper('A4', 'landscape');
 $dompdf->render();
 
 // Generar el archivo PDF y guardarlo en el servidor o descargarlo
-$dompdf->stream('reporte_libro_compras.pdf', array("Attachment" => false));
+$dompdf->stream('reporte_libro_ventas.pdf', array("Attachment" => false));
 ?>

@@ -1,32 +1,32 @@
 //funcion hablitarCampos
 let habilitarCampos = () => {
-    if ($("#informe").val() == "PRESUPUESTOS DEL PROVEEDOR") {
+    if ($("#informe").val() == "CAJA Y RECAUDACIONES") {
         //se ocultan los campos que no corresponden
-        $(".libro_compra, .cuentas_pagar").attr("style", "display:none");
+        $(".libro_venta, .cuentas_cobrar").attr("style", "display:none");
         //se limpian todos los campos innecesarios por si se cambia de informe
-        $(".libro_compra input, .cuentas_pagar input").each(function(){
+        $(".libro_venta input, .cuentas_cobrar input").each(function(){
             $(this).val('');
         });
         //se muestran los campos correspondientes
-        $(".presup_compras").removeAttr("style");
-    } else if ($("#informe").val() == "LIBRO DE COMPRAS") {
+        $(".caja_rec").removeAttr("style");
+    } else if ($("#informe").val() == "LIBRO DE VENTAS") {
         //se ocultan los campos que no corresponden
-        $(".presup_compras, .cuentas_pagar").attr("style", "display:none");
+        $(".caja_rec, .cuentas_cobrar").attr("style", "display:none");
         //se limpian todos los campos innecesarios por si se cambia de informe
-        $(".presup_compras input, .cuentas_pagar input").each(function(){
+        $(".caja_rec input, .cuentas_cobrar input").each(function(){
             $(this).val('');
         });
         //se muestran los campos correspondientes
-        $(".libro_compra").removeAttr("style");
-    } else if ($("#informe").val() == "CUENTAS A PAGAR") {
+        $(".libro_venta").removeAttr("style");
+    } else if ($("#informe").val() == "CUENTAS A COBRAR") {
         //se ocultan los campos que no corresponden
-        $(".presup_compras, .libro_compra").attr("style", "display:none");
+        $(".caja_rec, .libro_venta").attr("style", "display:none");
         //se limpian todos los campos innecesarios por si se cambia de informe
-        $(".presup_compras input, .libro_compra input").each(function(){
+        $(".caja_rec input, .libro_venta input").each(function(){
             $(this).val('');
         });
         //se muestran los campos correspondientes
-        $(".cuentas_pagar").removeAttr("style");
+        $(".cuentas_cobrar").removeAttr("style");
     }
 };
 
@@ -65,17 +65,17 @@ let alertaLabel = (msj) => {
 let reporte = () => {
     let desde = $("#desde").val();
     let hasta = $("#hasta").val();
-    let pro_cod = $("#pro_cod").val() || 0;
+    let cli_cod = $("#cli_cod").val() || 0;
     let tiprov_cod = $("#tiprov_cod").val() || 0;
     let tipcomp_cod = $("#tipcomp_cod").val() || 0;
-    let cuenpag_estado = $("#cuenpag_estado").val() || '';
+    let cuencob_estado = $("#cuencob_estado").val() || '';
 
-    if($("#informe").val() == "PRESUPUESTOS DEL PROVEEDOR"){
+    if($("#informe").val() == "CAJA Y RECAUDACIONES"){
         window.location.href = "presupuesto_prov_reporte/reportePresupuesto.php?pedcom_cod="+pedcom_cod+"&itm_cod="+itm_cod+"&tipitem_cod="+tipitem_cod+"&tipimp_cod="+tipimp_cod;
-    } else if($("#informe").val() == "CUENTAS A PAGAR"){
-        window.location.href = "cuentasPagar_reporte/reporteCuentasPagar.php?desde="+desde+"&hasta="+hasta+"&pro_cod="+pro_cod+"&tiprov_cod="+tiprov_cod+"&cuenpag_estado="+cuenpag_estado;
-    } else if($("#informe").val() == "LIBRO DE COMPRAS"){
-        window.location.href = "libroCompras_reporte/reporteLibroCompras.php?desde="+desde+"&hasta="+hasta+"&pro_cod="+pro_cod+"&tiprov_cod="+tiprov_cod+"&tipcomp_cod="+tipcomp_cod;
+    } else if($("#informe").val() == "CUENTAS A COBRAR"){
+        window.location.href = "cuentasCobrar_reporte/reporteCuentasCobrar.php?desde="+desde+"&hasta="+hasta+"&cli_cod="+cli_cod+"&tiprov_cod="+tiprov_cod+"&cuencob_estado="+cuencob_estado;
+    } else if($("#informe").val() == "LIBRO DE VENTAS"){
+        window.location.href = "libroVentas_reporte/reporteLibroVentas.php?desde="+desde+"&hasta="+hasta+"&cli_cod="+cli_cod+"&tiprov_cod="+tiprov_cod+"&tipcomp_cod="+tipcomp_cod;
     }
 }
 
@@ -86,32 +86,32 @@ let controlVacio = () => {
     let desde = new Date($("#desde").val());
     let hasta = new Date($("#hasta").val());
 
-    // Selecciona todos los inputs relevantes en todas las secciones (presup_compras, libro_compras, cuentas_pagar)
+    // Selecciona todos los inputs relevantes en todas las secciones (caja_rec, libro_ventas, cuentas_cobrar)
     $(".obligatorio").each(function () {
         let $input = $(this);
         let valor = $input.val().trim();
         let $formLine = $input.closest('.form-line');
         let nombreInput = $formLine.find('.form-label').text().trim();
 
-        // Determina si el campo es de la sección 'presup_compras', 'libro_compras' o 'cuentas_pagar'
-        let esPresup = $input.closest('.presup_compras').length > 0;
-        let esLibro = $input.closest('.libro_compra').length > 0;
-        let esCuenta = $input.closest('.cuentas_pagar').length > 0;
+        // Determina si el campo es de la sección 'caja_rec', 'libro_ventas' o 'cuentas_cobrar'
+        let esPresup = $input.closest('.caja_rec').length > 0;
+        let esLibro = $input.closest('.libro_venta').length > 0;
+        let esCuenta = $input.closest('.cuentas_cobrar').length > 0;
 
         // Reglas de validación:
         // 1. Validar si el input no está deshabilitado.
         // 2. Validar siempre el campo de reporte.
         // 3. Validar los campos de presupuesto proveedor solo si se encuentra seleccionado en el campo de reporte.
-        // 4. Validar los campos de libro de compras solo si se encuentra seleccionado en el campo de reporte.
-        // 5. Validar los campos de cuentas a pagar solo si se encuentra seleccionado en el campo de reporte.
+        // 4. Validar los campos de libro de ventas solo si se encuentra seleccionado en el campo de reporte.
+        // 5. Validar los campos de cuentas a cobrar solo si se encuentra seleccionado en el campo de reporte.
         if (valor === "") {
             if ($input.closest('.mod').length > 0) {
                 camposVacios.push(nombreInput);
-            } else if (esPresup && informeActual === "PRESUPUESTOS DEL PROVEEDOR") {
+            } else if (esPresup && informeActual === "CAJA Y RECAUDACIONES") {
                 camposVacios.push(nombreInput);
-            } else if (esLibro && informeActual === "LIBRO DE COMPRAS") {
+            } else if (esLibro && informeActual === "LIBRO DE VENTAS") {
                 camposVacios.push(nombreInput);
-            } else if (esCuenta && informeActual === "CUENTAS A PAGAR") {
+            } else if (esCuenta && informeActual === "CUENTAS A COBRAR") {
                 camposVacios.push(nombreInput);
             }
         }
@@ -119,7 +119,7 @@ let controlVacio = () => {
 
     if (camposVacios.length > 0) {
         alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
-    } else if (informeActual === "LIBRO DE COMPRAS" && formatoFecha(desde) !== formatoFecha(hasta)) {
+    } else if (informeActual === "LIBRO DE VENTAS" && formatoFecha(desde) !== formatoFecha(hasta)) {
         alertaLabel("Las fechas seleccionadas deben pertenecer al mismo peridodo fiscal");
         console.log(formatoFecha(desde), formatoFecha(hasta));
     } else {
@@ -134,7 +134,7 @@ let getInforme = () => {
     $.ajax({
         //Enviamos datos para poder filtrar
         method: "POST",
-        url: "/SysGym/Informes/modulos/compras/controlador.php",
+        url: "/SysGym/Informes/modulos/ventas/controlador.php",
         data: {
             informe:$("#informe").val()
         }
@@ -172,15 +172,15 @@ let seleccionInforme = (datos) => {
     habilitarCampos();
 };
     
-//capturamos los datos de la tabla proveedor en un JSON a través de POST para listarlo
-function getProveedor() {
+//capturamos los datos de la tabla clientes en un JSON a través de POST para listarlo
+function getPedido() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/modulos/compras/pedidos_compra/listas/listaProveedor.php",
+        url: "/SysGym/modulos/ventas/ventas/ventaItem/listas/listaPedido.php",
         data: {
-            pro_razonsocial:$("#pro_razonsocial").val().trim()
+            cliente:$("#cliente").val()
         }
-        //en base al JSON traído desde el listaProveedor arrojamos un resultado
+        //en base al JSON traído desde el listaPedido arrojamos un resultado
     }).done(function(lista) {
         //el JSON de respuesta es mostrado en una lista
         var fila = "";
@@ -189,25 +189,25 @@ function getProveedor() {
             fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
         }else{    
             $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionProveedor("+JSON.stringify(item)+")'>"+item.pro_razonsocial+"</li>";
+                fila += "<li class='list-group-item' onclick='seleccionPedido("+JSON.stringify(item)+")'>"+item.cliente+"</li>";
             });
         }
         //enviamos a los input correspondientes de el conjunto de filas
-        $("#ulProveedor").html(fila);
-        //le damos un estilo a la lista de Proveedor
-        $("#listaProveedor").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+        $("#ulPedido").html(fila);
+        //le damos un estilo a la lista de Pedido
+        $("#listaPedido").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");
     })
 }
 
-//seleccionamos el Proveedor de compra por su key y enviamos el dato al input correspondiente
-function seleccionProveedor (datos) {
+//seleccionamos el Pedido de VENTA por su key y enviamos el dato al input correspondiente
+function seleccionPedido (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
-    $("#ulProveedor").html();
-    $("#listaProveedor").attr("style", "display:none;");
+    $("#ulPedido").html();
+    $("#listaPedido").attr("style", "display:none;");
     $(".focus").attr("class", "form-line focus focused");
 }
 

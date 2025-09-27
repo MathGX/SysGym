@@ -1100,7 +1100,7 @@ function getPedCom() {
         method: "POST",
         url: "/SysGym/modulos/compras/pedidos_compra/listas/listaPedCom.php",
         data: {
-            pedcom_cod:$("#pedcom_cod").val()
+            pedcom_cod:$("#pedcom_cod_sol").val()
         }
         //en base al JSON traído desde el listaPedCom arrojamos un resultado
     }).done(function(lista) {
