@@ -12,7 +12,7 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$cliente = $_POST['cliente'];
+$cliente = pg_escape_string($conexion,$_POST['cliente']);
 
 //se realiza la consulta SQL a la base de datos con el filtro
 $sql = "select 

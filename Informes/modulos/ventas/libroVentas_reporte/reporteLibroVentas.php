@@ -34,16 +34,16 @@ $tipcomp_cod = $_GET['tipcomp_cod'];
 $sql = "select
             row_number() over (order by lc.libven_fecha, lc.libven_cod) id,
             to_char(lc.libven_fecha, 'dd/mm/yyyy') libven_fecha,
-            p.pro_ruc,
-            p.pro_razonsocial,
+            p2.per_nrodoc ,
+            p2.per_nombres||' '||p2.per_apellidos cliente,
             tc.tipcomp_descri,
             lc.libven_nrocomprobante,
-            (lc.libven_exenta+lc.libven_iva5+lc.libven_iva10) facturado,
+            (lc.libven_excenta +lc.libven_iva5+lc.libven_iva10) facturado,
             round(lc.libven_iva10/1.1) grav10,
             round(lc.libven_iva10/11) cf10,
             round(lc.libven_iva5/1.05) grav5,
             round(lc.libven_iva5/21) cf5,
-            lc.libven_exenta 
+            coalesce(lc.libven_excenta,0) libven_exenta
         from libro_ventas lc 
             join 	(select vc.ven_cod, vc.cli_cod, vc.ven_nrofac comprobante, vc.tipcomp_cod
                     from ventas_cab vc 
@@ -51,6 +51,7 @@ $sql = "select
                     select nvc.ven_cod, nvc.cli_cod, nvc.notven_nronota, nvc.tipcomp_cod
                     from nota_venta_cab nvc) c on lc.ven_cod = c.ven_cod and lc.libven_nrocomprobante = comprobante and lc.tipcomp_cod = c.tipcomp_cod
                 join clientes p on p.cli_cod = c.cli_cod
+                	join personas p2 on p2.per_cod = p.per_cod 
             join tipo_comprobante tc on tc.tipcomp_cod = lc.tipcomp_cod
         where lc.libven_estado = 'ACTIVO'
             and lc.libven_fecha between '$desde' and '$hasta'";
@@ -68,12 +69,12 @@ $datos = pg_fetch_all($resultado);
 
 //-------------------------------------------------------------SQL DE SUMA-------------------------------------------------------------
 $sqlSuma = "select
-            sum(lc.libven_exenta+lc.libven_iva5+lc.libven_iva10) sum_facturado,
-            sum(round(lc.libven_iva10/1.1)) sum_grav10,
-            sum(round(lc.libven_iva10/11)) sum_cf10,
-            sum(round(lc.libven_iva5/1.05)) sum_grav5,
-            sum(round(lc.libven_iva5/21)) sum_cf5,
-            sum(lc.libven_exenta) sum_exenta,
+            coalesce(sum(lc.libven_excenta+lc.libven_iva5+lc.libven_iva10),0) sum_facturado,
+            coalesce(sum(round(lc.libven_iva10/1.1)),0) sum_grav10,
+            coalesce(sum(round(lc.libven_iva10/11)),0) sum_cf10,
+            coalesce(sum(round(lc.libven_iva5/1.05)),0) sum_grav5,
+            coalesce(sum(round(lc.libven_iva5/21)),0) sum_cf5,
+            coalesce(sum(lc.libven_excenta),0) sum_exenta,
             upper(to_char('$desde'::date, 'TMMonth')||' '||extract(year from '$desde'::date)) periodo
         from libro_ventas lc 
             join 	(select vc.ven_cod, vc.cli_cod, vc.ven_nrofac comprobante, vc.tipcomp_cod
@@ -193,10 +194,10 @@ $datoSuma = pg_fetch_assoc($resultadoSuma);
                         <?php echo $fila['libven_fecha']; ?>
                     </td>
                     <td>
-                        <?php echo $fila['pro_ruc'] ?>
+                        <?php echo $fila['per_nrodoc'] ?>
                     </td>
                     <td>
-                        <?php echo $fila['pro_razonsocial'] ?>
+                        <?php echo $fila['cliente'] ?>
                     </td>
                     <td>
                         <?php echo $fila['tipcomp_descri'] ?>

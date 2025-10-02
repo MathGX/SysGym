@@ -12,7 +12,7 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$dep_descri = $_POST['dep_descri'];
+$dep_descri = pg_escape_string($conexion,$_POST['dep_descri']);
 $suc_cod = $_POST['suc_cod'];
 $emp_cod = $_POST['emp_cod'];
 

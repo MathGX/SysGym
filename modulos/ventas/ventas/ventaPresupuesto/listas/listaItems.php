@@ -13,7 +13,7 @@ $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
 $prpr_cod = $_POST["prpr_cod"];
-$itm_descri = $_POST['itm_descri'];
+$itm_descri = pg_escape_string($conexion,$_POST['itm_descri']);
 $suc_cod = $_POST['suc_cod'];
 $emp_cod = $_POST['emp_cod'];
 

@@ -68,12 +68,12 @@ $datos = pg_fetch_all($resultado);
 
 //-------------------------------------------------------------SQL DE SUMA-------------------------------------------------------------
 $sqlSuma = "select
-            sum(lc.libcom_exenta+lc.libcom_iva5+lc.libcom_iva10) sum_facturado,
-            sum(round(lc.libcom_iva10/1.1)) sum_grav10,
-            sum(round(lc.libcom_iva10/11)) sum_cf10,
-            sum(round(lc.libcom_iva5/1.05)) sum_grav5,
-            sum(round(lc.libcom_iva5/21)) sum_cf5,
-            sum(lc.libcom_exenta) sum_exenta,
+            coalesce(sum(lc.libcom_exenta+lc.libcom_iva5+lc.libcom_iva10),0) sum_facturado,
+            coalesce(sum(round(lc.libcom_iva10/1.1)),0) sum_grav10,
+            coalesce(sum(round(lc.libcom_iva10/11)),0) sum_cf10,
+            coalesce(sum(round(lc.libcom_iva5/1.05)),0) sum_grav5,
+            coalesce(sum(round(lc.libcom_iva5/21)),0) sum_cf5,
+            coalesce(sum(lc.libcom_exenta),0) sum_exenta,
             upper(to_char('$desde'::date, 'TMMonth')||' '||extract(year from '$desde'::date)) periodo
         from libro_compras lc 
             join 	(select cc.com_cod, cc.pro_cod, cc.com_nrofac comprobante, cc.tipcomp_cod

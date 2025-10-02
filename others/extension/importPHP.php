@@ -9,14 +9,14 @@ function obtenerConfig($suc_cod, $emp_cod, $conf_cod = null) {
 
     // Se consulta la configuración de la sucursal y empresa
     $sql = "select 
-        c.conf_validacion
-    from suc_config sc
-        join configuraciones c on c.conf_cod = sc.conf_cod 
-    where sc.suc_cod = $suc_cod and sc.emp_cod = $emp_cod";
+                c.conf_validacion
+            from suc_config sc
+                join configuraciones c on c.conf_cod = sc.conf_cod 
+            where sc.suc_cod = $suc_cod and sc.emp_cod = $emp_cod";
 
     // Si se proporciona un código de configuración, se agrega a la consulta
     if ($conf_cod !== null) {
-        $sql." and sc.conf_cod = $conf_cod";
+        $sql.=" and sc.conf_cod = $conf_cod";
         // Se ejecuta la consulta y se obtiene el resultado
         $resultado = pg_query($conexion, $sql);
         // Se guarda el resultado en un array asociativo

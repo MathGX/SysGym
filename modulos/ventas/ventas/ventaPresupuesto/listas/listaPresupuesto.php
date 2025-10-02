@@ -12,7 +12,9 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$cliente = $_POST['cliente'];
+$cliente = pg_escape_string($conexion,$_POST['cliente']);
+$suc_cod = $_POST['suc_cod'];
+$emp_cod = $_POST['emp_cod'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
 $sql = "select 
@@ -27,6 +29,8 @@ from presupuesto_prep_cab ppc
 		join personas p on p.per_cod = c.per_cod
 	join v_presupuesto_prep_det vppd on vppd.prpr_cod = ppc.prpr_cod
 where ppc.prpr_estado = 'ACTIVO'
+	and ppc.suc_cod = $suc_cod
+	and ppc.emp_cod = $emp_cod
 	and (p.per_nrodoc ilike '%$cliente%' or p.per_nombres||' '||p.per_apellidos ilike '%$cliente%')
 group by ppc.prpr_cod, p.per_nrodoc, p.per_nombres, p.per_apellidos
 order by p.per_nombres;";

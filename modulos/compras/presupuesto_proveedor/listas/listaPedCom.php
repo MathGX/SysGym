@@ -12,11 +12,14 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
+$pedcom_cod = $_POST['pedcom_cod'];
+
 //se realiza la consulta SQL a la base de datos con el filtro
 $sql = "select 
-        pedcom_cod
+                pedcom_cod
         from pedido_compra_cab
-        where pedcom_estado ilike '%ACTIVO%';";
+        where pedcom_estado = 'ACTIVO'
+                and cast(pedcom_cod as varchar) like '$pedcom_cod%';";
         
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);

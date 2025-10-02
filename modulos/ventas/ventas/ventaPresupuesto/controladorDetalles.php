@@ -19,7 +19,7 @@ if (isset($_POST['operacion_det'])) {
     if ($case == "detalle") {
 
         //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
-        $sql = "select sp_venta_det(
+        $sql = "select sp_ventas_det(
             {$_POST['ven_cod']},
             {$_POST['itm_cod']},
             {$_POST['tipitem_cod']},
@@ -34,7 +34,7 @@ if (isset($_POST['operacion_det'])) {
         pg_query($conexion, $sql);
         $error = pg_last_error($conexion);
         //Si ocurre un error lo capturamos y lo enviamos al front-end
-        if (strpos($error, "1") !== false) {
+        if (strpos($error, "err_det") !== false) {
             $response = array(
                 "mensaje" => "ESTE ITEM YA ESTÁ CARGADO",
                 "tipo" => "error"
@@ -47,7 +47,7 @@ if (isset($_POST['operacion_det'])) {
         }
         echo json_encode($response);
 
-    } else if ($case == "libro") {
+    } /*else if ($case == "libro") {
         //establecemos los montos a pasar pra el sp_libro_ventas segun el tipo de impuesto
         $tipimp_cod = $_POST["tipimp_cod"];
         if ($tipimp_cod == "1") {
@@ -92,7 +92,16 @@ if (isset($_POST['operacion_det'])) {
         );";
 
         pg_query($conexion, $sqlCuenta);
-    }
+    }*/
+} else if (isset($_POST['validacion_det']) == 1) {
+    //Se consulta si la venta esta asociada a una nota
+    $venCod = "select 1 validar from nota_venta_cab ncc 
+                where ncc.ven_cod = {$_POST['ven_cod']}
+                    and ncc.notven_estado != 'ANULADO';";
+
+    $codigo = pg_query($conexion, $venCod);
+    $codigoven = pg_fetch_assoc($codigo);
+    echo json_encode($codigoven);
 
 } else if (isset($_POST['ven_cod'])){
 

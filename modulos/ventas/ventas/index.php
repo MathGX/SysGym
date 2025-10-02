@@ -53,7 +53,7 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row clearfix">
-                <?php if (($apertura['apcier_estado'] == 'ABIERTA') || ($u['perf_descri'] == 'ADMINISTRADOR')) { ?>
+                <?php if (($apertura['apcier_estado'] == 'ABIERTA') || in_array($u['perf_cod'],[1,9])) { ?>
                     <div class="col-lg-12">
                         <!-- formulario de ciudades -->
                         <div class="card">

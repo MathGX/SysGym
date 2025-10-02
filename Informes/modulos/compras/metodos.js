@@ -65,17 +65,18 @@ let alertaLabel = (msj) => {
 let reporte = () => {
     let desde = $("#desde").val();
     let hasta = $("#hasta").val();
+    let pedcom_cod = $("#pedcom_cod").val() || 0;
     let pro_cod = $("#pro_cod").val() || 0;
     let tiprov_cod = $("#tiprov_cod").val() || 0;
     let tipcomp_cod = $("#tipcomp_cod").val() || 0;
     let cuenpag_estado = $("#cuenpag_estado").val() || '';
 
     if($("#informe").val() == "PRESUPUESTOS DEL PROVEEDOR"){
-        window.location.href = "presupuesto_prov_reporte/reportePresupuesto.php?pedcom_cod="+pedcom_cod+"&itm_cod="+itm_cod+"&tipitem_cod="+tipitem_cod+"&tipimp_cod="+tipimp_cod;
+        window.open("presupuesto_prov_reporte/reportePresupuesto.php?pedcom_cod="+pedcom_cod+"&itm_cod="+itm_cod+"&tipitem_cod="+tipitem_cod+"&tipimp_cod="+tipimp_cod);
     } else if($("#informe").val() == "CUENTAS A PAGAR"){
-        window.location.href = "cuentasPagar_reporte/reporteCuentasPagar.php?desde="+desde+"&hasta="+hasta+"&pro_cod="+pro_cod+"&tiprov_cod="+tiprov_cod+"&cuenpag_estado="+cuenpag_estado;
+        window.open("cuentasPagar_reporte/reporteCuentasPagar.php?desde="+desde+"&hasta="+hasta+"&pro_cod="+pro_cod+"&tiprov_cod="+tiprov_cod+"&cuenpag_estado="+cuenpag_estado);
     } else if($("#informe").val() == "LIBRO DE COMPRAS"){
-        window.location.href = "libroCompras_reporte/reporteLibroCompras.php?desde="+desde+"&hasta="+hasta+"&pro_cod="+pro_cod+"&tiprov_cod="+tiprov_cod+"&tipcomp_cod="+tipcomp_cod;
+        window.open("libroCompras_reporte/reporteLibroCompras.php?desde="+desde+"&hasta="+hasta+"&pro_cod="+pro_cod+"&tiprov_cod="+tiprov_cod+"&tipcomp_cod="+tipcomp_cod);
     }
 }
 
@@ -171,6 +172,85 @@ let seleccionInforme = (datos) => {
     $(".mod").attr("class", "form-line mod focused");
     habilitarCampos();
 };
+
+//capturamos los datos de la tabla pedido_compra_cab en un JSON a través de POST para listarlo
+function getPedCom() {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/modulos/compras/presupuesto_proveedor/listas/listaPedCom.php",
+        data: {
+            pedcom_cod:$("#pedcom_cod").val()
+        }
+        //en base al JSON traído desde el listaPedCom arrojamos un resultado
+    }).done(function(lista) {
+        //el JSON de respuesta es mostrado en una lista
+        var fila = "";
+        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{    
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionPedCom("+JSON.stringify(item)+")'>"+item.pedcom_cod+"</li>";
+            });
+        }
+        //enviamos a los input correspondientes de el conjunto de filas
+        $("#ulPedCom").html(fila);
+        //le damos un estilo a la lista de PedCom
+        $("#listaPedCom").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+    }).fail(function (a,b,c) {
+        swal("ERROR",c,"error");
+    })
+}
+
+//seleccionamos el pedido de compra por su key y enviamos el dato al input correspondiente
+function seleccionPedCom (datos) {
+    Object.keys(datos).forEach(key =>{
+        $("#"+key).val(datos[key]);
+    });
+    $("#ulPedCom").html();
+    $("#listaPedCom").attr("style", "display:none;");
+    $(".focus").attr("class", "form-line focus focused");
+}
+
+//capturamos los datos de la tabla items en un JSON a través de POST para listarlo
+function getItems() {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/modulos/compras/presupuesto_proveedor/listas/listaItems.php",
+        data: {
+            pedcom_cod:$("#pedcom_cod").val(),
+            itm_descri:$("#itm_descri").val()
+        }
+        //en base al JSON traído desde el listaItems arrojamos un resultado
+    }).done(function(lista) {
+        //el JSON de respuesta es mostrado en una lista
+        var fila = "";
+        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{    
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionItems("+JSON.stringify(item)+")'>"+item.itm_descri+"</li>";
+            });
+        }
+        //enviamos a los input correspondientes de el conjunto de filas
+        $("#ulItems").html(fila);
+        //le damos un estilo a la lista de items
+        $("#listaItems").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+    }).fail(function (a,b,c) {
+        swal("ERROR",c,"error");
+    })
+}
+
+//seleccionamos el item por su key y enviamos el dato al input correspondiente
+function seleccionItems (datos) {
+    Object.keys(datos).forEach(key =>{
+        $("#"+key).val(datos[key]);
+    });
+    $("#ulItems").html();
+    $("#listaItems").attr("style", "display:none;");
+    $(".foc").attr("class", "form-line foc focused");
+}
     
 //capturamos los datos de la tabla proveedor en un JSON a través de POST para listarlo
 function getProveedor() {
@@ -247,5 +327,44 @@ function seleccionNota (datos) {
     });
     $("#ulNota").html();
     $("#listaNota").attr("style", "display:none;");
+    $(".focus").attr("class", "form-line focus focused");
+}
+
+//capturamos los datos de la tabla cuentas_pagar en un JSON a través de POST para listarlo
+function getEstado() {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/Informes/modulos/compras/listas/listaEstado.php",
+        data: {
+            cuenpag_estado:$("#cuenpag_estado").val()
+        }
+        //en base al JSON traído desde el listaEstado arrojamos un resultado
+    }).done(function(lista) {
+        //el JSON de respuesta es mostrado en una lista
+        var fila = "";
+        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{    
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionEstado("+JSON.stringify(item)+")'>"+item.cuenpag_estado+"</li>";
+            });
+        }
+        //enviamos a los input correspondientes de el conjunto de filas
+        $("#ulEstado").html(fila);
+        //le damos un estilo a la lista de Estado
+        $("#listaEstado").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
+    }).fail(function (a,b,c) {
+        swal("ERROR",c,"error");
+    })
+}
+
+//seleccionamos el item por su key y enviamos el dato al input correspondiente
+function seleccionEstado (datos) {
+    Object.keys(datos).forEach(key =>{
+        $("#"+key).val(datos[key]);
+    });
+    $("#ulEstado").html();
+    $("#listaEstado").attr("style", "display:none;");
     $(".focus").attr("class", "form-line focus focused");
 }

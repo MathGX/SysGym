@@ -62,7 +62,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2 presup_compras" style="display:none;">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" class="form-control obligatorio" id="pedcom_cod_sol" onkeyup="getPedCom()">
+                                            <input type="text" class="form-control obligatorio" id="pedcom_cod" onkeyup="getPedCom()">
                                             <label class="form-label">Pedido Nro. (Obligatorio)</label>
                                             <div id="listaPedCom" style="display: none;">
                                                 <ul class="list-group" id="ulPedCom" style="height:60px; overflow:auto;"></ul>
@@ -134,10 +134,10 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3 cuentas_pagar" style="display:none;">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" class="form-control" id="cuenpag_estado" onkeyup="getNota()">
+                                            <input type="text" class="form-control" id="cuenpag_estado" onkeyup="getEstado()">
                                             <label class="form-label">Estado (Opcional)</label>
-                                            <div id="listaNota" style="display: none;">
-                                                <ul class="list-group" id="ulNota" style="height:60px; overflow:scroll;"></ul>
+                                            <div id="listaEstado" style="display: none;">
+                                                <ul class="list-group" id="ulEstado" style="height:60px; overflow:scroll;"></ul>
                                             </div>
                                         </div>
                                     </div>

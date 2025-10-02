@@ -590,7 +590,7 @@ let controlVacio2 = () => {
             text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
-    } else if (($("#tipitem_cod").val() == "1") && $("#pedcomdet_cantidad").val() !== "0") {
+    } else if (($("#tipitem_cod").val() == "1") && $("#comdet_cantidad").val() !== "0") {
         alertaLabel("El campo <b>Cantidad</b> debe ser 0 (cero) para los servicios.");
     } else {
         confirmar2();
