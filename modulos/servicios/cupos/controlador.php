@@ -12,36 +12,36 @@ $conexion = $objConexion->getConexion();
 if (isset($_POST['operacion_cab'])) {
 
     //ESCAPAMOS LOS DATOS CAPTURADOS
-    $ins_estado = pg_escape_string($conexion, $_POST['ins_estado']);
+    $cup_estado = pg_escape_string($conexion, $_POST['cup_estado']);
     $usu_login = pg_escape_string($conexion, $_POST['usu_login']);
     $suc_descri = pg_escape_string($conexion, $_POST['suc_descri']);
     $emp_razonsocial = pg_escape_string($conexion, $_POST['emp_razonsocial']);
-    $cliente = pg_escape_string($conexion, $_POST['cliente']);
+    $itm_descri = pg_escape_string($conexion, $_POST['itm_descri']);
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
-    $sql = "select sp_inscripciones_cab(
-        {$_POST['ins_cod']},
-        '{$_POST['ins_fecha']}',
-        '$ins_estado',
-        {$_POST['usu_cod']},
+    $sql = "select sp_cup_serv_cab(
+        {$_POST['cup_cod']},
+        '{$_POST['cup_fecha']}',
+        '$cup_estado',
         {$_POST['suc_cod']},
         {$_POST['emp_cod']},
-        {$_POST['cli_cod']},
+        {$_POST['usu_cod']},
+        {$_POST['itm_cod']},
+        {$_POST['tipitem_cod']},
         {$_POST['operacion_cab']},
-        '$usu_login',
         '$suc_descri',
         '$emp_razonsocial',
-        '{$_POST['per_nrodoc']}',
-        '$cliente',
+        '$usu_login',
+        '$itm_descri',
         '{$_POST['transaccion']}'
     );";
 
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_item") !== false) {
         $response = array(
-            "mensaje" => "ESTE CLIENTE YA ESTÁ INSCRIPTO",
+            "mensaje" => "EL CUPO PARA EL SERVICIO SELECCIONADO YA SE ENCUENTRA REGISTRADO",
             "tipo" => "error"
         );
     } else {
@@ -54,7 +54,7 @@ if (isset($_POST['operacion_cab'])) {
 
 } else if (isset($_POST['consulCod']) == 1) {
     //Se obtiene el valor para asignar al codigo
-    $insCod = "select coalesce (max(ins_cod),0)+1 as codigo from inscripciones_cab;";
+    $insCod = "select coalesce (max(cup_cod),0)+1 as codigo from cup_serv_cab;";
 
     $codigo = pg_query($conexion, $insCod);
     $codigoIns = pg_fetch_assoc($codigo);
@@ -62,7 +62,7 @@ if (isset($_POST['operacion_cab'])) {
 
 } else {
     //Si el post no recibe la operacion realizamos una consulta
-    $sql = "select * from --v_inscripciones_cab;";
+    $sql = "select * from v_cup_serv_cab;";
 
     $resultado = pg_query($conexion, $sql);
     $datos = pg_fetch_all($resultado);

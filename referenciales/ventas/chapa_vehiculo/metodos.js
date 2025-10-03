@@ -49,7 +49,7 @@ let modificar = () => {
 //funcion eliminar
 let eliminar = () => {
     $("#operacion").val(3);
-    $("#transaccion").val('BORRADO');
+    $("#transaccion").val('ANULACION');
     $("#chapve_estado").val('INACTIVO');
     habilitarBotones(true);
     window.scroll(0, -100);

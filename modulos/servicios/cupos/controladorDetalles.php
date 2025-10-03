@@ -13,20 +13,20 @@ if (isset($_POST['operacion_det'])) {
 
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
-    $sql = "select sp_inscripciones_det(
-        {$_POST['ins_cod']},
-        {$_POST['dia_cod']},
-        '{$_POST['insdet_horainicio']}',
-        '{$_POST['insdet_horafinal']}',
+    $sql = "select sp_cup_serv_det(
+        '{$_POST['cupdet_hora_ini']}',
+        '{$_POST['cupdet_hora_fin']}',
+        {$_POST['cup_cod']},
+        {$_POST['cupdet_cantidad']},
         {$_POST['operacion_det']}
     );";
 
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_det") !== false) {
         $response = array(
-            "mensaje" => "ESTE DÍA YA ESTÁ CARGADO",
+            "mensaje" => "EL RANGO DE HORARIO INGRESADO YA SE ENCUENTRA REGISTRADO",
             "tipo" => "error"
         );
     } else {
@@ -38,11 +38,11 @@ if (isset($_POST['operacion_det'])) {
     echo json_encode($response);
 
 
-} else if (isset($_POST['ins_cod'])){
+} else if (isset($_POST['cup_cod'])){
 
     //Si el post no recibe la operacion realizamos una consulta
-    $sql = "select * from v_inscripciones_det
-            where ins_cod = {$_POST['ins_cod']};";
+    $sql = "select * from v_cup_serv_det
+            where cup_cod = {$_POST['cup_cod']};";
 
     $resultado = pg_query($conexion, $sql);
     $datos = pg_fetch_all($resultado);

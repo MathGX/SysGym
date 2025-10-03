@@ -158,7 +158,7 @@ let nuevo = () => {
 //anular anular
 let anular = () => {
     $("#operacion_cab").val(2);
-    $("#transaccion").val('BORRADO');
+    $("#transaccion").val('ANULACION');
     $("#pedcom_estado").val('ANULADO');
     habilitarBotones(true);
     window.scroll(0, -100);

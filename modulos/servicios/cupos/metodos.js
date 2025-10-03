@@ -13,6 +13,7 @@ let datusUsuarios = () => {
         });
 };
 
+//funcion para establecer la fecha actual
 let formatoFecha = (fecha) => {
     let dia = fecha.getDate();
     let mes = fecha.getMonth() + 1;
@@ -21,11 +22,102 @@ let formatoFecha = (fecha) => {
     mes = mes < 10 ? '0' + mes : mes;
     dia = dia < 10 ? '0' + dia : dia;
 
-    return `${dia}/${mes}/${ano}`;
+    return `${ano}-${mes}-${dia}`;
+}
+let ahora = new Date();
+$("#cup_fecha").val(formatoFecha(ahora));
+
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
 }
 
-let ahora = new Date();
-$("#ins_fecha").val(formatoFecha(ahora));
+// Variable para rastrear si se hizo clic en la lista
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno, .disabledno2").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numéricos";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no acepta caracteres especiales";
+        if (idInput === "#pro_razonsocial") {
+            mensaje += "a parte del guión"; // concatena la cadena extra
+        }
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 
 //funcion habilitar inputs
@@ -40,11 +132,12 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
+//funcion para vaciar los campos de la cabecera
 let limpiarCab = () =>{
     $(".tblcab input").each(function(){
         $(this).val('');
     });
-    $(".tblcab .body #ins_fecha").each(function(){
+    $(".tblcab .body #cup_fecha").each(function(){
         $(this).val(formatoFecha(ahora));
     });
     $(".tblcab .header .focus").each(function() {
@@ -55,13 +148,14 @@ let limpiarCab = () =>{
     });
 }
 
+//funcion para obtener el nuevo codigo
 let getCod = () => {
     $.ajax({
         method: "POST",
         url: "controlador.php",
         data: {consulCod: 1}
     }).done(function (respuesta){
-        $("#ins_cod").val(respuesta.codigo);
+        $("#cup_cod").val(respuesta.codigo);
     });
 }
 
@@ -72,7 +166,7 @@ let nuevo = () => {
     $("#transaccion").val('INSERCION');
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
-    $("#ins_estado").val('ACTIVO');
+    $("#cup_estado").val('ACTIVO');
     $(".tbl, .tbldet").attr("style", "display:none");
     getCod();
     habilitarBotones(true);
@@ -83,8 +177,8 @@ let nuevo = () => {
 //anular anular
 let anular = () => {
     $("#operacion_cab").val(2);
-    $("#transaccion").val('BORRADO');
-    $("#ins_estado").val('ANULADO');
+    $("#transaccion").val('ANULACION');
+    $("#cup_estado").val('ANULADO');
     habilitarBotones(true);
     window.scroll(0, -100);
 };
@@ -106,19 +200,19 @@ let grabar = () => {
         method: "POST",
         url: "controlador.php",
         data: {
-            ins_cod: $("#ins_cod").val(),
-            ins_fecha: $("#ins_fecha").val(),
-            ins_estado: $("#ins_estado").val(),
-            usu_cod: $("#usu_cod").val(),
+            cup_cod: $("#cup_cod").val(),
+            cup_fecha: $("#cup_fecha").val(),
+            cup_estado: $("#cup_estado").val(),
             suc_cod: $("#suc_cod").val(),
             emp_cod: $("#emp_cod").val(),
-            cli_cod: $("#cli_cod").val(),
+            usu_cod: $("#usu_cod").val(),
+            itm_cod: $("#itm_cod").val(),
+            tipitem_cod: $("#tipitem_cod").val(),
             operacion_cab: $("#operacion_cab").val(),
-            usu_login: $("#usu_login").val(),
             suc_descri: $("#suc_descri").val(),
             emp_razonsocial: $("#emp_razonsocial").val(),
-            per_nrodoc: $("#per_nrodoc").val(),
-            cliente: $("#cliente").val(),
+            usu_login: $("#usu_login").val(),
+            itm_descri: $("#itm_descri").val(),
             transaccion: $("#transaccion").val()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
@@ -192,30 +286,30 @@ let confirmar = () => {
 
 //funcion control vacio
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".focus").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#ins_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#ins_fecha").val() == "") {
-        condicion = "i";
-    } else if ($("#per_nrodoc").val() == "") {
-        condicion = "i";
-    } else if ($("#cliente").val() == "") {
-        condicion = "i";
-    } else if ($("#ins_estado").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
     } else {
@@ -255,8 +349,8 @@ let habilitarBotones2 = (operacion_det) => {
 //funcion agregar
 let agregar = () => {
     $("#operacion_det").val(1);
-    $("#dia_cod, #dia_descri, #insdet_horainicio, #insdet_horafinal").val('');
-    $(".disabledno").removeAttr("disabled");
+    $(".foc").find(".form-control").val('');
+    $(".disabledno2").removeAttr("disabled");
     $(".foc").attr("class", "form-line foc focused");
     habilitarBotones2(true);
     window.scroll(0, -100);
@@ -275,10 +369,10 @@ function grabar2() {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            ins_cod: $("#ins_cod").val(),
-            dia_cod: $("#dia_cod").val(),           
-            insdet_horainicio: $("#insdet_horainicio").val(),
-            insdet_horafinal: $("#insdet_horafinal").val(),
+            cupdet_hora_ini: $("#cupdet_hora_ini").val(),
+            cupdet_hora_fin: $("#cupdet_hora_fin").val(),
+            cup_cod: $("#cup_cod").val(),      
+            cupdet_cantidad: $("#cupdet_cantidad").val(),      
             operacion_det: $("#operacion_det").val(),
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
@@ -292,7 +386,11 @@ function grabar2() {
         function () {
             //Si la respuesta devuelve un success recargamos la pagina
             if (respuesta.tipo == "success") {
-                location.reload(true);
+                listar2(); //actualizamos la grilla
+                $(".foc").find(".form-control").val(''); //limpiamos los input
+                $(".foc").attr("class", "form-line foc"); //se bajan los labels quitando el focused
+                $(".disabledno2").attr("disabled", "disabled"); //deshabilitamos los input
+                habilitarBotones2(false); //deshabilitamos los botones
             }
         }
     );
@@ -350,38 +448,38 @@ let confirmar2 = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio2 = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".foc").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#ins_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#dia_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#insdet_horainicio").val() == "") {
-        condicion = "i";
-    } else if ($("#insdet_horafinal").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
         swal({
+            html: true,
             title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
+            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
             type: "error",
         });
     } else {
         confirmar2();
     }
 };
-
-const persona = () => {
-    window.location = "/SysGym/referenciales/servicios/personas"
-}
-
-const cliente = () => {
-    window.location = "/SysGym/referenciales/ventas/clientes"
-}
 
 /*---------------------------------------------------- LISTAR Y SELECCION DE CABECERA Y DETALLE ----------------------------------------------------*/
 
@@ -400,15 +498,15 @@ let listar2 = () => {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            ins_cod: $("#ins_cod").val(),
+            cup_cod: $("#cup_cod").val(),
         }
     }).done(function (respuesta) {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila2(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>" + objeto.dia_descri + "</td>";
-                    tabla += "<td>" + objeto.insdet_horainicio + "</td>";
-                    tabla += "<td>" + objeto.insdet_horafinal + "</td>";
+                    tabla += "<td>" + objeto.cupdet_hora_ini + "</td>";
+                    tabla += "<td>" + objeto.cupdet_hora_fin + "</td>";
+                    tabla += "<td>" + objeto.cupdet_cantidad + "</td>";
                 tabla += "</tr>";
             }
             $("#grilla_det").html(tabla);
@@ -440,13 +538,12 @@ let listar = () => {
             let tabla = "";
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td>" + objeto.ins_cod + "</td>";
-                    tabla += "<td>" + objeto.ins_fecha + "</td>";
+                    tabla += "<td>" + objeto.cup_cod + "</td>";
+                    tabla += "<td>" + objeto.cup_fecha2 + "</td>";
                     tabla += "<td>" + objeto.usu_login + "</td>";
                     tabla += "<td>" + objeto.suc_descri + "</td>";
-                    tabla += "<td>" + objeto.cliente + "</td>";
-                    tabla += "<td>" + objeto.per_telefono + "</td>";
-                    tabla += "<td>" + objeto.ins_estado + "</td>";
+                    tabla += "<td>" + objeto.itm_descri + "</td>";
+                    tabla += "<td>" + objeto.cup_estado + "</td>";
                 tabla += "</tr>";
             }
             $("#grilla_cab").html(tabla);
@@ -461,54 +558,17 @@ listar();
 
 /*---------------------------------------------------- AUTOCOMPLETADOS ----------------------------------------------------*/
 
-//capturamos los datos de la tabla Clientes en un JSON a través de POST para listarlo
-function getClientes() {
+//capturamos los datos de la tabla items en un JSON a través de POST para listarlo
+function getItems() {
     $.ajax({
         method: "POST",
-        url: "/SysGym/modulos/servicios/inscripciones/listas/listaClientes.php",
+        url: "/SysGym/modulos/servicios/presupuesto_preparacion/listas/listaItems.php",
         data: {
-            per_nrodoc:$("#per_nrodoc").val(),
-            cliente:$("#cliente").val()
+            itm_descri:$("#itm_descri").val(),
+            tipitem_cod:$("#tipitem_cod").val(),
+            itm_precio:$("#itm_precio").val()
         }
-        //en base al JSON traído desde el listaClientes arrojamos un resultado
-    }).done(function(lista) {
-        //el JSON de respuesta es mostrado en una lista
-        var fila = "";
-        if(lista.true == true){
-            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
-        }else{
-            $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionClientes("+JSON.stringify(item)+")'>"+item.cliente+"</li>";
-            });
-        }
-        //enviamos a los input correspondientes de el conjunto de filas
-        $("#ulClientes").html(fila);
-        //le damos un estilo a la lista de GUI
-        $("#listaClientes").attr("style", "display:block; position:absolute; width:100%;");
-    }).fail(function (a,b,c) {
-        swal("ERROR",c,"error");
-    })
-}
-
-//seleccionamos el funcionario por su key y enviamos el dato al input correspondiente
-function seleccionClientes (datos) {
-    Object.keys(datos).forEach(key =>{
-        $("#"+key).val(datos[key]);
-    });
-    $("#ulClientes").html();
-    $("#listaClientes").attr("style", "display:none;");
-    $(".focus").attr("class", "form-line focus focused");
-}
-
-//capturamos los datos de la tabla Dias en un JSON a través de POST para listarlo
-function getDias() {
-    $.ajax({
-        method: "POST",
-        url: "/SysGym/modulos/servicios/inscripciones/listas/listaDias.php",
-        data: {
-            dia_descri:$("#dia_descri").val()
-        }
-        //en base al JSON traído desde el listaDias arrojamos un resultado
+        //en base al JSON traído desde el listaItems arrojamos un resultado
     }).done(function(lista) {
         //el JSON de respuesta es mostrado en una lista
         var fila = "";
@@ -517,25 +577,24 @@ function getDias() {
             fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
         }else{    
             $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionDias("+JSON.stringify(item)+")'>"+item.dia_descri+"</li>";
+                fila += "<li class='list-group-item' onclick='seleccionItems("+JSON.stringify(item)+")'>"+item.itm_descri+"</li>";
             });
         }
         //enviamos a los input correspondientes de el conjunto de filas
-        $("#ulDias").html(fila);
-        //le damos un estilo a la lista de Dias
-        $("#listaDias").attr("style", "display:block; position:absolute; width:100%;");
+        $("#ulItems").html(fila);
+        //le damos un estilo a la lista de items
+        $("#listaItems").attr("style", "display:block; position:absolute; z-index:3000; width:100%;");
     }).fail(function (a,b,c) {
         swal("ERROR",c,"error");
     })
 }
 
 //seleccionamos el item por su key y enviamos el dato al input correspondiente
-function seleccionDias (datos) {
+function seleccionItems (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
-    $("#ulDias").html();
-    $("#listaDias").attr("style", "display:none;");
-    $(".foc").attr("class", "form-line foc focused");
+    $("#ulItems").html();
+    $("#listaItems").attr("style", "display:none;");
+    $(".focus").attr("class", "form-line focus focused");
 }
-
