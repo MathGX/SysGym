@@ -2,15 +2,11 @@
 //Establecemos la salida en formato json
 header("Content-type: application/json; charset=utf-8");
 //Establecemos el array de array asociativos
-$tabla = [array('tabla' => "EMPRESAS"), 
-        array('tabla' => "SUCURSALES"), 
-        array('tabla' => "DEPOSITOS"), 
-        array('tabla' => "CIUDADES"), 
-        array('tabla' => "TIPOS DE IMPUESTO"), 
-        array('tabla' => "TIPOS DE ITEM"), 
-        array('tabla' => "ITEMS"), 
-        array('tabla' => "TIPOS DE PROVEEDOR"), 
-        array('tabla' => "PROVEEDORES"),];
+$tabla = [
+                ['tabla' => "SUCURSALES"],
+                ['tabla' => "ITEMS"],
+                ['tabla' => "PROVEEDORES"]
+        ];
 
 // Obtener el valor enviado por POST
 $entidad = $_POST['tabla'];

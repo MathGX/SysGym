@@ -293,12 +293,7 @@ let controlVacio = () => {
 
     // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
     if (camposVacios.length > 0) {
-        swal({
-            html: true,
-            title: "RESPUESTA!!",
-            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
-            type: "error",
-        });
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }

@@ -21,6 +21,7 @@ if (isset($_POST['operacion_cab'])) {
     $sql = "select sp_cobros_cab(
         {$_POST['cobr_cod']},
         '{$_POST['cobr_fecha']}',
+        {$_POST['cobr_nrocuota']},
         '$cobr_estado',
         {$_POST['caj_cod']},
         {$_POST['suc_cod']},
@@ -28,17 +29,46 @@ if (isset($_POST['operacion_cab'])) {
         {$_POST['usu_cod']},
         {$_POST['apcier_cod']},
         {$_POST['tipcomp_cod']},
+        {$_POST['ven_cod']},
+        '{$_POST['cobr_nrorec']}',
         {$_POST['operacion_cab']}
     );";
 
     pg_query($conexion, $sql);
     
-    $response = array(
-        "mensaje" => pg_last_notice($conexion),
-        "tipo" => "success"
-    );
-
+    $error = pg_last_error($conexion);
+    //Si ocurre un error lo capturamos y lo enviamos al front-end
+    if (strpos($error, "err_reci") !== false) {
+        $response = array(
+            "mensaje" => "EL NRO DE RECIBO YA SE ENCUENTRA REGISTRADO",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "err_cuota") !== false) {
+        $response = array(
+            "mensaje" => "PARA ANULAR ESTE COBRO, ANTES DEBE ANULAR EL DE LAS CUOTAS SUPERIORES",
+            "tipo" => "error"
+        );
+    } else {
+        $response = array(
+            "mensaje" => pg_last_notice($conexion),
+            "tipo" => "success"
+        );
+    }
     echo json_encode($response);
+} else if (isset($_POST['consulNroComprob']) == 1) {
+    
+    //Se obtiene el siguiente nro de comprobante
+    $comprobante = "select 
+        round(f.tim_com_nro_lim - (coalesce(max(f.tim_com_nro::integer),0)+1)) disponibles,
+        lpad(cast((coalesce(max(cast(tim_com_nro as integer)),0)+1) as text), 7, '0') as comprobante 
+    from timbrados f
+    where f.tipcomp_cod = {$_POST['tipcomp_cod']}
+    group by f.tim_com_nro_lim";
+
+    $nroComprob = pg_query($conexion, $comprobante);
+    $nroCom = pg_fetch_assoc($nroComprob);
+
+    echo json_encode($nroCom);
 
 } else if (isset($_POST['consulCod']) == 1) {
     //Se obtiene el valor para asignar al codigo

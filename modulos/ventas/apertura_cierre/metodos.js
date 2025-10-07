@@ -43,7 +43,6 @@ let formatoFecha = (fecha) => {
 
     return `${ano}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
 }
-
 let ahora = new Date();
 
 //funcion para mostrar alertas con label en el mensaje
@@ -55,7 +54,6 @@ let alertaLabel = (msj) => {
         type: "error",
     });
 }
-
 
 // Variable para rastrear si se hizo clic en la lista
 let clickEnLista = false;

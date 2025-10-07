@@ -260,7 +260,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">archive</i>
                                     <span>GRABAR</span>
                                 </button>
-                                <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
+                                <button type="button" style="display:none;" class="btn bg-red waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>

@@ -133,19 +133,19 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-2">
+                                <div class="col-sm-2 entrada">
                                     <div class="form-group form-float">
-                                        <div class="form-line focus focused">
-                                            <input type="time" class="form-control disabledno" id="asis_horaentrada" disabled>
+                                        <div class="form-line focused">
+                                            <input type="time" class="form-control" id="asis_horaentrada" disabled>
                                             <label class="form-label">Hora Entrada</label>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-2">
+                                <div class="col-sm-2 salida">
                                     <div class="form-group form-float">
-                                        <div class="form-line focus focused">
-                                            <input type="time" class="form-control disabledno" id="asis_horasalida" disabled>
+                                        <div class="form-line focused">
+                                            <input type="time" class="form-control" id="asis_horasalida" disabled>
                                             <label class="form-label">Hora Salida</label>
                                         </div>
                                     </div>
@@ -156,9 +156,13 @@ $u = $_SESSION['usuarios'];
                             <!-- botones del formulario de asistencias -->
                             <div class="icon-and-text-button-demo">
                                 <?php if ($botNuevo == true) { ?>
-                                    <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="nuevo()">
-                                        <i class="material-icons">create_new_folder</i>
-                                        <span>NUEVO</span>
+                                    <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="entrada()">
+                                        <i class="material-icons">arrow_forward</i>
+                                        <span>ENTRADA</span>
+                                    </button>
+                                    <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="salida()">
+                                        <i class="material-icons">arrow_back</i>
+                                        <span>SALIDA</span>
                                     </button>
                                 <?php } ?>
                                 <?php if ( $botEliminar == true) { ?>

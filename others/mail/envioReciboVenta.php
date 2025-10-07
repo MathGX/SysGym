@@ -40,16 +40,15 @@ $cobr_cod = $_POST['cobr_cod'];
 $sqlCobro = "select
     cd.cobr_cod codigo,
     sum(cd.cobrdet_monto) monto,
-    to_char(to_date(max(cc.cobr_fecha),'dd-mm-yyyy'),'DD \"de\" TMMonth \"de\" YYYY') fecha,
-    cd.cliente cliente,
-    cd.per_email email,
-    cd.cobrdet_nrocuota||'/'||cd.cuencob_cuotas cuotas,
-    cd.ven_nrofac factura
+    to_char(cc.cobr_fecha,'DD \"de\" TMMonth \"de\" YYYY') fecha,
+    cc.cliente cliente,
+    cc.per_email email,
+    cc.cobr_nrocuota||'/'||cc.cuencob_cuotas cuotas,
+    cc.ven_nrofac factura
 from v_cobros_det cd
     join v_cobros_cab cc on cd.cobr_cod = cc.cobr_cod
 where cd.cobr_cod = $cobr_cod
-group by 1,4,5,6,7;";
-
+group by 1,3,4,5,6,7;";
 
 $resultado = pg_query($conexion, $sqlCobro);
 $datos = pg_fetch_all($resultado);

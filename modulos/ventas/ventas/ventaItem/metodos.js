@@ -374,12 +374,7 @@ let controlVacio = () => {
 
     // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
     if (camposVacios.length > 0) {
-        swal({
-            html: true,
-            title: "RESPUESTA!!",
-            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
-            type: "error",
-        });
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }
@@ -433,7 +428,7 @@ let validarDetalle = () => {
 let agregar = () => {
     validarDetalle().done(function(respuesta) {
         if (respuesta.validar == 1) {
-            alertaLabel("NO SE PUEDEN AGREGAR MAS ITEMS, LA VENTA SE ENCUENTRA ASOCIADA A UNA NOTA");
+            alertaLabel("NO SE PUEDEN AGREGAR MAS ITEMS, LA VENTA SE ENCUENTRA ASOCIADA A "+respuesta.comp);
             return;
         }
         $("#operacion_det").val(1);
@@ -448,7 +443,7 @@ let agregar = () => {
 let eliminar = () => {
     validarDetalle().done(function(respuesta) {
         if (respuesta.validar == 1) {
-            alertaLabel("NO SE PUEDEN ELIMINAR ITEMS, LA COMPRA SE ENCUENTRA ASOCIADA A UNA NOTA");
+            alertaLabel("NO SE PUEDEN ELIMINAR ITEMS, LA COMPRA SE ENCUENTRA ASOCIADA A "+respuesta.comp);
             return;
         }
         $("#operacion_det").val(2);
@@ -606,12 +601,7 @@ let controlVacio2 = () => {
 
     // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
     if (camposVacios.length > 0) {
-        swal({
-            html: true,
-            title: "RESPUESTA!!",
-            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
-            type: "error",
-        });
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else if (($("#tipitem_cod").val() == "1") && $("#vendet_cantidad").val() !== "0") {
         alertaLabel("El campo <b>Cantidad</b> debe ser 0 (cero) para los servicios.");
     } else {

@@ -283,12 +283,7 @@ let controlVacio = () => {
 
     // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
     if (camposVacios.length > 0) {
-        swal({
-            html: true,
-            title: "RESPUESTA!!",
-            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
-            type: "error",
-        });
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }
@@ -473,12 +468,7 @@ let controlVacio2 = () => {
 
     // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
     if (camposVacios.length > 0) {
-        swal({
-            html: true,
-            title: "RESPUESTA!!",
-            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
-            type: "error",
-        });
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else if (($("#tipitem_cod").val() == "1") && $("#pedcomdet_cantidad").val() !== "0") {
         alertaLabel("El campo <b>Cantidad</b> debe ser 0 (cero) para los servicios.");
     } else {
@@ -784,12 +774,7 @@ let controlVacio3 = () => {
 
     // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
     if (camposVacios.length > 0) {
-        swal({
-            html: true,
-            title: "RESPUESTA!!",
-            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
-            type: "error",
-        });
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmarSolCab();
     }
@@ -935,12 +920,7 @@ let controlVacio4 = () => {
 
     // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
     if (camposVacios.length > 0) {
-        swal({
-            html: true,
-            title: "RESPUESTA!!",
-            text: "Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.",
-            type: "error",
-        });
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else if (($("#tipitem_cod_sol").val() == "1") && $("#pedcomdet_cantidad").val() !== "0") {
         alertaLabel("El campo <b>Cantidad</b> debe ser 0 (cero) para los servicios.");
     } else {

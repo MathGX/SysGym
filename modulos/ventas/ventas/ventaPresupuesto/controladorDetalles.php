@@ -95,9 +95,15 @@ if (isset($_POST['operacion_det'])) {
     }*/
 } else if (isset($_POST['validacion_det']) == 1) {
     //Se consulta si la venta esta asociada a una nota
-    $venCod = "select 1 validar from nota_venta_cab ncc 
-                where ncc.ven_cod = {$_POST['ven_cod']}
-                    and ncc.notven_estado != 'ANULADO';";
+    $venCod = "select 1 validar, 'UNA NOTA' comp 
+    from nota_venta_cab ncc 
+    where ncc.ven_cod = {$_POST['ven_cod']}
+        and ncc.notven_estado != 'ANULADO'
+    union all
+    select 1 validar, 'UN COBRO' comp 
+    from cobros_cab ncc 
+    where ncc.ven_cod = {$_POST['ven_cod']}
+        and ncc.cobr_estado != 'ANULADO'";
 
     $codigo = pg_query($conexion, $venCod);
     $codigoven = pg_fetch_assoc($codigo);

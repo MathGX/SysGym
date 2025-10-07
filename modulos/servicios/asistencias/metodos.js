@@ -26,6 +26,19 @@ let formatoFecha = (fecha) => {
 
 let ahora = new Date();
 $("#asis_fecha").val(formatoFecha(ahora));
+
+let formatoHora = (fecha) => {
+    let horas = fecha.getHours();
+    let minutos = fecha.getMinutes();
+    let segundos = fecha.getSeconds();
+
+    horas = horas < 10 ? '0' + horas : horas;
+    minutos = minutos < 10 ? '0' + minutos : minutos;
+    segundos = segundos < 10 ? '0' + segundos : segundos;
+
+    return `${horas}:${minutos}:${segundos}`;
+}
+
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 
 //funcion habilitar inputs
@@ -47,6 +60,9 @@ let limpiarCab = () =>{
     $(".tblcab .body #asis_fecha").each(function(){
         $(this).val(formatoFecha(ahora));
     });
+    $(".tblcab .body #asis_horaentrada").each(function(){
+        $(this).val(formatoHora(ahora));
+    });
     $(".tblcab .header .focus").each(function() {
         $(this).attr("class", "form-line focus")
     });
@@ -65,14 +81,29 @@ let getCod = () => {
     });
 }
 
-//funcion nuevo
-let nuevo = () => {
+//funcion entrada
+let entrada = () => {
     limpiarCab();
     $("#operacion_cab").val(1);
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
     $(".tbl").attr("style", "display:none");
+    $(".entrada").attr("style", "");
+    $(".salida").attr("style", "display:none");
     getCod();
+    habilitarBotones(true);
+    datusUsuarios();
+    window.scroll(0, -100);
+};
+
+//funcion salida
+let salida = () => {
+    $("#operacion_cab").val(2);
+    $(".focus").attr("class", "form-line focus focused");
+    $(".tbl").attr("style", "display:none");
+    $("#asis_horasalida").val(formatoHora(ahora));
+    $(".salida").attr("style", "");
+    $(".entrada").attr("style", "display:none");
     habilitarBotones(true);
     datusUsuarios();
     window.scroll(0, -100);
@@ -80,7 +111,7 @@ let nuevo = () => {
 
 //anular anular
 let eliminar = () => {
-    $("#operacion_cab").val(2);
+    $("#operacion_cab").val(3);
     habilitarBotones(true);
     window.scroll(0, -100);
 };
@@ -105,7 +136,7 @@ let grabar = () => {
             asis_cod: $("#asis_cod").val(),
             asis_fecha: $("#asis_fecha").val(),
             asis_horaentrada: $("#asis_horaentrada").val(),
-            asis_horasalida: $("#asis_horasalida").val(),
+            asis_horasalida: $("#asis_horasalida").val() || null,
             cli_cod: $("#cli_cod").val(),
             usu_cod: $("#usu_cod").val(),
             suc_cod: $("#suc_cod").val(),
@@ -183,34 +214,27 @@ let confirmar = () => {
 
 //funcion control vacio
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".focus").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#asis_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#asis_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#asis_fecha").val() == "") {
-        condicion = "i";
-    } else if ($("#cliente").val() == "") {
-        condicion = "i";
-    } else if ($("#asis_horaentrada").val() == "") {
-        condicion = "i";
-    } else if ($("#asis_horasalida").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }

@@ -24,7 +24,7 @@ $sql = "select
         from entidad_adherida ea 
         join entidad_emisora ee on ee.ent_cod = ea.ent_cod 
         join marca_tarjeta mt on mt.martarj_cod = ea.martarj_cod 
-        where ea.entahd_estado like 'ACTIVO' and ee.ent_razonsocial ilike '%$ent_razonsocial%'
+        where ea.entahd_estado like 'ACTIVO' and ee.ent_razonsocial||' '||mt.martarj_descri ilike '%$ent_razonsocial%'
         order by ee.ent_razonsocial;";
         
 //consultamos a la base de datos y guardamos el resultado

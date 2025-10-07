@@ -24,15 +24,19 @@ $sql = "select
         vc.ven_nrofac,
         p.per_nombres||' '||p.per_apellidos as cliente,
         vc.ven_montocuota,
-        vc.ven_intefecha
-        from cuentas_cobrar cc 
+        vc.ven_intefecha,
+        vc.ven_montocuota-coalesce(sum(cd.cobrdet_monto),0) pendiente
+from cuentas_cobrar cc 
         join ventas_cab vc on vc.ven_cod = cc.ven_cod
         join sucursales s on s.suc_cod = vc.suc_cod and s.emp_cod = vc.emp_cod
                 join empresa e on e.emp_cod = s.emp_cod
         join clientes c on c.cli_cod = vc.cli_cod
                 join personas p on p.per_cod = c.per_cod
-        where cc.cuencob_estado like 'ACTIVO' and p.per_nrodoc ilike '%$per_nrodoc%'
-        order by cc.ven_cod;";
+        left join cobros_cab cc2 on cc2.ven_cod = cc.ven_cod 
+                left join cobros_det cd on cd.cobr_cod = cc2.cobr_cod
+where cc.cuencob_estado = 'ACTIVO' and p.per_nrodoc ilike '%$per_nrodoc%'
+group by 1,2,3,4,5,6,7,8,9
+order by cc.ven_cod;";
         
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);

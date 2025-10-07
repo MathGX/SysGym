@@ -16,7 +16,7 @@ if (isset($_POST['operacion_cab'])) {
         {$_POST['asis_cod']},
         '{$_POST['asis_fecha']}',
         '{$_POST['asis_horaentrada']}',
-        '{$_POST['asis_horasalida']}',
+        coalesce('{$_POST['asis_horasalida']}',null),
         {$_POST['cli_cod']},
         {$_POST['usu_cod']},
         {$_POST['suc_cod']},
@@ -27,9 +27,9 @@ if (isset($_POST['operacion_cab'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_fecha") !== false) {
         $response = array(
-            "mensaje" => "LA ASISTENCIA DE  ESTE CLIENTE EN FECHA ".$_POST['asis_fecha']." YA FUE REGISTRADA",
+            "mensaje" => "LA ENTRADA DE  ESTE CLIENTE EN FECHA ".$_POST['asis_fecha']." YA FUE REGISTRADA",
             "tipo" => "error"
         );
     } else {

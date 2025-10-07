@@ -24,12 +24,13 @@ if ((isset($_POST['operacion_det']))) {
             '{$_POST['cobrcheq_num']}',
             {$_POST['cobrcheq_monto']},
             '$cobrcheq_tipcheq',
+            '{$_POST['cobrcheq_fecha_emi']}',
             '{$_POST['cobrcheq_fechaven']}',
-            {$_POST['ven_cod']},
             {$_POST['cobr_cod']},
             {$_POST['cobrdet_cod']},
             {$_POST['ent_cod']},
-            {$_POST['operacion_det']}
+            {$_POST['operacion_det']},
+            {$_POST['forcob_cod']}
         );";
 
     } else if ($_POST['forcob_cod'] == '3') {
@@ -40,17 +41,16 @@ if ((isset($_POST['operacion_det']))) {
         //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
         $sql = "select sp_cobro_tarjeta(
             {$_POST['cobrtarj_cod']},
-            '{$_POST['cobrtarj_num']}',
+            '{$_POST['cobrtarj_transaccion']}',
             {$_POST['cobrtarj_monto']},
             '$cobrtarj_tiptarj',
-            {$_POST['ven_cod']},
             {$_POST['cobr_cod']},
             {$_POST['cobrdet_cod']},
             {$_POST['martarj_cod']},
             {$_POST['ent_cod']},
             {$_POST['entahd_cod']},
-            '{$_POST['cobrtarj_transaccion']}',
             {$_POST['redpag_cod']},
+            {$_POST['forcob_cod']},
             {$_POST['operacion_det']}
         );";
     }
@@ -60,7 +60,6 @@ if ((isset($_POST['operacion_det']))) {
     echo json_encode($cheque_tarjeta_result);
     
 } else {
-    
     //Si el post no recibe la operacion realizamos una consulta para generar el codigo de cobro detalle
     $cobrDetCod = "select coalesce (max(cobrdet_cod),0)+1 as cobrdet_cod from cobros_det;";
 

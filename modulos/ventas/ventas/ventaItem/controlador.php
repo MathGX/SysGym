@@ -61,6 +61,11 @@ if (isset($_POST['operacion_cab'])) {
             "mensaje" => "EL ESTADO DE LA VENTA IMPIDE QUE SEA ANULADA, SE ENCUENTRA ASOCIADA A UNA NOTA  ",
             "tipo" => "error"
         );
+    } else if (strpos($error, "err_cobro") !== false) {
+        $response = array(
+            "mensaje" => "EL ESTADO DE LA VENTA IMPIDE QUE SEA ANULADA, SE ENCUENTRA ASOCIADA A UN COBRO",
+            "tipo" => "error"
+        );
     } else {
         $response = array(
             "mensaje" => pg_last_notice($conexion),

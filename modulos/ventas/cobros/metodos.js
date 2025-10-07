@@ -16,6 +16,7 @@ let datusUsuarios = () => {
         });
 };
 
+//funcion para obtener la fecha y hora actual
 let formatoFecha = (fecha) => {
     let dia = fecha.getDate();
     let mes = fecha.getMonth() + 1;
@@ -31,10 +32,132 @@ let formatoFecha = (fecha) => {
     minutos = minutos < 10 ? '0' + minutos : minutos;
     segundos = segundos < 10 ? '0' + segundos : segundos;
 
-    return `${dia}/${mes}/${ano} ${horas}:${minutos}:${segundos}`;
+    return `${ano}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
+}
+let ahora = new Date();
+
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
 }
 
-let ahora = new Date();
+// Variable para rastrear si se hizo clic en la lista
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno, .disabledno2").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    if (idInput === "#per_nrodoc") {
+        caracteres = /['_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/; //acepta guion
+    } else {
+        caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    }
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numéricos";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    if (["#ent_razonsocial_tarj", "#ent_razonsocial"].includes(idInput)) {
+        caracteres = /[-'_¡!°/\@#$%^&*(),¿?":{}|<>;~`+]/; //acepta punto
+    } else{
+        caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
+    }
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no acepta caracteres especiales ";
+        if (idInput === "#cliente") {
+            mensaje += "a parte del guión"; // concatena la cadena extra
+        }
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
 
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 
@@ -50,6 +173,24 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
+//funcion para obtener el numero de comprobante
+let getNroComprob = () => {
+    $.ajax({
+        method: "POST",
+        url: "controlador.php",
+        data: {
+            consulNroComprob: 1,
+            tipcomp_cod: $("#tipcomp_cod").val()
+        }
+    }).done(function (respuesta){
+        if (respuesta.disponibles < 0) {
+            alertaLabel("SE ALCANZÓ EL LÍMETE DE RECIBOS HABLITADOS, VERFIQUE POR FAVOR");
+        } else {
+            $("#cobr_nrorec").val(respuesta.comprobante);
+        }
+    });
+}
+
 let getCod = () => {
     $.ajax({
         method: "POST",
@@ -57,17 +198,51 @@ let getCod = () => {
         data: {consulCod: 1}
     }).done(function (respuesta){
         $("#cobr_cod").val(respuesta.codigo);
+        getNroComprob();
+    });
+}
+
+//funcion para controlar que nro de cuota se va abonar
+let cuotaNro = () => {
+    $.ajax({
+        method: "POST",
+        url: "ctrlNroCuota.php",
+        data: {
+            operacion_cab: $("#operacion_cab" ).val(),
+            ven_cod: $("#ven_cod").val(),
+            cobr_cod: $( "#cobr_cod" ).val(),
+            case: "1"
+        }
+    }).done(function (respuesta){
+        $("#cobr_nrocuota").val(respuesta.cobr_nrocuota);
+    });
+}
+
+//funcion para limpiar los campos de la cabecera
+let limpiarCab = () =>{
+    $(".tblcab input").each(function(){
+        $(this).val('');
+    });
+    $(".tblcab .body #cobr_fecha").each(function(){
+        $(this).val(formatoFecha(ahora));
+    });
+    $(".tblcab .header .focus").each(function() {
+        $(this).attr("class", "form-line focus")
+    });
+    $(".tblcab .body .focus").each(function() {
+        $(this).attr("class","form-line focus" )
     });
 }
 
 //funcion nuevo
 let nuevo = () => {
+    limpiarCab();
     $("#operacion_cab").val(1);
+    $("#tipcomp_cod").val(5);
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
     $("#cobr_estado").val('ACTIVO');
     $(".tbldet, .tblgrcab").attr("style", "display:none");
-    $("#cobr_fecha").val(formatoFecha(ahora));
     getCod();
     habilitarBotones(true);
     datusUsuarios();
@@ -100,6 +275,7 @@ let grabar = () => {
         data: {
             cobr_cod: $("#cobr_cod").val(),
             cobr_fecha: $("#cobr_fecha").val(),
+            cobr_nrocuota: $("#cobr_nrocuota").val(),
             cobr_estado: $("#cobr_estado").val(),
             caj_cod: $("#caj_cod").val(),
             suc_cod: $("#suc_cod").val(),
@@ -107,6 +283,8 @@ let grabar = () => {
             usu_cod: $("#usu_cod").val(),
             apcier_cod: $("#apcier_cod").val(),
             tipcomp_cod: $("#tipcomp_cod").val(),
+            ven_cod: $("#ven_cod").val(),
+            cobr_nrorec: $("#cobr_nrorec").val(),
             operacion_cab: $("#operacion_cab").val()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
@@ -180,32 +358,27 @@ let confirmar = () => {
 
 //funcion control vacio
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".focus").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#cobr_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#cobr_fecha").val() == "") {
-        condicion = "i";
-    } else if ($("#apcier_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#caj_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#cobr_estado").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }
@@ -285,21 +458,6 @@ const getCodDet = () => {
     });
 }
 
-const cuotaNro = () => {
-    $.ajax({
-        method: "POST",
-        url: "ctrlNroCuota.php",
-        data: {
-            operacion_det: $( "#operacion_det" ).val(),
-            ven_cod: $("#ven_cod").val(),
-            cobr_cod: $( "#cobr_cod" ).val(),
-            case: "1"
-        }
-    }).done(function (respuesta){
-        $("#cobrdet_nrocuota").val(respuesta.cobrdet_nrocuota);
-    });
-}
-
 let limpiarDet = () =>{
     $(".tbldet input").each(function(){
         $(this).val('');
@@ -315,27 +473,64 @@ let limpiarDet = () =>{
     });
 }
 
+//funcion para validar si se puede agregar o eliminar un detalle
+let validarDetalle = () => {
+    return $.ajax({
+        method: "POST",
+        url: "controladorDetalles.php",
+        data: {
+            validacion_det: 1,
+            ven_cod: $("#ven_cod").val(),
+            cobr_nrocuota: $("#cobr_nrocuota").val(),
+        }
+    });
+}
 
 //funcion agregar
 let agregar = () => {
-    limpiarDet();
-    $("#operacion_det").val(1);
-    $("#cobrtarj_monto, #cobrcheq_monto, #cobrdet_monto, #cobrcheq_cod, #cobrtarj_cod").val(0);
-    $(".disabledno").removeAttr("disabled");
-    $(".foc").attr("class", "form-line foc focused");
-    $(".grilla_det1").attr("style", "display:none");
-    $(".abono").attr("style", "display:none");
-    habilitarBotones2(true);
-    getCodDet();
-    window.scroll(0, -100);
+    validarDetalle().done(function(respuesta) {
+        if (respuesta.validar == 1) {
+            alertaLabel("NO SE PUEDEN AGREGAR DETALLES PORQUE EXISTE UN COBRO DE UNA CUOTA POSTERIOR");
+            return;
+        }
+        limpiarDet();
+        $("#operacion_det").val(1);
+        //$("#cobrtarj_monto, #cobrcheq_monto, #cobrdet_monto, #cobrcheq_cod, #cobrtarj_cod").val(0);
+        $(".disabledno2").removeAttr("disabled");
+        $(".foc").attr("class", "form-line foc focused");
+        $(".abono, .tbltarj, .tblcheq").attr("style", "display:none");
+        $(".formaDeCobro .btn").removeAttr("disabled");
+        habilitarBotones2(true);
+        getCodDet();
+    });
 };
 
 //funcion eliminar
 let eliminar = () => {
-    $("#operacion_det").val(2);
-    habilitarBotones2(true);
-    window.scroll(0, -100);
+    validarDetalle().done(function(respuesta) {
+        if (respuesta.validar == 1) {
+            alertaLabel("NO SE PUEDEN ELIMINAR DETALLES PORQUE EXISTE UN COBRO DE UNA CUOTA POSTERIOR");
+            return;
+        }
+        $("#operacion_det").val(2);
+        habilitarBotones2(true);
+    });
 };
+
+//funcion para calcular la fecha de vencimiento de un cheque
+let vencCheque = () => {
+    // se obtiene la fecha de emision
+    let fechaEmision = new Date($("#cobrcheq_fecha_emi").val());
+
+    // suma 30 días
+    fechaEmision.setDate(fechaEmision.getDate() + 30); 
+    
+    // Convertir a formato YYYY-MM-DD para volver a asignar al input
+    let vencimiento = fechaEmision.toISOString().split("T")[0];
+
+    // asignar el valor al input de vencimiento
+    $("#cobrcheq_fechaven").val(vencimiento);
+}
 
 /*enviamos por POST a la base de datos los datos cargados los input para grabar un nuevo detalle de cobros si se abona en cheque*/
 function grabarCheque() {
@@ -343,12 +538,12 @@ function grabarCheque() {
         method: "POST",
         url: "controlaCheqTarj.php",
         data: {
-            cobrcheq_cod: $("#cobrcheq_cod").val(),
+            cobrcheq_cod: $("#cobrcheq_cod").val() || 0,
             cobrcheq_num: $("#cobrcheq_num").val(),
             cobrcheq_monto: $("#cobrcheq_monto").val(),
             cobrcheq_tipcheq: $("#cobrcheq_tipcheq").val(),
+            cobrcheq_fecha_emi: $("#cobrcheq_fecha_emi").val(),
             cobrcheq_fechaven: $("#cobrcheq_fechaven").val(),
-            ven_cod: $("#ven_cod").val(),
             cobr_cod: $("#cobr_cod").val(),
             cobrdet_cod: $("#cobrdet_cod").val(),
             ent_cod: $("#ent_cod").val(),
@@ -363,20 +558,18 @@ function grabarTarjeta() {
         method: "POST",
         url: "controlaCheqTarj.php",
         data: {
-            cobrtarj_cod: $("#cobrtarj_cod").val(),
-            cobrtarj_num: $("#cobrtarj_num").val(),
+            cobrtarj_cod: $("#cobrtarj_cod").val() || 0,
+            cobrtarj_transaccion: $("#cobrtarj_transaccion").val(),
             cobrtarj_monto: $("#cobrtarj_monto").val(),
             cobrtarj_tiptarj: $("#cobrtarj_tiptarj").val(),
-            ven_cod: $("#ven_cod").val(),
             cobr_cod: $("#cobr_cod").val(),
             cobrdet_cod: $("#cobrdet_cod").val(),
             martarj_cod: $("#martarj_cod").val(),
             ent_cod: $("#ent_cod_tarj").val(),
             entahd_cod: $("#entahd_cod").val(),
-            cobrtarj_transaccion: $("#cobrtarj_transaccion").val(),
             redpag_cod: $("#redpag_cod").val(),
-            operacion_det: $("#operacion_det").val(),
-            forcob_cod: $("#forcob_cod").val()
+            forcob_cod: $("#forcob_cod").val(),
+            operacion_det: $("#operacion_det").val()
         }
 })};
 
@@ -386,20 +579,19 @@ function grabar2() {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            ven_cod: $("#ven_cod").val(),
             cobr_cod: $("#cobr_cod").val(),
-            cobrdet_cod: $("#cobrdet_cod").val(),
-            cobrdet_monto: $("#cobrdet_monto").val() ? $("#cobrdet_monto").val() : 0,
-            cobrdet_nrocuota: $("#cobrdet_nrocuota").val(),
             forcob_cod: $("#forcob_cod").val(),
-            cobrcheq_num: $("#cobrcheq_num").val() ? $("#cobrcheq_num").val() : "----",
-            ent_cod: $("#ent_cod").val() ? $("#ent_cod").val() : 0,
-            usu_cod: $("#usu_cod").val(),
-            cobrtarj_transaccion: $("#cobrtarj_transaccion").val() ? $("#cobrtarj_transaccion").val() : "-----",
-            redpag_cod: $("#redpag_cod").val() ? $("#redpag_cod").val() : 0,
+            cobrdet_cod: $("#cobrdet_cod").val(),
+            cobrdet_monto: $("#cobrdet_monto").val() || $("#cobrtarj_monto").val() || $("#cobrcheq_monto").val(),
             operacion_det: $("#operacion_det").val(),
-            cobrcheq_monto: $("#cobrcheq_monto").val() ? $("#cobrcheq_monto").val() : 0,
-            cobrtarj_monto: $("#cobrtarj_monto").val() ? $("#cobrtarj_monto").val() : 0,
+            ven_cod: $("#ven_cod").val(),
+            cobrcheq_num: $("#cobrcheq_num").val() || "0",
+            ent_cod: $("#ent_cod").val() || 0,
+            usu_cod: $("#usu_cod").val(),
+            cobrtarj_transaccion: $("#cobrtarj_transaccion").val() || "0",
+            redpag_cod: $("#redpag_cod").val() || 0,
+            //saldo para el mensje
+            pendiente: $("#pendiente").val() || "0",
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
 .done(function (respuesta) {
@@ -419,7 +611,13 @@ function grabar2() {
                         grabarTarjeta();
                     }
                 }
-                location.reload(true);
+                listar2(); //actualizamos la grilla
+                getForcob();
+                $(".foc").find(".form-control").val(''); //limpiamos los input
+                $(".foc").attr("class", "form-line foc"); //
+                $(".disabledno2").attr("disabled", "disabled"); //deshabilitamos los input
+                $(".abono, .tbltarj, .tblcheq").attr("style", "display:none"); // se ocultan los formularios de cobro
+                habilitarBotones2(false); //deshabilitamos los botones
             }
         }
     );
@@ -443,37 +641,37 @@ function grabar2() {
 };
 
 //funcion para controlar que no se cargue mas de lo que es el monto de la cuota
-function ctrlMontoCuota() {
-    $.ajax({
-        method: "POST",
-        url: "ctrlNroCuota.php",
-        data: {
-            ven_cod: $("#ven_cod").val(),
-            cobr_cod: $("#cobr_cod").val(),
-            cobrcheq_monto: $("#cobrcheq_monto").val(),
-            cobrtarj_monto: $("#cobrtarj_monto").val(),
-            cobrdet_monto: $("#cobrdet_monto").val(),
-            ven_montocuota: $("#ven_montocuota").val(),
-            forcob_cod: $("#forcob_cod").val(),
-            cuencob_monto: $("#cuencob_monto").val(),
-            cuencob_cuotas: $("#cuencob_cuotas").val(),
-            operacion_det: $("#operacion_det").val(),
-            case: "2"
-        }
-    }).done(function(respuesta) {
-        if (respuesta.tipo == "error") {
-            swal(
-                {
-                    title: "RESPUESTA!!",
-                    text: respuesta.mensaje,
-                    type: respuesta.tipo,
-                }
-            )
-        } else if (respuesta.tipo == "success") {
-            grabar2();
-        }
-    });
-};
+// function ctrlMontoCuota() {
+//     $.ajax({
+//         method: "POST",
+//         url: "ctrlNroCuota.php",
+//         data: {
+//             ven_cod: $("#ven_cod").val(),
+//             cobr_cod: $("#cobr_cod").val(),
+//             cobrcheq_monto: $("#cobrcheq_monto").val(),
+//             cobrtarj_monto: $("#cobrtarj_monto").val(),
+//             cobrdet_monto: $("#cobrdet_monto").val(),
+//             ven_montocuota: $("#ven_montocuota").val(),
+//             forcob_cod: $("#forcob_cod").val(),
+//             cuencob_monto: $("#cuencob_monto").val(),
+//             cuencob_cuotas: $("#cuencob_cuotas").val(),
+//             operacion_det: $("#operacion_det").val(),
+//             case: "2"
+//         }
+//     }).done(function(respuesta) {
+//         if (respuesta.tipo == "error") {
+//             swal(
+//                 {
+//                     title: "RESPUESTA!!",
+//                     text: respuesta.mensaje,
+//                     type: respuesta.tipo,
+//                 }
+//             )
+//         } else if (respuesta.tipo == "success") {
+//             grabar2();
+//         }
+//     });
+// };
 
 //funcion confirmar SweetAlert
 let confirmar2 = () => {
@@ -501,11 +699,11 @@ let confirmar2 = () => {
         function (isConfirm) {
             //Si la operacion es correcta llamamos al metodo grabar
             if (isConfirm) {
-                if ($("#operacion_det").val() == '1') {
-                    ctrlMontoCuota();
-                } else {
+                // if ($("#operacion_det").val() == '1') {
+                //     ctrlMontoCuota();
+                // } else {
                     grabar2();
-                }
+                //}
             } else {
                 //Si cancelamos la operacion realizamos un reload
                 cancelar();
@@ -516,83 +714,57 @@ let confirmar2 = () => {
 
 //funcion control vacio
 let controlVacio2 = () => {
-    let condicion = "c";
+    let camposVacios = [];
 
-    if ($("#per_nrodoc").val() == "") {
-        condicion = "i";
-    } else if ($("#cuencob_saldo").val() == "") {
-        condicion = "i";
-    } else if ($("#ven_cuotas").val() == "") {
-        condicion = "i";
-    } else if ($("#cobrdet_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#ven_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#ven_nrofac").val() == "") {
-        condicion = "i";
-    } else if ($("#cliente").val() == "") {
-        condicion = "i";
-    } else if ($("#cobrdet_nrocuota").val() == "") {
-        condicion = "i";
-    } else if ($("#ven_montocuota").val() == "") {
-        condicion = "i";
-    } else if ($("#ven_intefecha").val() == "") {
-        condicion = "i";
-    } else if ($("#forcob_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#forcob_cod").val() == "3") {
-        if ($("#cobrtarj_num").val() == "") {
-            condicion = "i";
-        } else if ($("#cobrtarj_monto").val() == "") {
-            condicion = "i";
-        } else if ($("#cobrtarj_tiptarj").val() == "") {
-            condicion = "i";
-        } else if ($("#entahd_cod").val() == "") {
-            condicion = "i";
-        } else if ($("#ent_cod_tarj").val() == "") {
-            condicion = "i";
-        } else if ($("#ent_razonsocial_tarj").val() == "") {
-            condicion = "i";
-        } else if ($("#martarj_cod").val() == "") {
-            condicion = "i";
-        } else if ($("#martarj_descri").val() == "") {
-            condicion = "i";
-        } else if ($("#redpag_descri").val() == "") {
-            condicion = "i";
-        } else if ($("#cobrtarj_transaccion").val() == "") {
-            condicion = "i";
-        }
-    } else if ($("#forcob_cod").val() == "1") {
-        if ($("#cobrcheq_num").val() == "") {
-            condicion = "i";
-        } else if ($("#cobrcheq_monto").val() == "") {
-            condicion = "i";
-        } else if ($("#cobrcheq_tipcheq").val() == "") {
-            condicion = "i";
-        } else if ($("#ent_cod").val() == "") {
-            condicion = "i";
-        } else if ($("#ent_razonsocial").val() == "") {
-            condicion = "i";
-        } else if ($("#cobrcheq_fechaven").val() == "") {
-            condicion = "i";
-        }
-    } else if ($("#forcob_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#cobrdet_monto").val() == "") {
-        condicion = "i";
-    }
+    // Seleccionar los contenedores visibles que correspondan a la forma de cobro activa
+    let secciones = [".tbldet"];
+    if ($(".tbltarj").is(":visible")) secciones.push(".tbltarj");
+    if ($(".tblcheq").is(":visible")) secciones.push(".tblcheq");
+    if ($(".abono").is(":visible")) secciones.push(".abono"); // solo monto
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Recorre todos los inputs visibles y habilitados dentro de las secciones activas
+    $(secciones.join(", ")).find(".foc .form-control:enabled:visible").each(function () {
+        if ($(this).val().trim() === "") {
+            let nombreInput = $(this).closest(".form-line").find(".form-label").text() || this.id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Mostrar alerta si hay vacíos, o confirmar si todo está completo
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" +camposVacios.join(", ") +"</b>.");
+    } else if (($("#forcob_cod").val().trim() === "0") || $("#forcob_cod").val().trim() === "") {
+        alertaLabel("Debe seleccionar una <b>Forma de Cobro</b> y completar los campos de la misma");
     } else {
         confirmar2();
     }
 };
 
+//funcion para seleccionar la forma de cobro y mostrar los botones y formularios correspondientes
+let setForcobCod = (cod) => {
+    $("#forcob_cod").val(cod);
+
+    // Define qué elementos mostrar según el código
+    const mostrar = {
+        1: [".tblcheq"], //cheque
+        2: [".abono"], //efectivo
+        3: [".tbltarj"] //tarjeta
+    };
+
+    // Todos los formularios de cobro  que pueden estar
+    const formCobro = [".abono", ".tblcheq", ".tbltarj"];
+
+    // Se recorren la constante con los formualrios de cobros
+    formCobro.forEach(grupo => {
+        if (mostrar[cod].includes(grupo)) {
+            $(grupo).show();
+        } else {
+            $(grupo).hide();
+            // Vacía inputs solo de los formularios de cobros ocultos
+            $(`${grupo} input`).val("");
+        }
+    });
+}
 
 /*---------------------------------------------------- LISTAR Y SELECCION DE CABECERA Y DETALLE ----------------------------------------------------*/
 
@@ -603,7 +775,20 @@ let seleccionarFila2 = (objetoJSON) => {
         $("#" + propiedad).val(objetoJSON[propiedad]);
     });
     $(".foc").attr("class", "form-line foc focused");
-    $(".abono").attr("style", "");
+    switch ($("#forcob_cod").val()) {
+        case "1":
+            $(".tblcheq").attr("style", "");
+            $(".abono, .tbltarj").attr("style", "display:none;");
+            break;
+        case "3":
+            $(".tbltarj").attr("style", "");
+            $(".abono, .tblcheq").attr("style", "display:none;");
+            break;
+        default:
+            $(".abono").attr("style", "");
+            $(".tblcheq, .tbltarj").attr("style", "display:none;");
+            break;
+    }
 };
 
 //funcion listar
@@ -618,10 +803,6 @@ let listar2 = () => {
             let tabla = "";
             for (objeto of respuesta) {;
                 tabla += "<tr onclick='seleccionarFila2(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td style='text-align:right;'>"+ objeto.ven_cod +"</td>";
-                    tabla += "<td>"+ objeto.ven_nrofac +"</td>";
-                    tabla += "<td>"+ objeto.cliente +"</td>";
-                    tabla += "<td style='text-align:right;'>"+ objeto.cobrdet_nrocuota +"</td>";
                     tabla += "<td style='text-align:right;'>"+ new Intl.NumberFormat('us-US').format(objeto.cobrdet_monto)  +"</td>";
                     tabla += "<td>"+ objeto.forcob_descri +"</td>";
                 tabla += "</tr>";
@@ -656,10 +837,14 @@ let listar = () => {
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
                     tabla += "<td>"+ objeto.cobr_cod +"</td>";
-                    tabla += "<td>"+ objeto.cobr_fecha +"</td>";
+                    tabla += "<td>"+ objeto.cobr_fecha2 +"</td>";
                     tabla += "<td>"+ objeto.usu_login +"</td>";
                     tabla += "<td>"+ objeto.suc_descri +"</td>";
                     tabla += "<td>"+ objeto.caj_descri +"</td>";
+                    tabla += "<td style='text-align:right;'>"+ objeto.ven_cod +"</td>";
+                    tabla += "<td>"+ objeto.ven_nrofac +"</td>";
+                    tabla += "<td>"+ objeto.cliente +"</td>";
+                    tabla += "<td style='text-align:right;'>"+ objeto.cobr_nrocuota +"</td>";
                     tabla += "<td>"+ objeto.cobr_estado +"</td>";
                 tabla += "</tr>";
             }
@@ -673,41 +858,6 @@ let listar = () => {
 
 listar();
 
-//funcion para seleccionar la forma de cobro y mostrar los botones y formularios correspondientes
-let setForcobCod = (cod) => {
-    $("#forcob_cod").val(cod); // Establece el valor del input hidden según el botón seleccionado
-    if (cod == 1) {
-        $(".abono").attr("style", "display: none");
-        $(".tblcheq").attr("style", "");
-        $(".tbltarj").attr("style", "display: none");
-        $(".abono input").each(function() {
-            $(this).val("")
-        });
-        $(".tbltarj input").each(function() {
-            $(this).val("")
-        });
-    } else if (cod == 2) {
-        $(".abono").attr("style", "");
-        $(".tbltarj").attr("style", "display: none");
-        $(".tblcheq").attr("style", "display: none");
-        $(".tbltarj input").each(function() {
-            $(this).val("")
-        });
-        $(".tblcheq input").each(function() {
-            $(this).val("")
-        });
-    } else if (cod == 3) {
-        $(".abono").attr("style", "display: none");
-        $(".tblcheq").attr("style", "display: none");
-        $(".tbltarj").attr("style", "");
-        $(".abono input").each(function() {
-            $(this).val("")
-        });
-        $(".tblcheq input").each(function() {
-            $(this).val("")
-        });
-    }
-}
 
 
 /*---------------------------------------------------- AUTOCOMPLETADOS ----------------------------------------------------*/
@@ -796,9 +946,10 @@ function getForcob() {
     $.ajax({
         method: "POST",
         url: "/SysGym/modulos/ventas/cobros/listas/listaForcob.php",
+        cache: false,
         data: {
-            ven_cod: $("#ven_cod").val() ? $("#ven_cod").val() : 0,
-            cobr_cod: $("#cobr_cod").val() ? $("#cobr_cod").val() : 0
+            ven_cod: $("#ven_cod").val() || 0,
+            cobr_cod: $("#cobr_cod").val() || 0
         }
     }).done(function(lista) {
         if (lista.true === true) {
@@ -808,13 +959,15 @@ function getForcob() {
             // Limpia todos los botones primero
             $(".icon-button-demo button").hide();
             // Muestra los botones según el valor de forcob_cod
+            $(".formaDeCobro .btn").attr("style", "display:none; border-radius:20px;").attr("disabled", "disabled");
             $.each(lista, function(i, item) {
-                $(".formaDeCobro").attr("style", "");
-                if (item.forcob_descri == 'CHEQUE') {
+                if (item.forcob_cod == '1') {
                     $("#btnCheque").show().attr("onclick", "setForcobCod("+item.forcob_cod+")");
-                } else if (item.forcob_descri == 'EFECTIVO') {
+                } 
+                if (item.forcob_cod == '2') {
                     $("#btnEfectivo").show().attr("onclick", "setForcobCod("+item.forcob_cod+")");
-                } else if (item.forcob_descri == 'TARJETA') {
+                }
+                if (item.forcob_cod == '3') {
                     $("#btnTarjeta").show().attr("onclick", "setForcobCod("+item.forcob_cod+")");
                 }
             });
@@ -989,6 +1142,6 @@ function seleccionVentas (datos) {
     });
     $("#ulVentas").html();
     $("#listaVentas").attr("style", "display:none;");
-    $(".foc").attr("class", "form-line foc focused");
+    $(".focus").attr("class", "form-line focus focused");
     cuotaNro();
 }

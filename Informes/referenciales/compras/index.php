@@ -11,7 +11,10 @@ session_start();
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>INFORME REF. COMPRAS</title>
     <!--Se icluyen los estilos CSS ingresando desde la carpeta raíz hacia el importCSS-->
-    <?php include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importCSS.php"; ?>
+    <?php 
+    $u = $_SESSION['usuarios'];
+    include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importCSS.php"; 
+    ?>
 </head>
 
 <body class="theme">
@@ -33,9 +36,9 @@ session_start();
                             <input type="hidden" id="operacion" value="0">
                             <div class="row clearfix">
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
-                                        <div class="form-line focus focused">
+                                        <div class="form-line focus focus">
                                             <input type="text" id="tabla" class="form-control" onkeyup="getTabla()">
                                             <label class="form-label">Reporte</label>
                                             <div id="listaTabla" style="display: none;">
@@ -47,28 +50,28 @@ session_start();
 
                                 <div class="col-md-2 codigo">
                                     <div class="form-group form-float">
-                                        <div class="form-line focused">
+                                        <div class="form-line">
                                             <input type="text" id="desde" class="form-control ">
-                                            <label class="form-label">Desde</label>
+                                            <label class="form-label">Desde (Opcional)</label>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="col-md-2 codigo">
                                     <div class="form-group form-float">
-                                        <div class="form-line focused">
+                                        <div class="form-line">
                                             <input type="text" id="hasta" class="form-control">
-                                            <label class="form-label">Hasta</label>
+                                            <label class="form-label">Hasta (Opcional)</label>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-md-3 empresa" style="display:none;">
+                                <div class="col-md-2 empresa" style="display:none;">
                                     <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="hidden" id="emp_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="emp_razonsocial" disabled onkeyup="getEmpresas()">
-                                            <label class="form-label">Empresa (Opcional)</label>
+                                            <input type="hidden" id="emp_cod" value="<?php echo $u['emp_cod'];?>">
+                                            <input type="text" id="emp_razonsocial" class="form-control" value="<?php echo $u['emp_razonsocial']; ?> " disabled>
+                                            <label class="form-label">Empresa</label>
                                             <div id="listaEmpresas" style="display: none;">
                                                 <ul class="list-group" id="ulEmpresas" style="height:60px; overflow:auto;"></ul>
                                             </div>
@@ -78,8 +81,8 @@ session_start();
                                 
                                 <div class="col-md-3 ciudad" style="display:none;">
                                     <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="hidden" id="ciu_cod" value="0">
+                                        <div class="form-line foc">
+                                            <input type="hidden" class="form-control disabledno" id="ciu_cod" value="0">
                                             <input type="text" class="form-control disabledno" id="ciu_descripcion" disabled onkeyup="getCiudades()">
                                             <label class="form-label">Ciudad (Opcional)</label>
                                             <div id="listaCiudades" style="display: none;">
@@ -89,10 +92,10 @@ session_start();
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-3 sucursal" style="display:none;">
+                                <div class="col-md-2 sucursal" style="display:none;">
                                     <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="hidden" id="suc_cod" value="0">
+                                        <div class="form-line foc">
+                                            <input type="hidden" id="suc_cod" class="form-control disabledno" value="0">
                                             <input type="text" class="form-control disabledno" id="suc_descri" disabled >
                                             <label class="form-label">Sucursal (Opcional)</label>
                                             <div id="listaSucursalEmp" style="display: none;">
@@ -102,10 +105,10 @@ session_start();
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-3 tipo_item" style="display:none;">
+                                <div class="col-md-2 tipo_item" style="display:none;">
                                     <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="hidden" id="tipitem_cod" value="0">
+                                        <div class="form-line foc">
+                                            <input type="hidden" id="tipitem_cod" class="form-control disabledno" value="0">
                                             <input type="text" class="form-control disabledno" id="tipitem_descri" disabled onkeyup="getTipoItem()">
                                             <label class="form-label">Tipo de Item (Opcional)</label>
                                             <div id="listaTipoItem" style="display: none;">
@@ -115,10 +118,10 @@ session_start();
                                     </div>
                                 </div>
 
-                                <div class="col-md-3 unidad_medida" style="display:none;">
+                                <div class="col-md-2 unidad_medida" style="display:none;">
                                     <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="hidden" id="uni_cod" value="0">
+                                        <div class="form-line foc">
+                                            <input type="hidden" id="uni_cod" class="form-control disabledno" value="0">
                                             <input type="text" class="form-control disabledno" id="uni_descri" disabled onkeyup="getUniMedida()">
                                             <label class="form-label">Unidad de Medida (Opcional)</label>
                                             <div id="listaUniMedida" style="display: none;">
@@ -128,10 +131,10 @@ session_start();
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-3 impuesto" style="display:none;">
+                                <div class="col-md-2 impuesto" style="display:none;">
                                     <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="hidden" id="tipimp_cod" value="0">
+                                        <div class="form-line foc">
+                                            <input type="hidden" id="tipimp_cod" class="form-control disabledno" value="0">
                                             <input type="text" class="form-control disabledno" id="tipimp_descri" disabled onkeyup="getTipoImpuesto()">
                                             <label class="form-label">Impuesto (Opcional)</label>
                                             <div id="listaTipoImpuesto" style="display: none;">
@@ -141,10 +144,10 @@ session_start();
                                     </div>
                                 </div>
                                 
-                                <div class="col-md-3 tipo_proveedor" style="display:none;"> 
+                                <div class="col-md-2 tipo_proveedor" style="display:none;"> 
                                     <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="hidden" id="tiprov_cod" value="0">
+                                        <div class="form-line foc">
+                                            <input type="hidden" id="tiprov_cod" class="form-control disabledno" value="0">
                                             <input type="text" class="form-control disabledno" id="tiprov_descripcion" disabled onkeyup="getTipoProv()">
                                             <label class="form-label">Tipo de proveedor (Opcional)</label>
                                             <div id="listaTipoProv" style="display: none;">
