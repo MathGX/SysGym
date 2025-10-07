@@ -93,5 +93,4 @@ if (isset($_POST['operacion_det'])) {
     $datos = pg_fetch_all($resultado);
     echo json_encode($datos);
 }
-
 ?>
