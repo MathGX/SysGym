@@ -573,6 +573,23 @@ function grabarTarjeta() {
         }
 })};
 
+//funcion para controlar cuanto ya se pagó
+function ctrlMontoCuota() {
+    $.ajax({
+        method: "POST",
+        url: "ctrlNroCuota.php",
+        data: {
+            cobr_cod: $("#cobr_cod").val(),
+            ven_montocuota: $("#ven_montocuota").val(),
+            case: "2"
+        }
+    }).done(function(respuesta) {
+        if (respuesta.pagado_tot === "S") {
+            window.location.reload();
+        }
+    });
+};
+
 /*enviamos por POST a la base de datos los datos cargados los input para grabar un nuevo detalle de cobros*/
 function grabar2() {
     $.ajax({
@@ -612,12 +629,13 @@ function grabar2() {
                     }
                 }
                 listar2(); //actualizamos la grilla
-                getForcob();
+                getForcob(); // se verifcan los medios de pago que se pueden aceptar
                 $(".foc").find(".form-control").val(''); //limpiamos los input
                 $(".foc").attr("class", "form-line foc"); //
                 $(".disabledno2").attr("disabled", "disabled"); //deshabilitamos los input
                 $(".abono, .tbltarj, .tblcheq").attr("style", "display:none"); // se ocultan los formularios de cobro
                 habilitarBotones2(false); //deshabilitamos los botones
+                ctrlMontoCuota(); // se verifica si se completó la cuota
             }
         }
     );
@@ -639,39 +657,6 @@ function grabar2() {
         }
     });
 };
-
-//funcion para controlar que no se cargue mas de lo que es el monto de la cuota
-// function ctrlMontoCuota() {
-//     $.ajax({
-//         method: "POST",
-//         url: "ctrlNroCuota.php",
-//         data: {
-//             ven_cod: $("#ven_cod").val(),
-//             cobr_cod: $("#cobr_cod").val(),
-//             cobrcheq_monto: $("#cobrcheq_monto").val(),
-//             cobrtarj_monto: $("#cobrtarj_monto").val(),
-//             cobrdet_monto: $("#cobrdet_monto").val(),
-//             ven_montocuota: $("#ven_montocuota").val(),
-//             forcob_cod: $("#forcob_cod").val(),
-//             cuencob_monto: $("#cuencob_monto").val(),
-//             cuencob_cuotas: $("#cuencob_cuotas").val(),
-//             operacion_det: $("#operacion_det").val(),
-//             case: "2"
-//         }
-//     }).done(function(respuesta) {
-//         if (respuesta.tipo == "error") {
-//             swal(
-//                 {
-//                     title: "RESPUESTA!!",
-//                     text: respuesta.mensaje,
-//                     type: respuesta.tipo,
-//                 }
-//             )
-//         } else if (respuesta.tipo == "success") {
-//             grabar2();
-//         }
-//     });
-// };
 
 //funcion confirmar SweetAlert
 let confirmar2 = () => {
@@ -803,8 +788,9 @@ let listar2 = () => {
             let tabla = "";
             for (objeto of respuesta) {;
                 tabla += "<tr onclick='seleccionarFila2(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
-                    tabla += "<td style='text-align:right;'>"+ new Intl.NumberFormat('us-US').format(objeto.cobrdet_monto)  +"</td>";
                     tabla += "<td>"+ objeto.forcob_descri +"</td>";
+                    tabla += "<td style='text-align:right;'>"+ objeto.comprobante +"</td>";
+                    tabla += "<td style='text-align:right;'>"+ new Intl.NumberFormat('us-US').format(objeto.cobrdet_monto)  +"</td>";
                 tabla += "</tr>";
             }
             $("#grilla_det").html(tabla);

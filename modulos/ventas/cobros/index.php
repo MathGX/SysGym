@@ -471,7 +471,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="col-sm-3">
                                         <div class="form-group form-float">
                                             <div class="form-line focused">
-                                                <input type="date" id="cobrcheq_fecha_emi" class="form-control disabledno2" disabled onkeyup="vencCheque()" onblur="vencCheque()">
+                                                <input type="date" id="cobrcheq_fecha_emi" class="form-control disabledno2" disabled onchange="vencCheque()">
                                                 <label class="form-label">Fecha de Emisión</label>
                                             </div>
                                         </div>
@@ -519,8 +519,9 @@ $u = $_SESSION['usuarios'];
                                 <table class="table table-hover table-borderer table-striped">
                                     <thead>
                                         <tr>
-                                            <th style='text-align:right;'>MONTO</th>
                                             <th>FORMA DE COBRO</th> 
+                                            <th style='text-align:right;'>COMPROBANTE N°</th>
+                                            <th style='text-align:right;'>MONTO</th>
                                         </tr>
                                     </thead>
                                     <tbody id="grilla_det">

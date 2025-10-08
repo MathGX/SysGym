@@ -395,9 +395,6 @@ function formatoTabla() {
     });
 }
 
-
-
-
 /*--------------------------------------------METODOS DEL DETALLE---------------------------------------------------------*/
 
 //funcion habilitar inputs
