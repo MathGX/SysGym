@@ -136,7 +136,7 @@ $datos = pg_fetch_all($resultado);
 
     <?php foreach ($datos as $cabecera) {
         foreach ($datosEmp as $emp) { ?>
-            <div class="contenedor" style="position: relative;">
+            <div class="contenedor" style="position: relative; font-family: Arial, sans-serif; ">
                 <!-- titulo -->
                 <div class="titulo_izq">
                     <div style="font-size:30px; font-weight:bold;"><?php echo $emp['emp_razonsocial'];?></div>

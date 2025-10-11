@@ -395,6 +395,14 @@ function formatoTabla() {
     });
 }
 
+let facturaVenta = () => {
+    if ($("#ven_cod").val() == '') {
+        alertaLabel("SELECCIONE UN REGISTRO");
+    } else {
+        window.open ("/SysGym/modulos/ventas/ventas/facturaVenta.php?ven_cod=" + $("#ven_cod").val());
+    }
+}
+
 /*--------------------------------------------METODOS DEL DETALLE---------------------------------------------------------*/
 
 //funcion habilitar inputs

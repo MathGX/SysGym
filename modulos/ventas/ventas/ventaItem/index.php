@@ -244,7 +244,7 @@ $u = $_SESSION['usuarios'];
                                         <span>ANULAR</span>
                                     </button>
                                 <?php } ?>
-                                <button type="button" style="width:12.5%;" class="btn bg-blue waves-effect btnOperacion1" onclick="docOrden()">
+                                <button type="button" style="width:12.5%;" class="btn bg-blue waves-effect btnOperacion1" onclick="facturaVenta()">
                                     <i class="material-icons">print</i>
                                     <span>IMPRIMIR</span>
                                 </button>
