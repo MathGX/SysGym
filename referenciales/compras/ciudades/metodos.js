@@ -152,6 +152,16 @@ let confirmar = () => {
     );
 };
 
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
 //funcion para validar que no haya campos vacios al grabar
 let controlVacio = () => {
     // Obtener todos los ids de los elementos con clase disabledno

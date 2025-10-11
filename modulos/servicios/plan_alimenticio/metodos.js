@@ -598,20 +598,6 @@ function seleccionComidas (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
-    
-    $.ajax({
-        method: 'GET',
-        url: '/SysGym/modulos/servicios/plan_alimenticio/listas/listaMacros.php',
-        data: { comida: $("#comi_descri").val() },
-        dataType: 'json' // Important para que jQuery interprete la respuesta como JSON
-    }).done(function(macros) {
-        $("#alimdet_proteina").val(macros.proteina ?? '');
-        $("#alimdet_calorias").val(macros.calorias ?? '');
-        $("#alimdet_carbohidratos").val(macros.carbohidratos ?? '');
-    }).fail(function() {
-        alert("Error al obtener datos nutricionales.");
-    });
-
 
     $("#ulComidas").html();
     $("#listaComidas").attr("style", "display:none;");

@@ -65,7 +65,7 @@ $datos = pg_fetch_all($resultado);
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="usu_login" class="form-control disabledno" disabled>
+                                            <input type="text" id="usu_login" class="form-control disabledno soloTxt" disabled>
                                             <label class="form-label">Login</label>
                                         </div>
                                     </div>
@@ -84,7 +84,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="per_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getFuncionarios()">
+                                            <input type="text" class="form-control disabledno soloNum" id="per_nrodoc" disabled onkeyup="getFuncionarios()">
                                             <label class="form-label">C.I.</label>
                                             <div id="listaFuncionarios" style="display: none;">
                                                 <ul class="list-group" id="ulFuncionarios" style="height:60px; overflow:auto;"></ul>
@@ -107,7 +107,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="perf_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="perf_descri" disabled onkeyup="getPerfiles()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="perf_descri" disabled onkeyup="getPerfiles()">
                                             <label class="form-label">Perfil</label>
                                             <div id="listaPerfiles" style="display: none;">
                                                 <ul class="list-group" id="ulPerfiles" style="height:60px; overflow:auto;"></ul>
@@ -120,7 +120,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="mod_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="mod_descri" disabled onkeyup="getModulos()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="mod_descri" disabled onkeyup="getModulos()">
                                             <label class="form-label">Modulo</label>
                                             <div id="listaModulos" style="display: none;">
                                                 <ul class="list-group" id="ulModulos" style="height:60px; overflow:auto;"></ul>

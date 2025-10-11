@@ -887,7 +887,7 @@ if(isset($_SESSION['numApcier'])){
                                 </li>
                                 <?php } ?> -->
                                 <?php 
-                                if ($accesoInterfaz['VENTAS'] && ($apertura['apcier_estado'] === 'ABIERTA' || in_array ($u['perf_cod'] ,[1,9]))) { ?>
+                                if ($accesoInterfaz['VENTAS'] || in_array ($u['perf_cod'] ,[1,9])) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/ventas/ventas/index.php">Ventas</a>
                                     <ul class="ml-menu">
@@ -900,7 +900,7 @@ if(isset($_SESSION['numApcier'])){
                                     </ul>
                                 </li>
                                 <?php } ?>
-                                <?php if (($accesoInterfaz['COBRANZAS']) && (($apertura['apcier_estado'] === 'ABIERTA') || ($u['perf_cod'] == '1'))) { ?>
+                                <?php if ($accesoInterfaz['COBRANZAS'] || ($u['perf_cod'] == '1')) { ?>
                                 <li>
                                     <a href="/SysGym/modulos/ventas/cobros/index.php">Cobranzas</a>
                                 </li>

@@ -213,7 +213,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="number" id="apcier_monto_aper" class= "form-control disabledno soloNum">
+                                            <input type="text" id="apcier_monto_aper" class= "form-control disabledno soloNum">
                                             <label class="form-label">Monto de apertura</label>
                                         </div>
                                     </div>
@@ -257,7 +257,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
-                                            <input type="number" id="apcier_monto_cierre" class= "form-control soloNum">
+                                            <input type="text" id="apcier_monto_cierre" class= "form-control soloNum">
                                             <label class="form-label">Monto al cierre</label>
                                         </div>
                                     </div>

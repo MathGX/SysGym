@@ -151,28 +151,77 @@ let confirmar = () => {
     );
 };
 
-//funcion control vacio
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".disabledno").map(function() {
+        return this.id;
+    }).get();
+    
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if ($("#permi_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#permi_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#permi_estado").val() == "") {
-        condicion = "i";
-    }
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }
 };
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    caracteres = /[°/\-'_¡!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    numeros = /[0-9]/;
+
+    //En caso de que el campo esté vacío
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+    //En caso de que el campo contenga caracteres especiales
+    } else if (caracteres.test($(idInput).val())) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede contener caracteres especiales.";
+    //En caso de que el campo contenga números
+    } else if (numeros.test($(idInput).val())) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede contener números.";
+    }
+    
+    //Si el mensaje no está vacío mostramos la alerta y limpiamos el campo
+    if (mensaje !== "") {
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método completarDatos al perder el foco de los inputs con clase .disabledno
+$(".disabledno").on("blur", function() {
+    //capturamos el id del input que perdió el foco
+    let idInput = "#" + $(this).attr("id");
+    //capturamos el texto de la etiqueta label asociada al input
+    let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+    //llamamos a la función pasarle el nombre del input y su id
+    completarDatos(nombreInput, idInput);
+});
 
 //funcion seleccionar Fila
 let seleccionarFila = (objetoJSON) => {

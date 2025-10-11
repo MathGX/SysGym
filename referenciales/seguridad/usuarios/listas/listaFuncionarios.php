@@ -16,13 +16,15 @@ $ci=$_POST['per_nrodoc'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
 $sql = "select 
-f.fun_cod,
-f.per_cod,
-p.per_nrodoc,
-p.per_nombres||' '||p.per_apellidos as funcionarios
+        f.fun_cod,
+        f.per_cod,
+        p.per_nrodoc,
+        p.per_nombres||' '||p.per_apellidos as funcionarios
 from funcionarios f 
-join personas p on p.per_cod = f.per_cod
-where p.per_nrodoc like '%$ci%' and f.fun_estado ilike 'ACTIVO';";
+        join personas p on p.per_cod = f.per_cod
+where p.per_nrodoc like '%$ci%' 
+        and f.fun_estado ilike 'ACTIVO'
+        and not exists (select 1 from usuarios u where u.fun_cod = f.fun_cod and u.usu_estado = 'ACTIVO');";
 
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);
