@@ -76,7 +76,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="notacom_cod" value = 0>
-                                            <label class="form-label">Nota Nro.</label>
+                                            <label class="form-label">Código</label>
                                         </div>
                                     </div>
                                 </div>
@@ -214,7 +214,7 @@ $u = $_SESSION['usuarios'];
 
                                 <div class="col-sm-12 row clearfix nota_remision" style="display:none;">
 
-                                    <h5 class="col-sm-12">Datos extra para Nota de Remisión</h5>
+                                    <h5 class="col-sm-12">Datos Extra para Nota de Remisión</h5>
 
                                     <div class="col-sm-2">
                                         <div class="form-group form-float">
@@ -298,16 +298,16 @@ $u = $_SESSION['usuarios'];
                                         <span>NUEVO</span>
                                     </button>
                                 <?php } ?>
-                                <?php if ($botNuevo == true) { ?>
-                                    <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="actCuotas()">
-                                        <i class="material-icons">update</i>
-                                        <span>ACT. CUOTAS</span>
-                                    </button>
-                                <?php } ?>
                                 <?php if ($botAnular == true) { ?>
                                     <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="anular()">
                                         <i class="material-icons">highlight_off</i>
                                         <span>ANULAR</span>
+                                    </button>
+                                <?php } ?>
+                                <?php if ($botNuevo == true) { ?>
+                                    <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="actCuotas()">
+                                        <i class="material-icons">update</i>
+                                        <span>ACT. CUOTAS</span>
                                     </button>
                                 <?php } ?>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">

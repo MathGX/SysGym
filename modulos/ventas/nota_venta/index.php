@@ -59,6 +59,14 @@ $u = $_SESSION['usuarios'];
         <div class="container-fluid">
             <div class="row clearfix">
 
+                <?php if ($apertura['apcier_estado'] != 'ABIERTA' && $u['perf_cod'] != 2) { ?>
+                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                        <div class="card bg-pink" style="border-radius:40px;"> 
+                            <div style="text-align:center; font-weight:bold; font-size:22px; padding:20px;">LA CAJA SE ENCUNETRA CERRADA, POR TANTO NO SE GENERARÁ EL NRO DE FACTURA</div>
+                        </div>
+                    </div>
+                <?php }?>
+
                 <div class="col-lg-12 tblcab">
                     <!-- formulario de NOTA VENTAS cabecera -->
                     <div class="card">
@@ -75,7 +83,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="notven_cod" class="form-control" disabled>
-                                            <label class="form-label">Nota Nro.</label>
+                                            <label class="form-label">Código</label>
                                         </div>
                                     </div>
                                 </div>
@@ -104,6 +112,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focused">
                                             <input type="hidden" id="usu_cod" value="<?php echo $u['usu_cod']; ?> ">
+                                            <input type="hidden" id="perf_cod" value="<?php echo $u['perf_cod']; ?> ">
                                             <input type="text" id="usu_login" class="form-control" value="<?php echo $u['usu_login']; ?> " disabled>
                                             <label class="form-label">Usuario</label> 
                                         </div>
@@ -113,17 +122,8 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus focused">
-                                            <input type="text" id="notven_fecha" class="form-control " disabled>
+                                            <input type="date" id="notven_fecha" class="form-control " disabled>
                                             <label class="form-label">Fecha</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-2">
-                                    <div class="form-group form-float">
-                                        <div class="form-line focus focused">
-                                            <input type="text" id="ven_timbrado" class="form-control" value="<?php echo $u['emp_timbrado'];?>" readonly>
-                                            <label class="form-label">Timbrado</label>
                                         </div>
                                     </div>
                                 </div>
@@ -132,7 +132,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="tipcomp_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="tipcomp_descri" disabled onkeyup="getNota()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="tipcomp_descri" disabled onkeyup="getNota()">
                                             <label class="form-label">Tipo de Nota</label>
                                             <div id="listaNota" style="display: none;">
                                                 <ul class="list-group" id="ulNota" style="height:60px; overflow:auto;"></ul>
@@ -144,8 +144,18 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="notven_nronota" class="form-control disabledno" disabled>
-                                            <label class="form-label">Nota Nro.</label>
+                                            <input type="hidden" id="caj_cod" value= "<?php echo $apertura['caj_cod']?>">
+                                            <input type="text" id="notven_timbrado" class="form-control" disabled>
+                                            <label class="form-label">Timbrado</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus focused">
+                                            <input type="date" id="notven_timb_fec_venc" class="form-control" disabled>
+                                            <label class="form-label">Vencimiento Timbrado</label>
                                         </div>
                                     </div>
                                 </div>
@@ -153,7 +163,25 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" class="form-control ven" id="per_nrodoc" disabled onkeyup="getVentas()">
+                                            <input type="text" id="notven_nronota" class="form-control" disabled>
+                                            <label class="form-label">Nota Nro.</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="notven_concepto" class="form-control disabledno sinCarac" disabled>
+                                            <label class="form-label">Concepto</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" class="form-control disabledno soloNum" id="per_nrodoc" disabled onkeyup="getVentas()">
                                             <label class="form-label">Nro. Doc.</label>
                                             <div id="listaVentas" style="display: none;">
                                                 <ul class="list-group" id="ulVentas" style="height:60px; overflow:auto;"></ul>
@@ -166,7 +194,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="cli_cod" value="0" class="ven">
-                                            <input type="text" class="form-control ven" id="cliente" disabled>
+                                            <input type="text" class="form-control" id="cliente" disabled>
                                             <label class="form-label">Cliente</label>
                                         </div>
                                     </div>
@@ -178,17 +206,8 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="ven_cod" value="0" class="ven">
                                             <input type="hidden" id="ven_tipfac" class="ven">
                                             <input type="hidden" id="ven_montocuota" class="ven">
-                                            <input type="text" id="ven_nrofac" class="form-control ven" disabled>
+                                            <input type="text" id="ven_nrofac" class="form-control" disabled>
                                             <label class="form-label">Factura nro.</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <div class="form-group form-float">
-                                        <div class="form-line focus">
-                                            <input type="text" id="notven_concepto" class="form-control disabledno" disabled>
-                                            <label class="form-label">Concepto</label>
                                         </div>
                                     </div>
                                 </div>
@@ -202,16 +221,25 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-12 row clearfix nota_remision">
+                                <div class="col-sm-2 cant_cuotas" style="display:none;">
+                                    <div class="form-group form-float">
+                                        <div class="form-line focus">
+                                            <input type="text" id="ven_cuotas" class="form-control disabledno soloNum" disabled>
+                                            <label class="form-label">Nueva Cant. Cuotas</label>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                    <h5 class="col-sm-12">Datos extra para Nota de Remisión</h5>
+                                <div class="col-sm-12 row clearfix nota_remision" style="display:none;">
 
-                                    <div class="col-sm-2">
+                                    <h5 class="col-sm-12">Datos Extra para Nota de Remisión</h5>
+
+                                    <div class="col-sm-5">
                                         <div class="form-group form-float">
                                             <div class="form-line focus">
-                                                <input type="hidden" id="per_cod" value="0">
-                                                <input type="text" class="form-control disabledno" id="funprov_nrodoc" disabled onkeyup="getPersonas()">
-                                                <label class="form-label">C.I. Funcionario</label>
+                                                <input type="hidden" id="fun_cod" value="0">
+                                                <input type="text" class="form-control disabledno soloTxt" id="funcionario" disabled onkeyup="getPersonas()">
+                                                <label class="form-label">Nombres y Apellidos del Funcionario</label>
                                                 <div id="listaPersonas" style="display: none;">
                                                     <ul class="list-group" id="ulPersonas" style="height:60px; overflow:auto;"></ul>
                                                 </div>
@@ -222,44 +250,13 @@ $u = $_SESSION['usuarios'];
                                     <div class="col-sm-5">
                                         <div class="form-group form-float">
                                             <div class="form-line focus">
-                                                <input type="text" class="form-control" id="funprov_nombres" disabled>
-                                                <label class="form-label">Nombres y Apellidos del Funcionario</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-2">
-                                        <div class="form-group form-float">
-                                            <div class="form-line focus">
-                                                <input type="hidden" id="per_cod" value="0">
-                                                <input type="text" class="form-control disabledno" id="funprov_nrodoc" disabled onkeyup="getChapa()">
-                                                <label class="form-label">Chpapa del Vehículo</label>
+                                                <input type="hidden" id="marcve_cod" value="0">
+                                                <input type="hidden" id="modve_cod" value="0">
+                                                <input type="hidden" id="chapve_cod" value="0">
+                                                <input type="text" class="form-control disabledno sinCarac" id="vehiculo" disabled onkeyup="getChapa()">
+                                                <label class="form-label">Vehículo</label>
                                                 <div id="listaChapa" style="display: none;">
                                                     <ul class="list-group" id="ulChapa" style="height:60px; overflow:auto;"></ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-3">
-                                        <div class="form-group form-float">
-                                            <div class="form-line focus">
-                                                <input type="text" class="form-control" id="funprov_nombres" disabled onkeyup="getMarca()">
-                                                <label class="form-label">Marca del Vehículo</label>
-                                                <div id="listaMarca" style="display: none;">
-                                                    <ul class="list-group" id="ulMarca" style="height:60px; overflow:auto;"></ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-4">
-                                        <div class="form-group form-float">
-                                            <div class="form-line focus">
-                                                <input type="text" class="form-control" id="funprov_apellidos" disabled onkeyup="getModelo()">
-                                                <label class="form-label">Modelo del vehículo</label>
-                                                <div id="listaModelo" style="display: none;">
-                                                    <ul class="list-group" id="ulModelo" style="height:60px; overflow:auto;"></ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -280,6 +277,12 @@ $u = $_SESSION['usuarios'];
                                     <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="anular()">
                                         <i class="material-icons">highlight_off</i>
                                         <span>ANULAR</span>
+                                    </button>
+                                <?php } ?>
+                                <?php if ($botNuevo == true) { ?>
+                                    <button type="button" style="width:12.5%;" class="btn bg-indigo waves-effect btnOperacion1" onclick="actCuotas()">
+                                        <i class="material-icons">update</i>
+                                        <span>ACT. CUOTAS</span>
                                     </button>
                                 <?php } ?>
                                 <button type="button" style="width:12.5%;" class="btn bg-blue waves-effect btnOperacion1" onclick="reporteNota()">
@@ -307,7 +310,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-12 tbldet" <!--style="display:none;">
+                <div class="col-lg-12 tbldet" style="display:none;">
                     <div class="card">
                     <!-- formulario de detalles de NOTA VENTAS DETALLE-->
                         <div class="header bg-indigo">
@@ -323,7 +326,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="dep_cod" value="0">
-                                            <input type="text" class="form-control disabledno2" id="dep_descri" disabled onkeyup="getDeposito()">
+                                            <input type="text" class="form-control disabledno2 sinCarac" id="dep_descri" disabled onkeyup="getDeposito()">
                                             <label class="form-label">Depósito</label>
                                             <div id="listaDeposito" style="display: none;">
                                                 <ul class="list-group" id="ulDeposito" style="height:60px; overflow:auto;"></ul>
@@ -338,7 +341,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
                                             <input type="hidden" id="tipimp_cod" value="0">
-                                            <input type="text" class="form-control disabledno2" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disabledno2 sinCarac" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Item</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:scroll;"></ul>
@@ -350,7 +353,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="notvendet_cantidad" class="form-control disabledno2" disabled>
+                                            <input type="text" id="notvendet_cantidad" class="form-control disabledno2 soloNum" disabled onkeyup="cantItem()" onchange="cantItem()">
                                             <label class="form-label">Cantidad</label>
                                         </div>
                                     </div>
@@ -406,11 +409,12 @@ $u = $_SESSION['usuarios'];
                                     <thead>
                                         <tr>
                                             <th>ITEM</th>
-                                            <th>CANTIDAD</th>
-                                            <th>PRECIO UNIT.</th>
-                                            <th>EXCENTA</th>
-                                            <th>IVA 5%</th>
-                                            <th>IVA 10%</th>
+                                            <th style="text-align:right;">CANTIDAD</th>
+                                            <th>MEDIDA</th>
+                                            <th style="text-align:right;">PRECIO</th>
+                                            <th style="text-align:right;">EXCENTA</th>
+                                            <th style="text-align:right;">IVA 5%</th>
+                                            <th style="text-align:right;">IVA 10%</th>
                                         </tr>
                                     </thead>
                                     <tbody id="grilla_det">
@@ -450,7 +454,6 @@ $u = $_SESSION['usuarios'];
                                             <th>FECHA</th>
                                             <th>USUARIO</th>
                                             <th>SUCURSAL</th>
-                                            <th>NOTA NRO.</th>
                                             <th>CLIENTE</th>
                                             <th>VENTA</th>
                                             <th>FACTURA</th>

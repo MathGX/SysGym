@@ -51,6 +51,34 @@ if (isset($_POST['operacion_cab'])) {
     }
     echo json_encode($response);
 
+} else if (isset($_POST['consulComprob']) == 1) {
+    
+    //Se determina el codigo de caja segun el perfil del usuario
+    if ($_POST['perf_cod'] == 2) {
+        $caj_cod = obtenerConfig($_POST['suc_cod'], $_POST['emp_cod'], 3);
+    } else {
+        $caj_cod = $_POST['caj_cod'];
+    }
+
+    //Se obtiene el siguiente nro de nota
+    $comprobante = "select 
+        f.tim_nro,
+        f.tim_fec_venc,
+        round(f.tim_com_nro_lim - (coalesce(max(f.tim_com_nro::integer),0)+1)) disponibles,
+        lpad(cast(f.suc_cod as text), 3, '0')|| '-' || 
+        lpad(cast(f.caj_cod as text), 3, '0')|| '-' ||
+        lpad(cast((coalesce(max(cast(tim_com_nro as integer)),0)+1) as text), 7, '0') as comprobante 
+    from timbrados f
+    where f.suc_cod = {$_POST['suc_cod']} 
+        and f.emp_cod = {$_POST['emp_cod']} 
+        and f.caj_cod = $caj_cod
+        and f.tipcomp_cod = {$_POST['tipcomp_cod']}
+    group by f.tim_nro, f,tim_fec_venc, f.suc_cod, f.caj_cod, f.tim_com_nro, tim_com_nro_lim;";
+
+    $nrocomprobante = pg_query($conexion, $comprobante);
+    $nroComp = pg_fetch_assoc($nrocomprobante);
+
+    echo json_encode($nroComp);
 
 } else {
     //Si el post no recibe la operacion realizamos una consulta

@@ -1,15 +1,4 @@
-
-// document
-//   .getElementById("notven_codigo")
-//   .addEventListener("keydown", function (e) {
-//     e.preventDefault(); // Bloquea edición por teclado
-//   });
-
-// // Opcional: Bloquear cambios vía consola
-// Object.defineProperty(document.getElementById("notven_codigo"), "value", {
-//   writable: false,
-// });
-
+// datos del usuario y empresa
 let datusUsuarios = () => {
     $.ajax({
         method: "POST",
@@ -21,9 +10,12 @@ let datusUsuarios = () => {
             $("#suc_descri").val(datos.suc_descri);
             $("#emp_cod").val(datos.emp_cod);
             $("#emp_razonsocial").val(datos.emp_razonsocial);
+            $("#perf_cod").val(datos.perf_cod);
+            $("#caj_cod").val(datos.caj_cod);
         });
 };
 
+//funcion para obtener la fecha actual
 let formatoFecha = (fecha) => {
     let dia = fecha.getDate();
     let mes = fecha.getMonth() + 1;
@@ -32,11 +24,130 @@ let formatoFecha = (fecha) => {
     mes = mes < 10 ? '0' + mes : mes;
     dia = dia < 10 ? '0' + dia : dia;
 
-    return `${dia}/${mes}/${ano}`;
-}
+    return `${ano}-${mes}-${dia}`;
 
+}
 let ahora = new Date();
 $("#notven_fecha").val(formatoFecha(ahora));
+
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+// Variable para rastrear si se hizo clic en la lista
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno, .disabledno2").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numéricos";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    if (idInput === "#per_nrodoc") {
+        caracteres = /['_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/; //acepta guion
+    } else {
+        caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    }
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no acepta caracteres especiales";
+        if (idInput === "#per_nrodoc") {
+            mensaje += "a parte del guión"; // concatena la cadena extra
+        }
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
 
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 
@@ -52,6 +163,7 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
+//funcion para obtener el nuevo codigo
 let getCod = () => {
     $.ajax({
         method: "POST",
@@ -62,6 +174,7 @@ let getCod = () => {
     });
 }
 
+//funcion para limpiar la cabecera
 let limpiarCab = () =>{
     $(".tblcab input").each(function(){
         $(this).val('');
@@ -77,6 +190,30 @@ let limpiarCab = () =>{
     });
 }
 
+//funcion para obtener el numero de comprobante
+let getComprobante = () => {
+    $.ajax({
+        method: "POST",
+        url: "controlador.php",
+        data: {
+            consulComprob: 1,
+            suc_cod: $("#suc_cod").val(),
+            emp_cod: $("#emp_cod").val(),
+            caj_cod: $("#caj_cod").val(),
+            perf_cod: $("#perf_cod").val(),
+            tipcomp_cod: $("#tipcomp_cod").val()
+        }
+    }).done(function (respuesta){
+        if (respuesta.disponibles < 0) {
+            alertaLabel("EL TIMBRADO ALCANZÓ EL LÍMETE DE COMPROBANTES HABLITADOS, VERFIQUE POR FAVOR");
+        } else {
+            $("#notven_nronota").val(respuesta.comprobante);
+            $("#notven_timbrado").val(respuesta.tim_nro);
+            $("#notven_timb_fec_venc").val(respuesta.tim_fec_venc);
+        }
+    });
+}
+
 //funcion nuevo
 let nuevo = () => {
     limpiarCab();
@@ -85,7 +222,7 @@ let nuevo = () => {
     $(".focus").attr("class", "form-line focus focused");
     $("#notven_cod").val(0);
     $("#notven_estado").val('ACTIVO');
-    $(".tbl, .tbldet").attr("style", "display:none");
+    $(".tbl, .tbldet, .nota_remision").attr("style", "display:none");
     getCod();
     habilitarBotones(true);
     datusUsuarios();
@@ -97,6 +234,23 @@ let anular = () => {
     $("#operacion_cab").val(2);
     habilitarBotones(true);
     window.scroll(0, -100);
+};
+
+//funcion actualizar cuotas de compra
+let actCuotas = () => {
+    if ($("#ven_cod").val() === "0" || $("#ven_cod").val() === "") {
+        alertaLabel("SELCCIONE UNA NOTA DE DEBITO O CREDITO");
+    } else if ($("#tipcomp_cod").val() == 3) {
+        alertaLabel("NO SE PUEDEN ACTUALIZAR LAS CUOTAS POR UNA <b> NOTA DE REMISION </b>");
+    } else if ($("#grilla_det tr").length < 1) {
+        alertaLabel("EL REGISTRO SELECCIONADO NO TIENE DETALLES");
+    } else {
+        $("#operacion_cab").val(3);
+        $(".cant_cuotas").removeAttr("style","").find(".focus").attr("class", "form-line focus focused");
+        $("#ven_cuotas").removeAttr("disabled");
+        habilitarBotones(true);
+        window.scroll(0, -100);
+    }
 };
 
 //funcion cancelar
@@ -118,8 +272,11 @@ let grabar = () => {
         data: {
             notven_cod: $("#notven_cod").val(),
             notven_fecha: $("#notven_fecha").val(),
+            notven_timbrado: $("#notven_timbrado").val(),
             notven_nronota: $("#notven_nronota").val(),
             notven_concepto: $("#notven_concepto").val(),
+            notven_funcionario: $("#fun_cod").val() || 0,
+            notven_chapa_vehi: $("#chapve_cod").val() || 0,
             notven_estado: $("#notven_estado").val(),
             tipcomp_cod: $("#tipcomp_cod").val(),
             ven_cod: $("#ven_cod").val(),
@@ -127,7 +284,9 @@ let grabar = () => {
             emp_cod: $("#emp_cod").val(),
             usu_cod: $("#usu_cod").val(),
             cli_cod: $("#cli_cod").val(),
-            operacion_cab: $("#operacion_cab").val()
+            notven_timb_fec_venc: $("#notven_timb_fec_venc").val(),
+            operacion_cab: $("#operacion_cab").val(),
+            ven_cuotas: $("#ven_cuotas").val(),          
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
         .done(function (respuesta) {
@@ -205,44 +364,34 @@ let confirmar = () => {
 
 //funcion control vacio
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los inputs .form-control dentro de cualquier .focus
+    let camposVacios = [];
 
-    if ($("#notven_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#notven_fecha").val() == "") {
-        condicion = "i";
-    } else if ($("#tipcomp_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#per_nrodoc").val() == "") {
-        condicion = "i";
-    } else if ($("#ven_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#ven_nrofac").val() == "") {
-        condicion = "i";
-    } else if ($("#cli_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#cliente").val() == "") {
-        condicion = "i";
-    } else if ($("#notven_nronota").val() == "") {
-        condicion = "i";
-    } else if ($("#notven_concepto").val() == "") {
-        condicion = "i";
-    } else if ($("#notven_estado").val() == "") {
-        condicion = "i";
-    }
+    $(".focus .form-control").each(function () {
+        let $input = $(this);
+        let valor = $input.val().trim();
+        let $formLine = $input.closest('.form-line');
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+        // Caso especial: si el .form-line está dentro de .nota_remision y el tipcomp_cod es 3 (remision)
+        let dentroNotaRemision = $formLine.closest('.nota_remision').length > 0;
+
+        if (dentroNotaRemision) {
+            if ($('#tipcomp_cod').val() === "3" && valor === "") {
+                // Si está dentro de nota_remision y tipcomp_cod=3 y está vacío
+                let nombreInput = $formLine.find('.form-label').text() || $input.attr('id');
+                camposVacios.push(nombreInput);
+            }
+        } else {
+            // Para form-lines fuera de nota_remision, se verifica siempre
+            if (valor === "") {
+                let nombreInput = $formLine.find('.form-label').text() || $input.attr('id');
+                camposVacios.push(nombreInput);
+            }
+        }
+    });
+
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }
@@ -293,60 +442,58 @@ let habilitarBotones2 = (operacion_det) => {
 let agregar = () => {
     $("#operacion_det").val(1);
     $(".disabledno2").removeAttr("disabled");
+    $(".foc").find(".form-control").val('');
     $(".foc").attr("class", "form-line foc focused");
-    $(".grilla_det1").attr("style", "display:none");
     habilitarBotones2(true);
-    window.scroll(0, -100);
 };
 
 //funcion eliminar
 let eliminar = () => {
     $("#operacion_det").val(2);
     habilitarBotones2(true);
-    window.scroll(0, -100);
 };
 
-function notDebito () {
-    $.ajax({
-        method: "POST",
-        url: "ctrlLibCobrDeb.php",
-        data: {
-            notven_cod: $("#notven_cod").val(),
-            ven_cod: $("#ven_cod").val(),
-            ven_tipfac: $("#ven_tipfac").val(),
-            ven_montocuota: $("#ven_montocuota").val(),
-            tipcomp_cod: $("#tipcomp_cod").val(),
-            tipimp_cod: $("#tipimp_cod").val(),
-            notvendet_cantidad: $("#notvendet_cantidad").val(),
-            notvendet_precio: $("#notvendet_precio").val(),
-            tipitem_cod: $("#tipitem_cod").val(),
-            operacion_cab: $("#operacion_cab").val(),
-            operacion_det: $("#operacion_det").val()
-        }
-    })
-}
+// function notDebito () {
+//     $.ajax({
+//         method: "POST",
+//         url: "ctrlLibCobrDeb.php",
+//         data: {
+//             notven_cod: $("#notven_cod").val(),
+//             ven_cod: $("#ven_cod").val(),
+//             ven_tipfac: $("#ven_tipfac").val(),
+//             ven_montocuota: $("#ven_montocuota").val(),
+//             tipcomp_cod: $("#tipcomp_cod").val(),
+//             tipimp_cod: $("#tipimp_cod").val(),
+//             notvendet_cantidad: $("#notvendet_cantidad").val(),
+//             notvendet_precio: $("#notvendet_precio").val(),
+//             tipitem_cod: $("#tipitem_cod").val(),
+//             operacion_cab: $("#operacion_cab").val(),
+//             operacion_det: $("#operacion_det").val()
+//         }
+//     })
+// }
 
-function notCredito () {
-    $.ajax({
-        method: "POST",
-        url: "ctrlLibCobrCred.php",
-        data: {
-            notven_cod: $("#notven_cod").val(),
-            ven_cod: $("#ven_cod").val(),
-            ven_tipfac: $("#ven_tipfac").val(),
-            ven_montocuota: $("#ven_montocuota").val(),
-            tipcomp_cod: $("#tipcomp_cod").val(),
-            tipimp_cod: $("#tipimp_cod").val(),
-            notvendet_cantidad: $("#notvendet_cantidad").val(),
-            notvendet_precio: $("#notvendet_precio").val(),
-            tipitem_cod: $("#tipitem_cod").val(),
-            notven_concepto: $("#notven_concepto").val(),
-            itm_cod: $("#itm_cod").val(),
-            operacion_cab: $("#operacion_cab").val(),
-            operacion_det: $("#operacion_det").val()
-        }
-    })
-}
+// function notCredito () {
+//     $.ajax({
+//         method: "POST",
+//         url: "ctrlLibCobrCred.php",
+//         data: {
+//             notven_cod: $("#notven_cod").val(),
+//             ven_cod: $("#ven_cod").val(),
+//             ven_tipfac: $("#ven_tipfac").val(),
+//             ven_montocuota: $("#ven_montocuota").val(),
+//             tipcomp_cod: $("#tipcomp_cod").val(),
+//             tipimp_cod: $("#tipimp_cod").val(),
+//             notvendet_cantidad: $("#notvendet_cantidad").val(),
+//             notvendet_precio: $("#notvendet_precio").val(),
+//             tipitem_cod: $("#tipitem_cod").val(),
+//             notven_concepto: $("#notven_concepto").val(),
+//             itm_cod: $("#itm_cod").val(),
+//             operacion_cab: $("#operacion_cab").val(),
+//             operacion_det: $("#operacion_det").val()
+//         }
+//     })
+// }
 
 /*enviamos por POST a la base de datos los datos cargados los input para grabar un nuevo detalle de inscripción*/
 function grabar2() {
@@ -359,7 +506,14 @@ function grabar2() {
             notven_cod: $("#notven_cod").val(),
             notvendet_cantidad: $("#notvendet_cantidad").val(),           
             notvendet_precio: $("#notvendet_precio").val(),
+            dep_cod: $("#dep_cod").val(),
+            suc_cod: $("#suc_cod").val(),
+            emp_cod: $("#emp_cod").val(),
             operacion_det: $("#operacion_det").val(),
+            tipcomp_cod: $("#tipcomp_cod").val(),
+            libven_nrocomprobante: $("#notven_nronota").val(),
+            tipimp_cod: $("#tipimp_cod").val(),
+            usu_cod: $("#usu_cod").val(),
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
 .done(function (respuesta) {
@@ -815,6 +969,12 @@ function seleccionNota (datos) {
     $("#listaNota").attr("style", "display:none;");
     $(".focus").attr("class", "form-line focus focused");
     $("#per_nrodoc").removeAttr("disabled");
+    if ($("#tipcomp_cod").val() == 3) {
+        $(".nota_remision").removeAttr("style");
+    } else {
+        $(".nota_remision").attr("style", "display:none;");
+    }
+    getComprobante();
 }
 
 //________________________________capturamos los datos de la tabla venta_cab en un JSON a través de POST para listarlo________________________________

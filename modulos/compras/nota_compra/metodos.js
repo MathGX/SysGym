@@ -475,7 +475,7 @@ let eliminar = () => {
 //                 usu_cod: $("#usu_cod").val(),
 //                 usu_login: $("#usu_login").val(),
 //                 tipcomp_cod: $("#tipcomp_cod").val(),
-//                 case: "cuentas"
+//                 case: "cuentas"notven_nronota
 //             }
 //         });
 //         setTimeout(() => {
@@ -597,12 +597,8 @@ let cantItem = () => {
     }).done(
         function (respuesta) {
             if ($("#tipcomp_cod").val() == 1) {
-                if ( parseFloat($("#notacomdet_cantidad").val()) > parseFloat(respuesta.cant)) {
-                    swal({
-                        title: "ERROR!!",
-                        text: "LA CANTIDAD SUPERA LO COMPRADO",
-                        type: "error",
-                    }),
+                if (parseFloat($("#notacomdet_cantidad").val()) > parseFloat(respuesta.cant)) {
+                    alertaLabel("LA CANTIDAD SUPERA LO COMPRADO");
                     $("#notacomdet_cantidad").val("");
                 }
             }
