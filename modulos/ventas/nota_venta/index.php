@@ -81,7 +81,7 @@ $u = $_SESSION['usuarios'];
 
                                 <div class="col-sm-2" style="display: none">
                                     <div class="form-group form-float">
-                                        <div class="form-line focus">
+                                        <div class="form-line">
                                             <input type="text" id="notven_cod" class="form-control" disabled>
                                             <label class="form-label">Código</label>
                                         </div>
@@ -238,10 +238,10 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-group form-float">
                                             <div class="form-line focus">
                                                 <input type="hidden" id="fun_cod" value="0">
-                                                <input type="text" class="form-control disabledno soloTxt" id="funcionario" disabled onkeyup="getPersonas()">
+                                                <input type="text" class="form-control disabledno soloTxt" id="funcionario" disabled onkeyup="getFuncionarios()">
                                                 <label class="form-label">Nombres y Apellidos del Funcionario</label>
-                                                <div id="listaPersonas" style="display: none;">
-                                                    <ul class="list-group" id="ulPersonas" style="height:60px; overflow:auto;"></ul>
+                                                <div id="listaFuncionarios" style="display: none;">
+                                                    <ul class="list-group" id="ulFuncionarios" style="height:60px; overflow:auto;"></ul>
                                                 </div>
                                             </div>
                                         </div>

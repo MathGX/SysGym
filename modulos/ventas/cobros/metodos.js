@@ -809,6 +809,7 @@ let seleccionarFila = (objetoJSON) => {
 
     $(".focus").attr("class", "form-line focus focused");
     $(".tbldet").removeAttr("style", "display:none;");
+    datusUsuarios();
     listar2();
     getForcob();
 };

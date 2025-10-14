@@ -15,19 +15,20 @@ $conexion = $objConexion->getConexion();
 $itm_descri = $_POST['itm_descri'];
 $tipcomp_cod = $_POST['tipcomp_cod'];
 $com_cod = $_POST['com_cod'];
+$dep_cod = $_POST['dep_cod'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
 if ($tipcomp_cod == "3") {
         $sql = "select 
-        i.itm_cod,
-        i.tipitem_cod,
-        i.tipimp_cod,
-        i.itm_descri,
-        cd.dep_cod,
-        d.dep_descri,
-        cd.comdet_cantidad as notacomdet_cantidad,
-        um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri,
-        cd.comdet_precio as notacomdet_precio
+                i.itm_cod,
+                i.tipitem_cod,
+                i.tipimp_cod,
+                i.itm_descri,
+                cd.dep_cod,
+                d.dep_descri,
+                cd.comdet_cantidad as notacomdet_cantidad,
+                um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri,
+                cd.comdet_precio as notacomdet_precio
         from items i 
                 join unidad_medida um on um.uni_cod = i.uni_cod 
 	        join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
@@ -35,46 +36,50 @@ if ($tipcomp_cod == "3") {
 	        	join compra_det cd on cd.itm_cod = s.itm_cod and cd.tipitem_cod = s.tipitem_cod
 	        		join compra_cab cc on cc.com_cod = cd.com_cod 
 	        		join depositos d on d.dep_cod = cd.dep_cod 
-        where itm_descri ilike '%$itm_descri%' and cc.com_cod = $com_cod 
+        where itm_descri ilike '%$itm_descri%' 
+                and cc.com_cod = $com_cod 
         order by i.itm_descri;";
 } else if ($tipcomp_cod == "2") {
         $sql = "select 
-        i.itm_cod,
-        i.tipitem_cod,
-        i.tipimp_cod,
-        i.itm_descri,
-        i.itm_costo as notacomdet_precio,
-        i.uni_cod,
-        um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri
+                i.itm_cod,
+                i.tipitem_cod,
+                i.tipimp_cod,
+                i.itm_descri,
+                i.itm_costo as notacomdet_precio,
+                i.uni_cod,
+                um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri
         from items i 
                 join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
                 join unidad_medida um on um.uni_cod = i.uni_cod 
-        where itm_descri ilike '%$itm_descri%' and i.itm_estado ilike 'ACTIVO'
+                join stock s on s.itm_cod = i.itm_cod and s.tipitem_cod = i.tipitem_cod 
+        where itm_descri ilike '%$itm_descri%' 
+                and s.dep_cod = $dep_cod
+                and i.itm_estado ilike 'ACTIVO'
         order by i.itm_descri;";
 } else if ($tipcomp_cod == "1") {
         $sql = "select 
-                        c.itm_cod,
-                        c.tipitem_cod,
-                        i.tipimp_cod,
-                        i.itm_descri,
-                        c.dep_cod,
-                        d.dep_descri,
-                        sum(c.cant) notacomdet_cantidad,
-                        um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri,
-                        c.precio notacomdet_precio
-                from(select itm_cod, tipitem_cod, dep_cod, comdet_cantidad cant, comdet_precio precio from compra_det where com_cod = $com_cod
-                        union all
-                        select ncd.itm_cod, ncd.tipitem_cod, ncd.dep_cod, ncd.notacomdet_cantidad cant, ncd.notacomdet_precio precio from nota_compra_det ncd 
-                                join nota_compra_cab ncc on ncc.notacom_cod = ncd.notacom_cod
-                        where ncc.com_cod = $com_cod 
-                                and ncc.tipcomp_cod = $com_cod
-                                and ncc.notacom_estado = 'ACTIVO') c
-                        join items i on i.itm_cod = c.itm_cod
-                join unidad_medida um on um.uni_cod = i.uni_cod 
-                join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
-                join depositos d on d.dep_cod = c.dep_cod 
-                where i.itm_descri ilike '%$itm_descri%'
-                group by 1,2,3,4,5,6,8,9;";
+                c.itm_cod,
+                c.tipitem_cod,
+                i.tipimp_cod,
+                i.itm_descri,
+                c.dep_cod,
+                d.dep_descri,
+                sum(c.cant) notacomdet_cantidad,
+                um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri,
+                c.precio notacomdet_precio
+        from(select itm_cod, tipitem_cod, dep_cod, comdet_cantidad cant, comdet_precio precio from compra_det where com_cod = $com_cod
+                union all
+                select ncd.itm_cod, ncd.tipitem_cod, ncd.dep_cod, ncd.notacomdet_cantidad cant, ncd.notacomdet_precio precio from nota_compra_det ncd 
+                        join nota_compra_cab ncc on ncc.notacom_cod = ncd.notacom_cod
+                where ncc.com_cod = $com_cod 
+                        and ncc.tipcomp_cod = 2
+                        and ncc.notacom_estado = 'ACTIVO') c
+                join items i on i.itm_cod = c.itm_cod
+        join unidad_medida um on um.uni_cod = i.uni_cod 
+        join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
+        join depositos d on d.dep_cod = c.dep_cod 
+        where i.itm_descri ilike '%$itm_descri%'
+        group by 1,2,3,4,5,6,8,9;";
 }
         
 //consultamos a la base de datos y guardamos el resultado

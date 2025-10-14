@@ -18,6 +18,8 @@ $conexion = $objConexion->getConexion();
 include "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/extension/importPHP.php"; 
 
 $per_nrodoc = $_POST['per_nrodoc'];
+$suc_cod = $sesion['suc_cod'];
+$emp_cod = $sesion['emp_cod'];
 $validacion = obtenerConfig($sesion['suc_cod'], $sesion['emp_cod'], 1);
 
 $sql = "select 
@@ -25,17 +27,22 @@ $sql = "select
         cc.ven_cod,
         current_date - vc.ven_fecha as dias_emision,
         vc.ven_tipfac,
-        vc.ven_montocuota,
         vc.ven_nrofac,
         vc.cli_cod,
-        p.per_nombres||' '||p.per_apellidos as cliente
+        p.per_nombres||' '||p.per_apellidos as cliente,
+        vc.ven_cuotas
 from cuentas_cobrar cc 
 join ventas_cab vc on vc.ven_cod = cc.ven_cod
 join sucursales s on s.suc_cod = vc.suc_cod and s.emp_cod = vc.emp_cod
         join empresa e on e.emp_cod = s.emp_cod
 join clientes c on c.cli_cod = vc.cli_cod
         join personas p on p.per_cod = c.per_cod
-where cc.cuencob_estado <> 'ANULADO' and p.per_nrodoc ilike '%$per_nrodoc%' and ((current_date - vc.ven_fecha) <= $validacion)
+where cc.cuencob_estado <> 'ANULADO' 
+        and vc.suc_cod = $suc_cod
+        and vc.emp_cod = $emp_cod
+        and p.per_nrodoc ilike '%$per_nrodoc%' 
+        and ((current_date - vc.ven_fecha) <= $validacion)
+        and not exists (select 1 from presupuesto_venta pv where pv.ven_cod = vc.ven_cod)
 order by cc.ven_cod;";
 //
 //consultamos a la base de datos y guardamos el resultado

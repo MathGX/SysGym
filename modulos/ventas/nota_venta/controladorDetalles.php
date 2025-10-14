@@ -18,7 +18,15 @@ if (isset($_POST['operacion_det'])) {
         {$_POST['notven_cod']},
         {$_POST['notvendet_cantidad']},
         {$_POST['notvendet_precio']},
-        {$_POST['operacion_det']}
+        {$_POST['dep_cod']},
+        {$_POST['suc_cod']},
+        {$_POST['emp_cod']},
+        {$_POST['operacion_det']},
+        {$_POST['tipcomp_cod']},
+        {$_POST['ven_cod']},
+        '{$_POST['libven_nrocomprobante']}',
+        {$_POST['tipimp_cod']},
+        {$_POST['usu_cod']}
     );";
 
     pg_query($conexion, $sql);
@@ -27,6 +35,11 @@ if (isset($_POST['operacion_det'])) {
     if (strpos($error, "repedet") !== false) {
         $response = array(
             "mensaje" => "ESTE ITEM YA ESTÁ CARGADO",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "err_exceso") !== false) {
+        $response = array(
+            "mensaje" => "EL MONTO EXCEDE EL SALDO DE LA CUENTA",
             "tipo" => "error"
         );
     } else {
@@ -45,6 +58,18 @@ if (isset($_POST['operacion_det'])) {
 
     $resultado = pg_query($conexion, $sql);
     $datos = pg_fetch_all($resultado);
+    echo json_encode($datos);
+
+} else if (isset($_POST['cantidad'])){
+
+    //Si el post no recibe la operacion ni codigo se consulta cantidad en compra detalle
+    $sql = "select cd.vendet_cantidad as cant 
+    from ventas_det cd 
+    where cd.ven_cod = {$_POST['ven_cod']} 
+        and cd.itm_cod = {$_POST['itm_cod']};";
+
+    $resultado = pg_query($conexion, $sql);
+    $datos = pg_fetch_assoc($resultado);
     echo json_encode($datos);
 }
 

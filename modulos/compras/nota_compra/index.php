@@ -338,6 +338,19 @@ $u = $_SESSION['usuarios'];
                         <div class="body">
                             <input type="hidden" id="operacion_det" value="0">
                             <div class="row clearfix">
+                                
+                                <div class="col-sm-2 depo" style="display:none;">
+                                    <div class="form-group form-float">
+                                        <div class="form-line foc">
+                                            <input type="hidden" id="dep_cod" value="0">
+                                            <input type="text" id="dep_descri" class="form-control disabledno2 sinCarac" disabled onkeyup="getDeposito()">
+                                            <label class="form-label">Depósito</label>
+                                            <div id="listaDeposito" style="display: none;">
+                                                <ul class="list-group" id="ulDeposito" style="height:60px; overflow:auto;"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="col-sm-4">
                                     <div class="form-group form-float">
@@ -349,19 +362,6 @@ $u = $_SESSION['usuarios'];
                                             <label class="form-label">Item</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:scroll;"></ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="col-sm-2 depo" style="display:none;">
-                                    <div class="form-group form-float">
-                                        <div class="form-line foc">
-                                            <input type="hidden" id="dep_cod" value="0">
-                                            <input type="text" id="dep_descri" class="form-control disabledno2 sinCarac" disabled onkeyup="getDeposito()">
-                                            <label class="form-label">Depósito</label>
-                                            <div id="listaDeposito" style="display: none;">
-                                                <ul class="list-group" id="ulDeposito" style="height:60px; overflow:auto;"></ul>
                                             </div>
                                         </div>
                                     </div>

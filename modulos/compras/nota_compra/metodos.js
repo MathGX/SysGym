@@ -363,20 +363,22 @@ let controlVacio = () => {
         let $formLine = $input.closest('.form-line');
 
         // Caso especial: si el .form-line está dentro de .nota_remision y el tipcomp_cod es 3 (remision)
-        let dentroNotaRemision = $formLine.closest('.nota_remision').length > 0;
-
-        if (dentroNotaRemision) {
-            if ($('#tipcomp_cod').val() === "3" && valor === "") {
-                // Si está dentro de nota_remision y tipcomp_cod=3 y está vacío
-                let nombreInput = $formLine.find('.form-label').text() || $input.attr('id');
-                if (nombreInput !== "C.I. Funcionario") {
-                    camposVacios.push(nombreInput);
-                }
-            }
-        } else {
-            // Para form-lines fuera de nota_remision, se verifica siempre
-            if (valor === "") {
-                let nombreInput = $formLine.find('.form-label').text() || $input.attr('id');
+        let dentroNotaRemision = $formLine.closest('.nota_remision');
+        // Caso especial: si el .form-line stá dentro de .cant_cuotas
+        let esCuota = $formLine.closest('.cant_cuotas');
+        
+        // Si está dentro de nota_remision y tipcomp_cod=3
+        if (dentroNotaRemision.length > 0) {
+            if (!dentroNotaRemision.is(':visible') || $('#tipcomp_cod').val() !== '3') return; // no validar si no es visibel
+        } 
+        // Si está dentro de cant_cuotas 
+        if (esCuota.length > 0) {
+            if (!esCuota.is(':visible')) return; // no validar si no es visible
+        } 
+        // Para form-lines fuera de nota_remision y cant_cuotas se verifica siempre
+        if (valor === "") {
+            let nombreInput = $formLine.find('.form-label').text() || $input.attr('id');
+            if (nombreInput !== "C.I. Funcionario") {
                 camposVacios.push(nombreInput);
             }
         }
@@ -664,7 +666,7 @@ let controlVacio2 = () => {
     // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
     if (camposVacios.length > 0) {
         alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
-    } else if (($("#tipitem_cod").val() == "1") && $("#pedcomdet_cantidad").val() !== "0") {
+    } else if (($("#tipitem_cod").val() == "1") && $("#notacomdet_cantidad").val() !== "0") {
         alertaLabel("El campo <b>Cantidad</b> debe ser 0 (cero) para los servicios.");
     } else {
         confirmar2();
@@ -986,6 +988,7 @@ function getItems() {
         data: {
             itm_descri:$("#itm_descri").val(),
             com_cod:$("#com_cod").val(),
+            dep_cod:$("#dep_cod").val()||0,
             tipcomp_cod:$("#tipcomp_cod").val()
         }
         //en base al JSON traído desde el listaItems arrojamos un resultado

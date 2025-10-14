@@ -18,13 +18,23 @@ if (isset($_POST['operacion_cab'])) {
     //escapar los datos para que acepte comillas simples
     $notven_concepto = pg_escape_string($conexion, $concepto);
     $notven_estado = pg_escape_string($conexion, $estado);
+    
+    //Se determina el codigo de caja segun el perfil del usuario
+    if ($_POST['perf_cod'] == 2) {
+        $caj_cod = obtenerConfig($_POST['suc_cod'], $_POST['emp_cod'], 3);
+    } else {
+        $caj_cod = $_POST['caj_cod'];
+    }
 
     //si existe ejecutamos el procedimiento almacenado con los parametros brindados por el post
     $sql = "select sp_nota_venta_cab(
         {$_POST['notven_cod']},
         '{$_POST['notven_fecha']}',
+        '{$_POST['notven_timbrado']}',
         '{$_POST['notven_nronota']}',
         '$notven_concepto',
+        {$_POST['notven_funcionario']},
+        {$_POST['notven_chapa_vehi']},
         '$notven_estado',
         {$_POST['tipcomp_cod']},
         {$_POST['ven_cod']},
@@ -32,7 +42,10 @@ if (isset($_POST['operacion_cab'])) {
         {$_POST['emp_cod']},
         {$_POST['usu_cod']},
         {$_POST['cli_cod']},
-        {$_POST['operacion_cab']}
+        '{$_POST['notven_timb_fec_venc']}',
+        {$_POST['operacion_cab']},
+        {$_POST['ven_cuotas']},
+        $caj_cod
     );";
 
     pg_query($conexion, $sql);
@@ -41,6 +54,11 @@ if (isset($_POST['operacion_cab'])) {
     if (strpos($error, "repe") !== false) {
         $response = array(
             "mensaje" => "ESTA NOTA YA ESTÁ CARGADA",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "err_cuota") !== false) {
+        $response = array(
+            "mensaje" => "PARA COMPRAS AL CONTADO LA CANTIDAD DE CUOTAS DEBE SER 1",
             "tipo" => "error"
         );
     } else {
@@ -79,6 +97,14 @@ if (isset($_POST['operacion_cab'])) {
     $nroComp = pg_fetch_assoc($nrocomprobante);
 
     echo json_encode($nroComp);
+
+} else if (isset($_POST['consulCod']) == 1) {
+    //Se obtiene el valor para asignar al codigo
+    $notVenCod = "select coalesce (max(notven_cod),0)+1 as codigo from nota_venta_cab;";
+
+    $codigo = pg_query($conexion, $notVenCod);
+    $codigoNotVen = pg_fetch_assoc($codigo);
+    echo json_encode($codigoNotVen);
 
 } else {
     //Si el post no recibe la operacion realizamos una consulta
