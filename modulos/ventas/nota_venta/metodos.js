@@ -597,7 +597,7 @@ let cantItem = () => {
             if ($("#tipcomp_cod").val() == 1) {
                 if (parseFloat($("#notvendet_cantidad").val()) > parseFloat(respuesta.cant)) {
                     alertaLabel("LA CANTIDAD SUPERA LO VENDIDO");
-                    $("#notacomdet_cantidad").val("");
+                    $("#notvendet_cantidad").val("");
                 }
             }
         }
@@ -972,15 +972,18 @@ function seleccionItems (datos) {
     Object.keys(datos).forEach(key =>{
         $("#"+key).val(datos[key]);
     });
-    if ($("#tipcomp_cod").val() == 3) {
-        $("#notvendet_cantidad").attr("readonly","");
-    } else {
-        $("#notvendet_cantidad").removeAttr("readonly");
-    }
     $("#ulItems").html();
     $("#listaItems").attr("style", "display:none;");
     $(".foc").attr("class", "form-line foc focused");
     itemServicio();
+    //validar si es nota de debito para mostrar el input de deposito y permitir modificar el precio
+    if ($("#tipcomp_cod").val() == 2) {
+        $(".depo").removeAttr("style", "display:none;");
+        $("#notvendet_precio").removeAttr("readonly");
+    } else {
+        $(".depo").attr("style", "display:none;");
+        $("#notvendet_precio").attr("readonly","");
+    }
 }
 
 //________________________________capturamos los datos de la tabla Nota en un JSON a través de POST para listarlo________________________________

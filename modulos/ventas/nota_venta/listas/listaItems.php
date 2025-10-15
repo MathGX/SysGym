@@ -62,7 +62,7 @@ if ($tipcomp_cod == "3") {
                 join stock s on s.itm_cod = i.itm_cod and s.tipitem_cod = i.tipitem_cod
         where itm_descri ilike '%$itm_descri%' 
                 and s.dep_cod = $dep_cod
-                and not exists (select 1 from items where itm_cod != 3 and tipitem_cod = 1)
+                and s.itm_cod not in (select itm_cod from items where itm_cod != 3 and tipitem_cod = 1)
         order by i.itm_descri;";
 } else if ($tipcomp_cod == "1") {
         $sql = "select 

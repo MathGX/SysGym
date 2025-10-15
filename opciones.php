@@ -959,7 +959,6 @@ if(isset($_SESSION['numApcier'])){
                         </li>
                         <?php } ?>
 
-                        <?php if (!empty($guiInfMovimientos)) { ?>
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                                 <i class="material-icons">work</i>
@@ -986,7 +985,36 @@ if(isset($_SESSION['numApcier'])){
                         <?php } ?>
                     </ul>
                 </li>
-                <?php } ?>
+
+                <li>
+                    <a href="javascript:void(0);" class="menu-toggle">
+                        <i class="material-icons">attachment</i>
+                        <span>MANUALES</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li>
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">person_pin</i>
+                                <span>De Usuario</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li>
+                                    <a href="/SysGym/Manuales/Manual_Usuario_Sys_Orbus_Gym.pdf"> Abrir </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="material-icons">lock_outline</i>
+                                <span>De Seguridad</span>
+                            </a>
+                            <ul class="ml-menu">
+                                <li>
+                                    <a href="/SysGym/Manuales/Manual_Seguridad_Sys_Orbus_Gym.pdf"> Abrir </a>
+                                </li>
+                            </ul>
+                        </li>
+                </li>
 
 
 

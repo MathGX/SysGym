@@ -75,7 +75,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="pedven_cod" class="form-control" disabled>
+                                            <input type="text" id="promdes_cod" class="form-control" disabled>
                                             <label class="form-label">Promoción Nro.</label>
                                         </div>
                                     </div>
@@ -114,7 +114,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="prpr_fecha" class="form-control" disabled>
+                                            <input type="date" id="promdes_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -124,11 +124,11 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                        <input type="hidden" id="cli_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getClientes()">
+                                        <input type="hidden" id="tiprom_cod" value="0">
+                                            <input type="text" class="form-control disabledno sinCarac" id="tiprom_descri" disabled onkeyup="getTipo()">
                                             <label class="form-label">Tipo</label>
-                                            <div id="listaClientes" style="display: none;">
-                                                <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>
+                                            <div id="listaTipo" style="display: none;">
+                                                <ul class="list-group" id="ulTipo" style="height:60px; overflow:auto;"></ul>
                                             </div>
                                         </div>
                                     </div>
@@ -137,7 +137,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" class="form-control" id="cliente" disabled>
+                                            <input type="text" class="form-control disabledno soloNum" id="promdes_valor" disabled>
                                             <label class="form-label">Valor</label>
                                         </div>
                                     </div>
@@ -146,7 +146,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="prpr_fecha" class="form-control" disabled>
+                                            <input type="text" id="promdes_descri" class="form-control disabledno sinCarac" disabled>
                                             <label class="form-label">Descipción</label>
                                         </div>
                                     </div>
@@ -155,7 +155,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="pedven_estado" class="form-control" disabled>
+                                            <input type="text" id="promdes_estado" class="form-control" disabled>
                                             <label class="form-label">Estado</label>
                                         </div>
                                     </div>
@@ -210,8 +210,7 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line foc">
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
-                                            <input type="hidden" id="tipimp_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disabledno2 sinCarac" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Servicio</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:auto;"></ul>
@@ -223,7 +222,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="pedvendet_cantidad" class="form-control disabledno" disabled>
+                                            <input type="text" id="promdesdet_cantidad" class="form-control disabledno2 soloNum" disabled>
                                             <label class="form-label">Cantidad</label>
                                         </div>
                                     </div>
@@ -261,7 +260,7 @@ $u = $_SESSION['usuarios'];
                                     <thead>
                                         <tr>
                                             <th>Servicio</th>
-                                            <th style="text-align:left;">CANTIDAD</th>
+                                            <th style="text-align:left;">CANTIDAD DE PROMOCIONES</th>
                                         </tr>
                                     </thead>
                                     <tbody id="grilla_det">
