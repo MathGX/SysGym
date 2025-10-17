@@ -59,7 +59,7 @@ $u = $_SESSION['usuarios'];
         <div class="container-fluid">
             <div class="row clearfix">
 
-            <div class="col-lg-12">
+            <div class="col-lg-12 tblcab">
                     <!-- formulario de Promociones cabecera -->
                     <div class="card">
                         <div class="header bg-indigo">
@@ -121,7 +121,7 @@ $u = $_SESSION['usuarios'];
                                 </div>
 
 
-                                <div class="col-sm-2">
+                                <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                         <input type="hidden" id="tiprom_cod" value="0">
@@ -152,7 +152,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="promdes_estado" class="form-control" disabled>
@@ -193,7 +193,7 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-12 tbldet" <!--style="display: none;"-->>
+                <div class="col-lg-12 tbldet" style="display: none;">
                     <div class="card">
                     <!-- formulario de detalles de PROMOCIONES Y DESCUENTOSde venta -->
                         <div class="header bg-indigo">
@@ -210,7 +210,7 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line foc">
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
-                                            <input type="text" class="form-control disabledno2 sinCarac" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disabledno2 soloTxt" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Servicio</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:auto;"></ul>

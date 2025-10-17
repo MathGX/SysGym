@@ -12,16 +12,15 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$ci=$_POST['per_nrodoc'];
+$tiprom_descri=$_POST['tiprom_descri'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
 $sql = "select 
-        c.cli_cod,
-        p.per_nrodoc,
-        p.per_nombres||' '||p.per_apellidos as cliente
-        from clientes c
-        join personas p on p.per_cod = c.per_cod 
-        where p.per_nrodoc like '%$ci%' and p.per_estado = 'ACTIVO';";
+        p.tiprom_cod,
+        p.tiprom_descri
+from tipo_promocion p
+where p.tiprom_descri like '%$tiprom_descri%' 
+        and p.tiprom_estado = 'ACTIVO';";
 
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);

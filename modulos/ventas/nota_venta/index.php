@@ -193,7 +193,8 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="hidden" id="cli_cod" value="0" class="ven">
+                                            <input type="hidden" id="cli_cod" value="0">
+                                            <input type="hidden" id="per_email" value="0">
                                             <input type="text" class="form-control" id="cliente" disabled>
                                             <label class="form-label">Cliente</label>
                                         </div>
@@ -203,9 +204,9 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="hidden" id="ven_cod" value="0" class="ven">
-                                            <input type="hidden" id="ven_tipfac" class="ven">
-                                            <input type="hidden" id="ven_montocuota" class="ven">
+                                            <input type="hidden" id="ven_cod" value="0" >
+                                            <input type="hidden" id="ven_tipfac" >
+                                            <input type="hidden" id="ven_montocuota" >
                                             <input type="text" id="ven_nrofac" class="form-control" disabled>
                                             <label class="form-label">Factura nro.</label>
                                         </div>

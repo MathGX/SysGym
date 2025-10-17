@@ -60,7 +60,7 @@ if (isset($_POST['operacion_det'])) {
         );
     } else if (strpos($error, "mayor_saldo") !== false) {
         $response = array(
-            "mensaje" => "EL MONTO EXCEDE EL SALDO DE LA CUOTA",
+            "mensaje" => "EL MONTO EXCEDE EL SALDO DE GS.".number_format($_POST['pendiente'],0,',','.')." DE LA CUOTA",
             "tipo" => "error"
         );
     } else {

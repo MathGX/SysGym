@@ -2,33 +2,19 @@
 session_start();
 $u = $_SESSION['usuarios'];
 
-$fechaActual = date('d-m-Y');
-
 $letras = new NumberFormatter('es', NumberFormatter::SPELLOUT);
 
+//Establecemos el retorno del documento en formato json
+header("Content-type: application/json; charset=utf-8");
+
 ob_start();
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $_GET['tipcomp_descri']?></title>
-</head>
-<?php
 require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 
 //Creamos la instancia de la clase Conexion
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$notven_cod = $_GET['notven_cod'];
-$tipcomp_cod = $_GET['tipcomp_cod'];
-
-//Datos de la empresa
 $sqlEmp = "select
 e.emp_razonsocial,
 e.emp_ruc,
@@ -44,6 +30,9 @@ where s.emp_cod = {$u['emp_cod']} and s.suc_cod = {$u['suc_cod']}";
 
 $resEmp = pg_query($conexion, $sqlEmp);
 $emp = pg_fetch_assoc($resEmp);
+
+$notven_cod = $_POST['notven_cod'];
+$tipcomp_cod = $_POST['tipcomp_cod'];
 
 //Datos de cabecera
 $sqlCab = "select 
@@ -342,11 +331,88 @@ $dompdf->setPaper('A4', 'landscape');
 // Renderizar el contenido HTML a PDF
 $dompdf->render();
 
-// Generar el archivo PDF y guardarlo en el servidor o descargarlo
-$dompdf->stream('Nro '.$cabecera['comprobante'], array("Attachment" => false));
-
 // Obtener el contenido del PDF como string
 $pdfOutput = $dompdf->output(); // Guardar en variable
 
+//------------------------------------------------------------------ CORREO -----------------------------------------------------------------------
+$per_email = $_POST['per_email'];
+$tipcomp_descri = mb_convert_case($cabecera['tipo'], MB_CASE_TITLE, "UTF-8");
+
+// Configurar PHPMailer
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+// Crear una instancia de PHPMailer
+$mail = new PHPMailer(true);
+
+try {
+    // Configuración del servidor SMTP
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'orbus.gym0@gmail.com'; // Tu dirección de correo
+    $mail->Password = 'vrug vzrr syrn njzl'; // La contraseña de aplicación
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Habilitar SSL
+    $mail->Port = 587; // Puerto para SSL
+
+    // Remitente y destinatario
+    $mail->setFrom('orbus.gym0@gmail.com', 'Orbus Gym');
+    $mail->addAddress($per_email, $cabecera['cliente']);      // Destinatario
+
+    // Adjuntar el PDF generado desde la variable
+    $mail->addStringAttachment($pdfOutput, $tipcomp_descri.' Nro '.$cabecera['comprobante'].'pdf', 'base64', 'application/pdf');
+
+    // Contenido del correo
+    $mail->isHTML(true);
+    $mail->Subject = $tipcomp_descri.' Nro. '.$cabecera['comprobante']; //asunto del correo
+    $mail->Body = '<html lang="es">
+                    <body>
+                        <p>Estimado/a '.$cabecera['cliente'].'</p>
+
+                        <p>
+                            Por medio de la presente, le facilitamos su correspondiente '.$tipcomp_descri.':
+                        </p>
+
+                        <h3>Detalles de la '.$tipcomp_descri.':</h3>
+                        <p>
+                            <strong>Número de Nota:</strong> '.$cabecera['comprobante'].'<br />
+                            <strong>Fecha:</strong> '.$cabecera['fecha'].'<br />
+                            <strong>Cliente:</strong> '.$cabecera['cliente'].'<br />
+                            <strong>Dirección de Envío:</strong> '. $cabecera['direc'].'
+                        </p>
+
+                        <p>
+                            Si necesitan más información o tienen alguna
+                            pregunta, no duden en contactarse.
+                        </p>
+
+                        <p>Gracias por su colaboración.</p>
+
+                        <p>
+                            Saludos cordiales,<br />
+                            '.$u['per_nombres'].' '.$u['per_apellidos'].'<br />
+                            '.$u['perf_descri'].'<br />
+                            '.$u['emp_razonsocial'].'<br />
+                            '.$u['suc_telefono'].'<br />
+                            orbus.gym0@gmail.com
+                        </p>
+                    </body>';
+
+    //Enviar el correo
+    $mail->send();
+
+    $response = array(
+        "mensaje" => "Correo enviado con éxito!",
+        "tipo" => "success"
+    );
+    echo json_encode($response);
+
+} catch (PHPMailerException $e) {
+    $response = array(
+        "mensaje" => "Error al enviar el correo electrónico: " . $e->getMessage(),
+        "tipo" => "error"
+    );
+    echo json_encode($response);
+}
 
 ?>

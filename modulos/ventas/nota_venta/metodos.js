@@ -419,13 +419,31 @@ function formatoTabla() {
 
 let reporteNota = () => {
     if ($("#notven_cod").val() == '') {
-        swal({
-            title: "RESPUESTA!!",
-            text: "SELECCIONE UN REGISTRO",
-            type: "error",
-        });
+        alertaLabel("SELECCIONE UN REGISTRO");
     } else {
-        window.open ("/SysGym/modulos/ventas/nota_venta/reporteNota.php?notven_cod=" + $("#notven_cod").val());
+        window.open ("/SysGym/modulos/ventas/nota_venta/reporteNota.php?notven_cod="+$("#notven_cod").val()+"&tipcomp_cod="+$("#tipcomp_cod").val()+"&tipcomp_descri="+$("#tipcomp_descri").val());
+    }
+}
+
+let enviarDoc = () => {
+    if ($("#notven_cod").val() == '') {
+        alertaLabel("SELECCIONE UN REGISTRO");
+    } else {
+        $.ajax({
+            method: "POST",
+            url: "/SysGym/others/mail/envioNotaVenta.php",
+            data: { 
+                notven_cod: $("#notven_cod").val(),
+                tipcomp_cod: $("#tipcomp_cod").val(),
+                per_email: $("#per_email").val(),
+            }
+        }).done(function (respuesta) {
+            swal({
+                title: "RESPUESTA!!",
+                text: respuesta.mensaje,
+                type: respuesta.tipo,
+            });
+        })
     }
 }
 

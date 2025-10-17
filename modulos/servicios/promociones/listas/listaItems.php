@@ -18,37 +18,30 @@ $item = $_POST['itm_descri'];
 $sql = "select 
         i.itm_cod,
         i.tipitem_cod,
-        i.tipimp_cod,
-        i.itm_descri,
-        i.itm_precio as pedvendet_precio,
-        i.uni_cod,
-        um.uni_descri||' ('||um.uni_simbolo||')' as uni_descri
-        from items i 
+        i.itm_descri
+from items i 
         join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
-        join unidad_medida um on um.uni_cod = i.uni_cod 
-        where itm_descri ilike '%$item%' and i.itm_estado ilike 'ACTIVO'
-        order by i.itm_descri;";
-        
+where itm_descri ilike '%$item%' 
+        and i.itm_cod != 3
+        and i.tipitem_cod = 1
+        and i.itm_estado = 'ACTIVO'
+order by i.itm_descri;";
+
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);
 //convertimos el resultado en un array asociativo
 $datos = pg_fetch_all($resultado);
-
-// Filtramos los resultados según las condiciones deseadas
-$filtroItem = array_filter($datos, function($respItem) {
-        return !($respItem['tipitem_cod'] == '1' && $respItem['itm_descri'] != 'FLETE');
-});
-
-// Si hay elementos filtrados, los devolvemos; de lo contrario, enviamos un mensaje
-if (empty($filtroItem)) {
+//se consulta si el array asociativo está vacío, de ser así se envía un mensaje al front-end
+if (empty($datos)) {
         echo json_encode(
-                array(
-                        "fila" => "No se encuentra el dato", 
-                        "true" => true));
+        array(
+                "fila" => "No se encuentra el dato",
+                "true" => true
+        )
+        );
+        // si datos no está vacío convertimoas el array asociativo en json
 } else {
-        echo json_encode(
-                array_values($filtroItem)
-        ); // Devuelve un array con los valores filtrados
+        echo json_encode($datos);
 }
 
 
