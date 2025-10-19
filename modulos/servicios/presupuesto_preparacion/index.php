@@ -114,7 +114,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="prpr_fecha" class="form-control" disabled>
+                                            <input type="date" id="prpr_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -135,7 +135,9 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="per_nrodoc" value="0">
                                             <input type="hidden" id="cli_cod" value="0">
                                             <input type="hidden" id="per_email" value="0">
-                                            <input type="text" class="form-control disabledno" id="cliente" disabled onkeyup="getClientes()">
+                                            <input type="hidden" id="ins_hora_ini" value="0">
+                                            <input type="hidden" id="ins_hora_fin" value="0">
+                                            <input type="text" class="form-control disabledno sinCarac" id="cliente" disabled onkeyup="getClientes()">
                                             <label class="form-label">C.I. - Cliente</label>
                                             <div id="listaClientes" style="display: none;">
                                                 <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>
@@ -220,7 +222,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="itm_cod" value="0">
                                             <input type="hidden" id="tipitem_cod" value="0">
                                             <input type="hidden" id="tipimp_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="itm_descri" disabled onkeyup="getItems()">
+                                            <input type="text" class="form-control disabledno2 soloTxt" id="itm_descri" disabled onkeyup="getItems()">
                                             <label class="form-label">Servicio</label>
                                             <div id="listaItems" style="display: none;">
                                                 <ul class="list-group" id="ulItems" style="height:60px; overflow:auto;"></ul>
@@ -232,7 +234,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="prprdet_cantidad" class="form-control disabledno" disabled>
+                                            <input type="text" id="prprdet_cantidad" class="form-control disabledno2 soloNum" disabled>
                                             <label class="form-label">Cant. meses</label>
                                         </div>
                                     </div>
@@ -241,7 +243,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="prprdet_precio" class="form-control disabledno" disabled>
+                                            <input type="text" id="prprdet_precio" class="form-control disabledno2" disabled>
                                             <label class="form-label">Precio</label>
                                         </div>
                                     </div>
@@ -250,7 +252,8 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-5">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="vendet_cantidad" class="form-control" disabled>
+                                            <input type="hidden" id="prprdet_promdes_cod" value="0">
+                                            <input type="text" id="promdes_descri" class="form-control" disabled>
                                             <label class="form-label">Promoción</label>
                                         </div>
                                     </div>

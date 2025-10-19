@@ -40,9 +40,14 @@ if (isset($_POST['operacion_cab'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_cli") !== false) {
         $response = array(
             "mensaje" => "ESTE CLIENTE YA FUE MEDIDO",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "err_cab") !== false) {
+        $response = array(
+            "mensaje" => "EL ESTADO DE LA MEDICIÓN IMPIDE QUE SEA ANULADA, SE ENCUENTRA ASOCIADA A UNA EVOLUCIÓN",
             "tipo" => "error"
         );
     } else {

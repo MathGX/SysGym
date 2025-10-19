@@ -19,17 +19,18 @@ if (isset($_POST['operacion_det'])) {
         {$_POST['itm_cod']},
         {$_POST['tipitem_cod']},
         {$_POST['prpr_cod']},
-        $prprdet_cantidad,
         $prprdet_precio,
+        $prprdet_cantidad,
+        {$_POST['prprdet_promdes_cod']},
         {$_POST['operacion_det']}
     );";
 
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_rep") !== false) {
         $response = array(
-            "mensaje" => "ESTE ITEM YA ESTÁ CARGADO",
+            "mensaje" => "EL SERVICIO SELECCIONADO YA ESTÁ PRESUPUESTADO",
             "tipo" => "error"
         );
     } else {
@@ -40,6 +41,16 @@ if (isset($_POST['operacion_det'])) {
     }
     echo json_encode($response);
 
+} else if (isset($_POST['validacion_det']) == 1) {
+    //Se consulta si el presupuesto esta asociado a una venta
+    $venCod = "select 1 validar from presupuesto_venta po 
+                    join ventas_cab occ on occ.ven_cod = po.ven_cod 
+                where po.prpr_cod = {$_POST['prpr_cod']}
+                    and occ.ven_estado != 'ANULADO';";
+
+    $codigo = pg_query($conexion, $venCod);
+    $codigoVen = pg_fetch_assoc($codigo);
+    echo json_encode($codigoVen);
 
 } else if (isset($_POST['prpr_cod'])){
 

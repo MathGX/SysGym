@@ -118,7 +118,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="evo_fecha" class="form-control" disabled >
+                                            <input type="date" id="evo_fecha" class="form-control" disabled >
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -129,7 +129,7 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line focus">
                                             <input type="hidden" id="per_nrodoc" value="0">
                                             <input type="hidden" id="cli_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="cliente" disabled onkeyup="getClientes()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="cliente" disabled onkeyup="getClientes()">
                                             <label class="form-label">C.I. - Cliente</label>
                                             <div id="listaClientes" style="display: none;">
                                                 <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>
@@ -175,7 +175,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" class="btn bg-pink waves-effect btnOperacion2" style="width:12.5%; display:none;" onclick="cancelar()">
+                                <button type="button" class="btn bg-red waves-effect btnOperacion2" style="width:12.5%; display:none;" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -202,8 +202,8 @@ $u = $_SESSION['usuarios'];
 
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
-                                        <div class="form-line foc">
-                                            <input type="text" id="evodet_fecha" class="form-control" disabled>
+                                        <div class="form-line focused">
+                                            <input type="date" id="evodet_fecha" class="form-control">
                                             <label class="form-label">Fecha Actualización</label>
                                         </div>
                                     </div>
@@ -213,7 +213,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="param_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="param_descri" disabled onkeyup="getParametro()">
+                                            <input type="text" class="form-control disabledno2 soloTxt" id="param_descri" disabled onkeyup="getParametro()">
                                             <label class="form-label">Parámetro</label>
                                             <div id="listaParametro" style="display: none;">
                                                 <ul class="list-group" id="ulParametro" style="height:60px; overflow:auto;"></ul>
@@ -234,7 +234,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="evodet_registro_act" class="form-control disabledno" disabled>
+                                            <input type="text" id="evodet_registro_act" class="form-control disabledno2 soloNum" disabled>
                                             <label class="form-label">Registro Actual</label>
                                         </div>
                                     </div>
@@ -278,7 +278,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">archive</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style="width:12.5%; display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
+                                <button type="button" style="width:12.5%; display:none;" class="btn bg-red waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>

@@ -60,6 +60,7 @@ $datos = pg_fetch_all($resultado);
             justify-content: center;      /* Centra verticalmente */
             align-items: center;          /* Centra horizontalmente */
             height: 100vh;               /* Altura del contenedor igual a la altura de la ventana */
+            font-family: Arial, sans-serif; 
         }
 
         .titulo {
@@ -78,6 +79,7 @@ $datos = pg_fetch_all($resultado);
             border-collapse: collapse;
             font-size: 12px;
             white-space:nowrap;
+            font-family: Arial, sans-serif; 
         }
 
         .right {
@@ -162,7 +164,7 @@ $datos = pg_fetch_all($resultado);
                 <table>
                     <tr>
                         <td class="subrayar" style="width:10%;" colspan="1"> Fecha de emisión: </td>
-                        <td style="width:12%;"><?php echo $cabecera['prpr_fecha'];?> </td>
+                        <td style="width:12%;"><?php echo date('d/m/Y',strtotime($cabecera['prpr_fecha']));?> </td>
                         <td class="subrayar" style="width:10%;"> Fecha de vencimiento: </td>
                         <td> <?php echo $cabecera['prpr_fechavenci2'];?> </td>
                     </tr>
@@ -236,8 +238,8 @@ $datos = pg_fetch_all($resultado);
                             <td class="right"> <?php echo number_format($totalGral, 0, ',','.');?> </td>
                         </tr>
                         <tr>
-                            <td class="left" colspan="2"> IVA 5%: <?php echo $discrIva5_format?> </td>
-                            <td class="left" colspan="2"> IVA 10%: <?php echo $discrIva10_format ?> </td>
+                            <td class="left" colspan="2"> IVA 5%: <?php echo $discrIva5_format ?? 0?> </td>
+                            <td class="left" colspan="2"> IVA 10%: <?php echo $discrIva10_format ?? 0?> </td>
                             <td class="left" colspan="2"> Total IVA: <?php echo $totalIva_format?> </td>
                         </tr>
                     </tfoot>

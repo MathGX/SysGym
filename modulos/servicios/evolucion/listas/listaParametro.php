@@ -14,21 +14,45 @@ $conexion = $objConexion->getConexion();
 
 $param_descri = $_POST['param_descri'];
 $med_cod = $_POST['med_cod'];
+$evo_cod = $_POST['evo_cod'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
-$sql = "select 
-        md.meddet_cantidad as evodet_registro_ant,
-        md.param_cod,
-        pm.param_descri,
-        um.uni_simbolo,
-        pm.param_formula
-from mediciones_det md
+$sql = "(select 
+    md.evodet_registro_act as evodet_registro_ant,
+    md.param_cod,
+    ec.med_cod,
+    pm.param_descri,
+    um.uni_simbolo,
+    pm.param_formula,
+    'D' fuente
+	from evolucion_det md
+		join evolucion_cab ec on ec.evo_cod = md.evo_cod 
+        join parametros_medicion pm on pm.param_cod = md.param_cod
+                join unidad_medida um on um.uni_cod = pm.uni_cod 
+where md.evodet_fecha = (select max(evodet_fecha) from evolucion_det where evo_cod = $evo_cod and param_cod = md.param_cod)
+	and pm.param_descri ilike '%$param_descri%'
+    and ec.med_cod = $med_cod)
+union all
+(select 
+    md.meddet_cantidad as evodet_registro_ant,
+    md.param_cod,
+    md.med_cod,
+    pm.param_descri,
+    um.uni_simbolo,
+    pm.param_formula,
+    'M' fuente
+	from mediciones_det md
         join parametros_medicion pm on pm.param_cod = md.param_cod
                 join unidad_medida um on um.uni_cod = pm.uni_cod 
 where pm.param_descri ilike '%$param_descri%'
-        and md.med_cod = $med_cod
-order by param_descri;";
-        
+    and md.med_cod = $med_cod
+        and md.param_cod not in (
+                select md2.param_cod
+                from evolucion_det md2
+                where md2.evodet_fecha = (select max(evodet_fecha) from evolucion_det where evo_cod = $evo_cod and param_cod = md.param_cod)
+        )
+);";
+
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);
 //convertimos el resultado en un array asociativo

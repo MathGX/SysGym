@@ -99,7 +99,11 @@ $(".soloNum").each(function() {
 
 //funcion para alertar campos que no acepten caracteres especiales
 let sinCaracteres = (nombreInput, idInput) => {
-    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    if (idInput == "#promdes_descri") {
+        caracteres = /[-'_¡´°/\!@#$^&*(),.¿?":{}|<>;~`]/;// acepta que porcentaje (%)
+    } else {
+        caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    }
     valor = $(idInput).val().trim();
     mensaje = "";
     //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
@@ -539,6 +543,7 @@ let seleccionarFila = (objetoJSON) => {
     Object.keys(objetoJSON).forEach(function (propiedad) {
         $("#" + propiedad).val(objetoJSON[propiedad]);
     });
+    window.scroll(0, -100);
 
     $(".focus").attr("class", "form-line focus focused");
     $(".tbldet").removeAttr("style", "display:none;");

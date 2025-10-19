@@ -27,14 +27,9 @@ if (isset($_POST['operacion_det'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_det") !== false) {
         $response = array(
-            "mensaje" => "ESTE PARÁMETRO YA ESTÁ REGISTRADO",
-            "tipo" => "error"
-        );
-    } else if (strpos($error, "2") !== false) {
-        $response = array(
-            "mensaje" => "ESTE PARÁMETRO DEBE SER INSERTADO",
+            "mensaje" => "ESTE PARÁMETRO YA ESTÁ REGISTRADO EN FECHA ".date( 'd/m/y', strtotime($_POST['evodet_fecha'])),
             "tipo" => "error"
         );
     } else {

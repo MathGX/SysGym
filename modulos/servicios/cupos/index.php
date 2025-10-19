@@ -120,19 +120,6 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <!-- <div class="col-sm-3">
-                                    <div class="form-group form-float">
-                                        <div class="form-line focus">
-                                        <input type="hidden" id="cli_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getClientes()">
-                                            <label class="form-label">Funcionario</label>
-                                            <div id="listaClientes" style="display: none;">
-                                                <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> -->
-
                                 <div class="col-sm-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
@@ -175,7 +162,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" class="btn bg-pink waves-effect btnOperacion2" style="width:12.5%; display:none;" onclick="cancelar()">
+                                <button type="button" class="btn bg-red waves-effect btnOperacion2" style="width:12.5%; display:none;" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -188,9 +175,9 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-12 tbldet" --style="display: none;">
+                <!-- formulario de detalles de CUPO DE SERVICIOS -->
+                <div class="col-lg-12 tbldet" style="display: none;">
                     <div class="card">
-                    <!-- formulario de detalles de CUPO DE SERVICIOS -->
                         <div class="header bg-indigo">
                             <h2>
                                 DETALLE DEL CUPO DE SERVICIO
@@ -202,7 +189,7 @@ $u = $_SESSION['usuarios'];
                                 
                                 <div class="col-sm-4">
                                     <div class="form-group form-float">
-                                        <div class="form-line foc focused">
+                                        <div class="form-line focused">
                                             <input type="time" id="cupdet_hora_ini" class="form-control disabledno2" disabled>
                                             <label class="form-label">Desde</label>
                                         </div>
@@ -211,7 +198,7 @@ $u = $_SESSION['usuarios'];
 
                                 <div class="col-sm-4">
                                     <div class="form-group form-float">
-                                        <div class="form-line foc focused">
+                                        <div class="form-line focused">
                                             <input type="time" id="cupdet_hora_fin" class="form-control disabledno2" disabled>
                                             <label class="form-label">Hasta</label>
                                         </div>
@@ -247,13 +234,13 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">archive</i>
                                     <span>GRABAR</span>
                                 </button>
-                                <button type="button" style="width:12.5%; display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
+                                <button type="button" style="width:12.5%; display:none;" class="btn bg-red waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
                             </div>
 
-                        <!-- grilla del detalle de cupo de servicios -->
+                            <!-- grilla del detalle de cupo de servicios -->
                             <div class="table-responsive">
                                 <table class="table table-hover table-borderer table-striped">
                                     <thead>

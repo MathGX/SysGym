@@ -30,7 +30,7 @@ if (isset($_POST['operacion_det'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_det") !== false) {
         $response = array(
             "mensaje" => "LA COMIDA YA FUE SELECCIONADA PARA ESTE DIA",
             "tipo" => "error"

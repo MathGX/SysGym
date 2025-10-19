@@ -113,7 +113,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="asis_fecha" class="form-control" disabled>
+                                            <input type="date" id="asis_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -124,7 +124,7 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line focus">
                                             <input type="hidden" id="per_nrodoc" value="0">
                                             <input type="hidden" id="cli_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="cliente" disabled onkeyup="getClientes()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="cliente" disabled onkeyup="getClientes()">
                                             <label class="form-label">C.I. - Cliente</label>
                                             <div id="listaClientes" style="display: none;">
                                                 <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>

@@ -21,11 +21,124 @@ let formatoFecha = (fecha) => {
     mes = mes < 10 ? '0' + mes : mes;
     dia = dia < 10 ? '0' + dia : dia;
 
-    return `${dia}/${mes}/${ano}`;
+    return `${ano}-${mes}-${dia}`;
 }
-
 let ahora = new Date();
 $("#rut_fecha").val(formatoFecha(ahora));
+
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+// Variable para rastrear si se hizo clic en la lista
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno, .disabledno2").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numéricos";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no acepta caracteres especiales";
+        if (idInput === "#pro_razonsocial") {
+            mensaje += "a parte del guión"; // concatena la cadena extra
+        }
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
 
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 
@@ -107,25 +220,25 @@ let grabar = () => {
         method: "POST",
         url: "controlador.php",
         data: {
-            rut_cod: $("#rut_cod").val(),
-            rut_estado: $("#rut_estado").val(),
-            tiprut_cod: $("#tiprut_cod").val(),
-            cli_cod: $("#cli_cod").val(),
-            fun_cod: $("#fun_cod").val(),
-            usu_cod: $("#usu_cod").val(),
-            suc_cod: $("#suc_cod").val(),
-            emp_cod: $("#emp_cod").val(),
-            rut_fecha: $("#rut_fecha").val(),
-            prpr_cod: $("#prpr_cod").val(),
-            operacion_cab: $("#operacion_cab").val(),
-            tiprut_descri: $("#tiprut_descri").val(),
-            per_nrodoc: $("#per_nrodoc").val(),
-            cliente: $("#cliente").val(),
-            funcionario: $("#funcionario").val(),
-            usu_login: $("#usu_login").val(),
-            suc_descri: $("#suc_descri").val(),
-            emp_razonsocial: $("#emp_razonsocial").val(),
-            transaccion: $("#transaccion").val()
+            rut_cod: $("#rut_cod").val().trim(),
+            rut_estado: $("#rut_estado").val().trim(),
+            tiprut_cod: $("#tiprut_cod").val().trim(),
+            cli_cod: $("#cli_cod").val().trim(),
+            fun_cod: $("#fun_cod").val().trim(),
+            usu_cod: $("#usu_cod").val().trim(),
+            suc_cod: $("#suc_cod").val().trim(),
+            emp_cod: $("#emp_cod").val().trim(),
+            rut_fecha: $("#rut_fecha").val().trim(),
+            prpr_cod: $("#prpr_cod").val().trim(),
+            operacion_cab: $("#operacion_cab").val().trim(),
+            tiprut_descri: $("#tiprut_descri").val().trim(),
+            per_nrodoc: $("#per_nrodoc").val().trim(),
+            cliente: $("#cliente").val().trim(),
+            funcionario: $("#funcionario").val().trim(),
+            usu_login: $("#usu_login").val().trim(),
+            suc_descri: $("#suc_descri").val().trim(),
+            emp_razonsocial: $("#emp_razonsocial").val().trim(),
+            transaccion: $("#transaccion").val().trim()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
         .done(function (respuesta) {
@@ -198,36 +311,27 @@ let confirmar = () => {
 
 //funcion control vacio
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".focus").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#rut_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#rut_fecha").val() == "") {
-        condicion = "i";
-    } else if ($("#tiprut_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#cliente").val() == "") {
-        condicion = "i";
-    } else if ($("#ins_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#funcionario").val() == "") {
-        condicion = "i";
-    } else if ($("#rut_estado").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }
@@ -316,7 +420,7 @@ let limpiarDet = () =>{
 let agregar = () => {
     limpiarDet();
     $("#operacion_det").val(1);
-    $(".disabledno").removeAttr("disabled");
+    $(".disabledno2").removeAttr("disabled");
     $(".foc").attr("class", "form-line foc focused");
     habilitarBotones2(true);
     window.scroll(0, -100);
@@ -335,14 +439,14 @@ function grabar2() {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            rut_cod: $("#rut_cod").val(),
-            ejer_cod: $("#ejer_cod").val(),
-            rutdet_series: $("#rutdet_series").val(),
-            rutdet_repeticiones: $("#rutdet_repeticiones").val(),
-            dia_cod: $("#dia_cod").val(),           
-            equi_cod: $("#equi_cod").val(),
-            tipequi_cod: $("#tipequi_cod").val(),           
-            operacion_det: $("#operacion_det").val(),
+            rut_cod: $("#rut_cod").val().trim(),
+            ejer_cod: $("#ejer_cod").val().trim(),
+            rutdet_series: $("#rutdet_series").val().trim(),
+            rutdet_repeticiones: $("#rutdet_repeticiones").val().trim(),
+            dia_cod: $("#dia_cod").val().trim(),           
+            equi_cod: $("#equi_cod").val().trim(),
+            tipequi_cod: $("#tipequi_cod").val().trim(),           
+            operacion_det: $("#operacion_det").val().trim(),
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
 .done(function (respuesta) {
@@ -353,10 +457,11 @@ function grabar2() {
             type: respuesta.tipo,
         },
         function () {
-            //Si la respuesta devuelve un success recargamos la pagina
-            if (respuesta.tipo == "success") {
-                location.reload(true);
-            }
+            listar2(); //actualizamos la grilla
+            $(".foc").find(".form-control").val(''); //limpiamos los input
+            $(".foc").attr("class", "form-line foc"); //se bajan los labels quitando el focused
+            $(".disabledno2").attr("disabled", "disabled"); //deshabilitamos los input
+            habilitarBotones2(false); //deshabilitamos los botones
         }
     );
 }).fail(function (a, b, c) {
@@ -413,32 +518,29 @@ let confirmar2 = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio2 = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".foc").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#rut_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#dia_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#ejer_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#equi_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#rutdet_series").val() == "") {
-        condicion = "i";
-    } else if ($("#rutdet_repeticiones").val() == "") {
-        condicion = "i";
-    } else if ($("#tipequi_cod").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar2();
     }
@@ -487,6 +589,7 @@ let seleccionarFila = (objetoJSON) => {
     Object.keys(objetoJSON).forEach(function (propiedad) {
         $("#" + propiedad).val(objetoJSON[propiedad]);
     });
+    window.scroll(0, -100);
 
     $(".focus").attr("class", "form-line focus focused");
     $(".tbldet").removeAttr("style", "display:none;");
@@ -504,7 +607,7 @@ let listar = () => {
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
                     tabla += "<td>" + objeto.rut_cod + "</td>";
-                    tabla += "<td>" + objeto.rut_fecha + "</td>";
+                    tabla += "<td>" + objeto.rut_fecha2 + "</td>";
                     tabla += "<td>" + objeto.usu_login + "</td>";
                     tabla += "<td>" + objeto.suc_descri + "</td>";
                     tabla += "<td>" + objeto.cliente + "</td>";
@@ -693,9 +796,14 @@ function getFuncionarios() {
     }).done(function(lista) {
         //el JSON de respuesta es mostrado en una lista
         var fila = "";
-        $.each(lista,function(i, item) {
-            fila += "<li class='list-group-item' onclick='seleccionFuncionarios("+JSON.stringify(item)+")'>"+item.funcionario+"</li>";
-        });
+        //consultamos si el dato tipeado el front-end existe en la base de datos, si es así, se muestra en la lista
+        if(lista.true == true){
+            fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
+        }else{    
+            $.each(lista,function(i, item) {
+                fila += "<li class='list-group-item' onclick='seleccionFuncionarios("+JSON.stringify(item)+")'>"+item.funcionario+"</li>";
+            });
+        }
         //enviamos a los input correspondientes de el conjunto de filas
         $("#ulFuncionarios").html(fila);
         //le damos un estilo a la lista de GUI

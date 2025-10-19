@@ -29,6 +29,11 @@ if (isset($_POST['operacion_det'])) {
             "mensaje" => "EL RANGO DE HORARIO INGRESADO YA SE ENCUENTRA REGISTRADO",
             "tipo" => "error"
         );
+    } else if (strpos($error, "err_rango") !== false) {
+        $response = array(
+            "mensaje" => "LA DIFERENCIA ENTRE INICIO Y FIN DEBE SER DE UNA (1) HORA",
+            "tipo" => "error"
+        );
     } else {
         $response = array(
             "mensaje" => pg_last_notice($conexion),

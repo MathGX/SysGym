@@ -60,6 +60,7 @@ $datos = pg_fetch_all($resultado);
             justify-content: center;      /* Centra verticalmente */
             align-items: center;          /* Centra horizontalmente */
             height: 100vh;               /* Altura del contenedor igual a la altura de la ventana */
+            font-family: Arial, sans-serif; 
         }
 
         .titulo {
@@ -78,6 +79,7 @@ $datos = pg_fetch_all($resultado);
             border-collapse: collapse;
             font-size: 12px;
             white-space:nowrap;
+            font-family: Arial, sans-serif; 
         }
 
         .right {
@@ -205,7 +207,7 @@ $datos = pg_fetch_all($resultado);
         </div>
         <br>
         <?php foreach ($datosEmp as $pie) { ?>
-            <div class="titulo" style="font-size:12px;"><?php echo $pie['suc_descri'].' ------- '.$pie['suc_telefono'].' ------- '.$pie['suc_email']?></div>
+            <div class="titulo" style="font-size:12px; font-family: Arial, sans-serif; "><?php echo $pie['suc_descri'].' ------- '.$pie['suc_telefono'].' ------- '.$pie['suc_email']?></div>
         <?php }
         } ?>
 

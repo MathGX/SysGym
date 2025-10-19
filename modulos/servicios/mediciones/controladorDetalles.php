@@ -24,7 +24,7 @@ if (isset($_POST['operacion_det'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_det") !== false) {
         $response = array(
             "mensaje" => "ESTE PARÁMETRO YA ESTÁ ESTABLECIDO",
             "tipo" => "error"
@@ -37,6 +37,15 @@ if (isset($_POST['operacion_det'])) {
     }
     echo json_encode($response);
 
+} else if (isset($_POST['validacion_det']) == 1) {
+    //Se consulta si la medicion esta asociada a una evolucion
+    $evoCod = "select 1 validar from evolucion_cab po 
+                where po.med_cod = {$_POST['med_cod']}
+                    and po.evo_estado != 'ANULADO';";
+
+    $codigo = pg_query($conexion, $evoCod);
+    $codigoEvo = pg_fetch_assoc($codigo);
+    echo json_encode($codigoEvo);
 
 } else if (isset($_POST['med_cod'])){
 

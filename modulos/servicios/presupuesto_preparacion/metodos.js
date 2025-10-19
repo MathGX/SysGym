@@ -21,11 +21,124 @@ let formatoFecha = (fecha) => {
     mes = mes < 10 ? '0' + mes : mes;
     dia = dia < 10 ? '0' + dia : dia;
 
-    return `${dia}/${mes}/${ano}`;
+    return `${ano}-${mes}-${dia}`;
 }
-
 let ahora = new Date();
 $("#prpr_fecha").val(formatoFecha(ahora));
+
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+// Variable para rastrear si se hizo clic en la lista
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno, .disabledno2").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numéricos";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no acepta caracteres especiales";
+        if (idInput === "#pro_razonsocial") {
+            mensaje += "a parte del guión"; // concatena la cadena extra
+        }
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
 
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 
@@ -41,6 +154,7 @@ let habilitarBotones = (operacion_cab) => {
     }
 };
 
+//
 let limpiarCab = () =>{
     $(".tblcab input").each(function(){
         $(this).val('');
@@ -107,28 +221,29 @@ let grabar = () => {
         method: "POST",
         url: "controlador.php",
         data: {
-            prpr_cod: $("#prpr_cod").val(),
-            prpr_fecha: $("#prpr_fecha").val(),
-            prpr_estado: $("#prpr_estado").val(),
-            ins_cod: $("#ins_cod").val(),
-            cli_cod: $("#cli_cod").val(),
-            usu_cod: $("#usu_cod").val(),
-            suc_cod: $("#suc_cod").val(),
-            emp_cod: $("#emp_cod").val(),
-            prpr_fechavenci: $("#prpr_fechavenci").val(),
-            operacion_cab: $("#operacion_cab").val(),
-            per_nrodoc: $("#per_nrodoc").val(),
-            cliente: $("#cliente").val(),
-            usu_login: $("#usu_login").val(),
-            suc_descri: $("#suc_descri").val(),
-            emp_razonsocial: $("#emp_razonsocial").val(),
-            funcionario: $("#funcionario").val(),
-            transaccion: $("#transaccion").val()
+            prpr_cod: $("#prpr_cod").val().trim(),
+            prpr_fecha: $("#prpr_fecha").val().trim(),
+            prpr_estado: $("#prpr_estado").val().trim(),
+            ins_cod: $("#ins_cod").val().trim(),
+            cli_cod: $("#cli_cod").val().trim(),
+            usu_cod: $("#usu_cod").val().trim(),
+            suc_cod: $("#suc_cod").val().trim(),
+            emp_cod: $("#emp_cod").val().trim(),
+            prpr_fechavenci: $("#prpr_fechavenci").val().trim(),
+            operacion_cab: $("#operacion_cab").val().trim(),
+            per_nrodoc: $("#per_nrodoc").val().trim(),
+            cliente: $("#cliente").val().trim(),
+            suc_descri: $("#suc_descri").val().trim(),
+            emp_razonsocial: $("#emp_razonsocial").val().trim(),
+            usu_login: $("#usu_login").val().trim(),
+            //funcionario: $("#funcionario").val().trim(),
+            transaccion: $("#transaccion").val().trim()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
         .done(function (respuesta) {
             swal(
                 {
+                    html: true,
                     title: "RESPUESTA!!",
                     text: respuesta.mensaje,
                     type: respuesta.tipo,
@@ -162,7 +277,7 @@ let grabar = () => {
 //funcion confirmar SweetAlert
 let confirmar = () => {
     //solicitamos el value del input operacion
-    var oper = $("#operacion_cab").val();
+    var oper = $("#operacion_cab").val().trim();
 
     preg = "¿Desea agregar el registro?";
 
@@ -196,34 +311,27 @@ let confirmar = () => {
 
 //funcion control vacio
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".focus").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#prpr_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#usu_login").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#ins_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#cliente").val() == "") {
-        condicion = "i";
-    } else if ($("#prpr_fecha").val() == "") {
-        condicion = "i";
-    } else if ($("#prpr_fechavenci").val() == "") {
-        condicion = "i";
-    } else if ($("#prpr_estado").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }
@@ -245,19 +353,19 @@ function formatoTabla() {
 }
 
 let docPresup = () => {
-    if ($("#prpr_cod").val() == '') {
+    if ($("#prpr_cod").val().trim() == '') {
         swal({
             title: "RESPUESTA!!",
             text: "SELECCIONE UN REGISTRO",
             type: "error",
         });
     } else {
-        window.open ("/SysGym/modulos/servicios/presupuesto_preparacion/docPresup.php?prpr_cod=" + $("#prpr_cod").val());
+        window.open ("/SysGym/modulos/servicios/presupuesto_preparacion/docPresup.php?prpr_cod=" + $("#prpr_cod").val().trim());
     }
 }
 
 let enviarDoc = () => {
-    if ($("#prpr_cod").val() == '') {
+    if ($("#prpr_cod").val().trim() == '') {
         swal({
             title: "RESPUESTA!!",
             text: "SELECCIONE UN REGISTRO",
@@ -268,11 +376,11 @@ let enviarDoc = () => {
             method: "POST",
             url: "/SysGym/others/mail/envioPresPreparacion.php",
             data: { 
-                prpr_cod: $("#prpr_cod").val(),
-                per_email: $("#per_email").val(),
-                cliente: $("#cliente").val(),
-                prpr_fecha: $("#prpr_fecha").val(),
-                prpr_fechavenci: $("#prpr_fechavenci").val()
+                prpr_cod: $("#prpr_cod").val().trim(),
+                per_email: $("#per_email").val().trim(),
+                cliente: $("#cliente").val().trim(),
+                prpr_fecha: $("#prpr_fecha").val().trim(),
+                prpr_fechavenci: $("#prpr_fechavenci").val().trim()
             }
         }).done(function (respuesta) {
             swal({
@@ -299,21 +407,45 @@ let habilitarBotones2 = (operacion_det) => {
     }
 };
 
+//funcion para validar si se puede agregar o eliminar un detalle
+let validarDetalle = () => {
+    return $.ajax({
+        method: "POST",
+        url: "controladorDetalles.php",
+        data: {
+            validacion_det: 1,
+            prpr_cod: $("#prpr_cod").val(),
+        }
+    });
+}
+
 //funcion agregar
 let agregar = () => {
-    $("#operacion_det").val(1);
-    $("#dia_cod, #itm_cod, #tipimp_cod, #tipitem_cod, #itm_descri, #prprdet_cantidad, #prprdet_precio").val('');
-    $(".disabledno").removeAttr("disabled");
-    $(".foc").attr("class", "form-line foc focused");
-    habilitarBotones2(true);
-    window.scroll(0, -100);
+    validarDetalle().done(function(respuesta) {
+        if (respuesta.validar == 1) {
+            alertaLabel("NO SE PUEDEN AGREGAR MAS SERVICIOS, EL PRESUPUESTO SE ENCUENTRA ASOCIADO A UNA VENTA");
+            return;
+        }
+        $("#operacion_det").val(1);
+        $(".foc").find(".form-control").val('');
+        $(".disabledno2").removeAttr("disabled");
+        $(".foc").attr("class", "form-line foc focused");
+        habilitarBotones2(true);
+        window.scroll(0, -100);
+    });
 };
 
 //funcion eliminar
 let eliminar = () => {
-    $("#operacion_det").val(2);
-    habilitarBotones2(true);
-    window.scroll(0, -100);
+    validarDetalle().done(function(respuesta) {
+        if (respuesta.validar == 1) {
+            alertaLabel("NO SE PUEDEN ELIMINAR SERVICIOS, EL PRESUPUESTO SE ENCUENTRA ASOCIADO A UNA VENTA");
+            return;
+        }
+        $("#operacion_det").val(2);
+        habilitarBotones2(true);
+        window.scroll(0, -100);
+    });
 };
 
 /*enviamos por POST a la base de datos los datos cargados los input para grabar un nuevo detalle de inscripción*/
@@ -322,26 +454,29 @@ function grabar2() {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            itm_cod: $("#itm_cod").val(),
-            tipitem_cod: $("#tipitem_cod").val(),
-            prpr_cod: $("#prpr_cod").val(),
-            prprdet_cantidad: $("#prprdet_cantidad").val(),           
-            prprdet_precio: $("#prprdet_precio").val(),
-            operacion_det: $("#operacion_det").val(),
+            itm_cod: $("#itm_cod").val().trim(),
+            tipitem_cod: $("#tipitem_cod").val().trim(),
+            prpr_cod: $("#prpr_cod").val().trim(),
+            prprdet_precio: $("#prprdet_precio").val().trim(),
+            prprdet_cantidad: $("#prprdet_cantidad").val().trim(),          
+            prprdet_promdes_cod: $("#prprdet_promdes_cod").val().trim(),          
+            operacion_det: $("#operacion_det").val().trim(),
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
 .done(function (respuesta) {
     swal(
         {
+            html: true,
             title: "RESPUESTA!!",
             text: respuesta.mensaje,
             type: respuesta.tipo,
         },
         function () {
-            //Si la respuesta devuelve un success recargamos la pagina
-            if (respuesta.tipo == "success") {
-                location.reload(true);
-            }
+            listar2(); //actualizamos la grilla
+            $(".foc").find(".form-control").val(''); //limpiamos los input
+            $(".foc").attr("class", "form-line foc"); //se bajan los labels quitando el focused
+            $(".disabledno2").attr("disabled", "disabled"); //deshabilitamos los input
+            habilitarBotones2(false); //deshabilitamos los botones
         }
     );
 }).fail(function (a, b, c) {
@@ -366,7 +501,7 @@ function grabar2() {
 //funcion confirmar SweetAlert
 let confirmar2 = () => {
     //solicitamos el value del input operacion
-    var oper = $("#operacion_det").val();
+    var oper = $("#operacion_det").val().trim();
 
     preg = "¿Desea agregar el registro?";
 
@@ -398,28 +533,29 @@ let confirmar2 = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio2 = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".foc").find('.form-control').map(function() {
+        return this.id;
+    }).get();
 
-    if ($("#prpr_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#itm_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#tipitem_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#prprdet_cantidad").val() == "") {
-        condicion = "i";
-    } else if ($("#prprdet_precio").val() == "") {
-        condicion = "i";
-    }
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
+
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar2();
     }
@@ -442,7 +578,7 @@ let listar2 = () => {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            prpr_cod: $("#prpr_cod").val(),
+            prpr_cod: $("#prpr_cod").val().trim(),
         }
     }).done(function (respuesta) {
         let tabla = "";
@@ -499,6 +635,7 @@ let seleccionarFila = (objetoJSON) => {
     Object.keys(objetoJSON).forEach(function (propiedad) {
         $("#" + propiedad).val(objetoJSON[propiedad]);
     });
+    window.scroll(0, -100);
 
     $(".focus").attr("class", "form-line focus focused");
     $(".tbldet").removeAttr("style", "display:none;");
@@ -516,7 +653,7 @@ let listar = () => {
             for (objeto of respuesta) {
                 tabla += "<tr onclick='seleccionarFila(" + JSON.stringify(objeto).replace(/'/g, '&#39;') + ")'>";
                     tabla += "<td>" + objeto.prpr_cod + "</td>";
-                    tabla += "<td>" + objeto.prpr_fecha + "</td>";
+                    tabla += "<td>" + objeto.prpr_fecha2 + "</td>";
                     tabla += "<td>" + objeto.usu_login + "</td>";
                     tabla += "<td>" + objeto.suc_descri + "</td>";
                     tabla += "<td>" + objeto.ins_cod + "</td>";
@@ -543,7 +680,7 @@ function getClientes() {
         method: "POST",
         url: "/SysGym/modulos/servicios/presupuesto_preparacion/listas/listaClientes.php",
         data: {
-            cliente:$("#cliente").val()
+            cliente:$("#cliente").val().trim()
         }
         //en base al JSON traído desde el listaClientes arrojamos un resultado
     }).done(function(lista) {
@@ -581,9 +718,9 @@ function getItems() {
         method: "POST",
         url: "/SysGym/modulos/servicios/presupuesto_preparacion/listas/listaItems.php",
         data: {
-            itm_descri:$("#itm_descri").val(),
-            tipitem_cod:$("#tipitem_cod").val(),
-            itm_precio:$("#itm_precio").val()
+            itm_descri:$("#itm_descri").val().trim(),
+            ins_hora_ini:$("#ins_hora_ini").val().trim(),
+            ins_hora_fin:$("#ins_hora_fin").val().trim(),
         }
         //en base al JSON traído desde el listaItems arrojamos un resultado
     }).done(function(lista) {

@@ -114,7 +114,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="alim_fecha" class="form-control" disabled>
+                                            <input type="date" id="alim_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -124,7 +124,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="tiplan_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="tiplan_descri" disabled onkeyup="getTipPlan()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="tiplan_descri" disabled onkeyup="getTipPlan()">
                                             <label class="form-label">TIpo de plan</label>
                                             <div id="listaTipPlan" style="display: none;">
                                                 <ul class="list-group" id="ulTipPlan" style="height:60px; overflow:auto;"></ul>
@@ -139,7 +139,7 @@ $u = $_SESSION['usuarios'];
                                             <input type="hidden" id="per_nrodoc" value="0">
                                             <input type="hidden" id="cli_cod" value="0">
                                             <input type="hidden" id="per_email" value="0">
-                                            <input type="text" class="form-control disabledno" id="cliente" disabled onkeyup="getClientes()">
+                                            <input type="text" class="form-control disabledno sinCarac" id="cliente" disabled onkeyup="getClientes()">
                                             <label class="form-label">C.I. - Cliente</label>
                                             <div id="listaClientes" style="display: none;">
                                                 <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>
@@ -162,7 +162,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="fun_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="funcionario" disabled onkeyup="getFuncionarios()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="funcionario" disabled onkeyup="getFuncionarios()">
                                             <label class="form-label">Nutricionista</label>
                                             <div id="listaFuncionarios" style="display: none;">
                                                 <ul class="list-group" id="ulFuncionarios" style="height:60px; overflow:auto;"></ul>
@@ -236,7 +236,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="dia_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="dia_descri" disabled onkeyup="getDias()">
+                                            <input type="text" class="form-control disabledno2 soloTxt" id="dia_descri" disabled onkeyup="getDias()">
                                             <label class="form-label">Dia</label>
                                             <div id="listaDias" style="display: none;">
                                                 <ul class="list-group" id="ulDias" style="height:60px; overflow:auto;"></ul>
@@ -249,7 +249,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="hrcom_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="hrcom_descri" disabled onkeyup="getHorario()">
+                                            <input type="text" class="form-control disabledno2 soloTxt" id="hrcom_descri" disabled onkeyup="getHorario()">
                                             <label class="form-label">Horario</label>
                                             <div id="listaHorario" style="display: none;">
                                                 <ul class="list-group" id="ulHorario" style="height:60px; overflow:auto;"></ul>
@@ -262,7 +262,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="comi_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="comi_descri" disabled onkeyup="getComidas()">
+                                            <input type="text" class="form-control disabledno2 soloTxt" id="comi_descri" disabled onkeyup="getComidas()">
                                             <label class="form-label">Comida</label>
                                             <div id="listaComidas" style="display: none;">
                                                 <ul class="list-group" id="ulComidas" style="height:60px; overflow:auto;"></ul>
@@ -274,7 +274,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="alimdet_proteina" class="form-control disabledno" disabled>
+                                            <input type="text" id="alimdet_proteina" class="form-control disabledno2 soloNum" disabled>
                                             <label class="form-label">Proteínas</label>
                                         </div>
                                     </div>
@@ -283,7 +283,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="alimdet_calorias" class="form-control disabledno" disabled>
+                                            <input type="text" id="alimdet_calorias" class="form-control disabledno2 soloNum" disabled>
                                             <label class="form-label">Calorias</label>
                                         </div>
                                     </div>
@@ -292,7 +292,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="alimdet_carbohidratos" class="form-control disabledno" disabled>
+                                            <input type="text" id="alimdet_carbohidratos" class="form-control disabledno2 soloNum" disabled>
                                             <label class="form-label">Carbohidratos</label>
                                         </div>
                                     </div>

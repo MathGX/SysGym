@@ -147,7 +147,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="text" id="promdes_descri" class="form-control disabledno sinCarac" disabled>
-                                            <label class="form-label">Descipción</label>
+                                            <label class="form-label">Descripción</label>
                                         </div>
                                     </div>
                                 </div>

@@ -114,7 +114,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="med_fecha" class="form-control" disabled>
+                                            <input type="date" id="med_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -125,7 +125,7 @@ $u = $_SESSION['usuarios'];
                                         <div class="form-line focus">
                                             <input type="hidden" id="per_nrodoc" value="0">
                                             <input type="hidden" id="cli_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="cliente" disabled onkeyup="getClientes()">
+                                            <input type="text" class="form-control disabledno sinCarac" id="cliente" disabled onkeyup="getClientes()">
                                             <label class="form-label">C.I. - Cliente</label>
                                             <div id="listaClientes" style="display: none;">
                                                 <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>
@@ -203,7 +203,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
                                             <input type="hidden" id="param_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="param_descri" disabled onkeyup="getParametro()">
+                                            <input type="text" class="form-control disabledno2 soloTxt" id="param_descri" disabled onkeyup="getParametro()">
                                             <label class="form-label">Parámetro</label>
                                             <div id="listaParametro" style="display: none;">
                                                 <ul class="list-group" id="ulParametro" style="height:60px; overflow:auto;"></ul>
@@ -215,7 +215,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line foc">
-                                            <input type="text" id="meddet_cantidad" class="form-control disabledno" disabled>
+                                            <input type="text" id="meddet_cantidad" class="form-control disabledno2 soloNum" disabled>
                                             <label class="form-label">Cantidad</label>
                                         </div>
                                     </div>

@@ -21,7 +21,7 @@ $sql = "select
         i.itm_descri
 from items i 
         join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
-where itm_descri ilike '%$item%' 
+where itm_descri ilike upper('%$item%')
         and i.itm_cod != 3
         and i.tipitem_cod = 1
         and i.itm_estado = 'ACTIVO'

@@ -20,7 +20,7 @@ $sql = "select
         p.per_nombres||' '||p.per_apellidos as funcionario
 from funcionarios f 
 join personas p on p.per_cod = f.per_cod
-where p.per_nombres||' '||p.per_apellidos ilike '%$funcionario%'
+where (p.per_nombres||' '||p.per_apellidos ilike '%$funcionario%' or p.per_nombres ilike '%$funcionario%' or p.per_apellidos ilike '%$funcionario%')
 	and f.car_cod = 2 
         and f.fun_estado = 'ACTIVO';";
 

@@ -18,9 +18,11 @@ $cliente = $_POST['cliente'];
 $sql = "select 
 ic.ins_cod,
 ic.cli_cod,
+ic.ins_hora_ini,
+ic.ins_hora_fin,
 p.per_nrodoc,
 p.per_email,
-p.per_nombres||' '||p.per_apellidos AS cliente
+p.per_nombres||' '||p.per_apellidos as cliente
 from inscripciones_cab ic 
 	join clientes c on ic.cli_cod = c.cli_cod 
 		join personas p on p.per_cod = c.per_cod

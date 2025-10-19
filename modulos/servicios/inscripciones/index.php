@@ -114,7 +114,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="ins_fecha" class="form-control" disabled>
+                                            <input type="date" id="ins_fecha" class="form-control" disabled>
                                             <label class="form-label">Fecha</label>
                                         </div>
                                     </div>
@@ -124,7 +124,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                         <input type="hidden" id="cli_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getClientes()">
+                                            <input type="text" class="form-control disabledno soloNum" id="per_nrodoc" disabled onkeyup="getClientes()">
                                             <label class="form-label">Nro. Doc. Cliente</label>
                                             <div id="listaClientes" style="display: none;">
                                                 <ul class="list-group" id="ulClientes" style="height:60px; overflow:auto;"></ul>
@@ -145,7 +145,7 @@ $u = $_SESSION['usuarios'];
                                 
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
-                                        <div class="form-line foc focused">
+                                        <div class="form-line focus focused">
                                             <input type="time" id="ins_hora_ini" class="form-control disabledno" disabled>
                                             <label class="form-label">Desde</label>
                                         </div>
@@ -154,7 +154,7 @@ $u = $_SESSION['usuarios'];
 
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
-                                        <div class="form-line foc focused">
+                                        <div class="form-line focus focused">
                                             <input type="time" id="ins_hora_fin" class="form-control disabledno" disabled>
                                             <label class="form-label">Hasta</label>
                                         </div>
@@ -189,7 +189,7 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">save</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" class="btn bg-pink waves-effect btnOperacion2" style="width:12.5%; display:none;" onclick="cancelar()">
+                                <button type="button" class="btn bg-red waves-effect btnOperacion2" style="width:12.5%; display:none;" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
@@ -202,9 +202,9 @@ $u = $_SESSION['usuarios'];
                     </div>
                 </div>
 
-                <div class="col-lg-12 <!--  -->" style="display: none;">
+                <!-- formulario de detalles de INSCRIPCIONES -->
+                <!-- <div class="col-lg-12" style="display: none;">
                     <div class="card">
-                    <!-- formulario de detalles de INSCRIPCIONES -->
                         <div class="header bg-indigo">
                             <h2>
                                 DETALLE DE LA INSCRIPCION
@@ -212,6 +212,7 @@ $u = $_SESSION['usuarios'];
                         </div>
                         <div class="body">
                             <input type="hidden" id="operacion_det" value="0">
+                            
                             <div class="row clearfix">
 
                                 <div class="col-sm-4">
@@ -227,10 +228,10 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                            </div>
+                            </div> -->
 
                             <!-- botones del detalle de inscripciones -->
-                            <div class="icon-and-text-button-demo">
+                            <!-- <div class="icon-and-text-button-demo">
                                 <?php if ($botAgregar == true) { ?>
                                     <button type="button" class="btn bg-indigo waves-effect btnOperacion3" style="width:12.5%;" onclick="agregar()">
                                         <i class="material-icons">file_upload</i>
@@ -247,14 +248,14 @@ $u = $_SESSION['usuarios'];
                                     <i class="material-icons">archive</i>
                                     <span>CONFIRMAR</span>
                                 </button>
-                                <button type="button" style="width:12.5%; display:none;" class="btn bg-pink waves-effect btnOperacion4" onclick="cancelar()">
+                                <button type="button" style="width:12.5%; display:none;" class="btn bg-red waves-effect btnOperacion4" onclick="cancelar()">
                                     <i class="material-icons">close</i>
                                     <span>CANCELAR</span>
                                 </button>
-                            </div>
+                            </div> -->
 
-                        <!-- grilla del detalle de inscripciones -->
-                            <div class="table-responsive">
+                            <!-- grilla del detalle de inscripciones -->
+                            <!-- <div class="table-responsive">
                                 <table class="table table-hover table-borderer table-striped">
                                     <thead>
                                         <tr>
@@ -270,10 +271,10 @@ $u = $_SESSION['usuarios'];
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
+                <!-- grilla del formulario INSCRIPCIONES-->
                 <div class="col-lg-12 tbl">
-                    <!-- grilla del formulario INSCRIPCIONES-->
                     <div class="card">
                         <div class="header bg-indigo">
                             <h2>

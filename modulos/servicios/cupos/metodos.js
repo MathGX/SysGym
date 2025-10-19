@@ -118,6 +118,29 @@ $(".sinCarac").each(function() {
     });
 });
 
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
 /*-------------------------------------------- METODOS DE LA CABECERA --------------------------------------------*/
 
 //funcion habilitar inputs
@@ -200,20 +223,20 @@ let grabar = () => {
         method: "POST",
         url: "controlador.php",
         data: {
-            cup_cod: $("#cup_cod").val(),
-            cup_fecha: $("#cup_fecha").val(),
-            cup_estado: $("#cup_estado").val(),
-            suc_cod: $("#suc_cod").val(),
-            emp_cod: $("#emp_cod").val(),
-            usu_cod: $("#usu_cod").val(),
-            itm_cod: $("#itm_cod").val(),
-            tipitem_cod: $("#tipitem_cod").val(),
-            operacion_cab: $("#operacion_cab").val(),
-            suc_descri: $("#suc_descri").val(),
-            emp_razonsocial: $("#emp_razonsocial").val(),
-            usu_login: $("#usu_login").val(),
-            itm_descri: $("#itm_descri").val(),
-            transaccion: $("#transaccion").val()
+            cup_cod: $("#cup_cod").val().trim(),
+            cup_fecha: $("#cup_fecha").val().trim(),
+            cup_estado: $("#cup_estado").val().trim(),
+            suc_cod: $("#suc_cod").val().trim(),
+            emp_cod: $("#emp_cod").val().trim(),
+            usu_cod: $("#usu_cod").val().trim(),
+            itm_cod: $("#itm_cod").val().trim(),
+            tipitem_cod: $("#tipitem_cod").val().trim(),
+            operacion_cab: $("#operacion_cab").val().trim(),
+            suc_descri: $("#suc_descri").val().trim(),
+            emp_razonsocial: $("#emp_razonsocial").val().trim(),
+            usu_login: $("#usu_login").val().trim(),
+            itm_descri: $("#itm_descri").val().trim(),
+            transaccion: $("#transaccion").val().trim()
         },
     }) //Establecemos un mensaje segun el contenido de la respuesta
         .done(function (respuesta) {
@@ -252,7 +275,7 @@ let grabar = () => {
 //funcion confirmar SweetAlert
 let confirmar = () => {
     //solicitamos el value del input operacion
-    var oper = $("#operacion_cab").val();
+    var oper = $("#operacion_cab").val().trim();
 
     preg = "¿Desea agregar el registro?";
 
@@ -364,11 +387,11 @@ function grabar2() {
         method: "POST",
         url: "controladorDetalles.php",
         data: {
-            cupdet_hora_ini: $("#cupdet_hora_ini").val(),
-            cupdet_hora_fin: $("#cupdet_hora_fin").val(),
-            cup_cod: $("#cup_cod").val(),      
-            cupdet_cantidad: $("#cupdet_cantidad").val(),      
-            operacion_det: $("#operacion_det").val(),
+            cupdet_hora_ini: $("#cupdet_hora_ini").val().trim(),
+            cupdet_hora_fin: $("#cupdet_hora_fin").val().trim(),
+            cup_cod: $("#cup_cod").val().trim(),      
+            cupdet_cantidad: $("#cupdet_cantidad").val().trim(),      
+            operacion_det: $("#operacion_det").val().trim(),
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
 .done(function (respuesta) {
@@ -382,7 +405,7 @@ function grabar2() {
             //Si la respuesta devuelve un success recargamos la pagina
             if (respuesta.tipo == "success") {
                 listar2(); //actualizamos la grilla
-                $(".foc").find(".form-control").val(''); //limpiamos los input
+                $(".tbldet").find(".form-control").val(''); //limpiamos los input
                 $(".foc").attr("class", "form-line foc"); //se bajan los labels quitando el focused
                 $(".disabledno2").attr("disabled", "disabled"); //deshabilitamos los input
                 habilitarBotones2(false); //deshabilitamos los botones
@@ -411,7 +434,7 @@ function grabar2() {
 //funcion confirmar SweetAlert
 let confirmar2 = () => {
     //solicitamos el value del input operacion
-    var oper = $("#operacion_det").val();
+    var oper = $("#operacion_det").val().trim();
 
     preg = "¿Desea agregar el registro?";
 

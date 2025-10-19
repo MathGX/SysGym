@@ -21,7 +21,7 @@ $sql = "select
 from dias
 where dia_descri ilike '%$dia_descri%'
         and dia_estado != 'INACTIVO'
-order by dia_descri;";
+order by dia_cod;";
         
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);

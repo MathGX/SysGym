@@ -48,6 +48,7 @@ $datos = pg_fetch_all($resultado);
             justify-content: center;      /* Centra verticalmente */
             align-items: center;          /* Centra horizontalmente */
             height: 100vh;               /* Altura del contenedor igual a la altura de la ventana */
+            font-family: Arial, sans-serif; 
         }
 
         .titulo {
@@ -66,6 +67,7 @@ $datos = pg_fetch_all($resultado);
             border-collapse: collapse;
             font-size: 12px;
             white-space:nowrap;
+            font-family: Arial, sans-serif; 
         }
 
         .right {

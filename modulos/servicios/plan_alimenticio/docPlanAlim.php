@@ -60,6 +60,7 @@ $datos = pg_fetch_all($resultado);
             justify-content: center;      /* Centra verticalmente */
             align-items: center;          /* Centra horizontalmente */
             height: 100vh;               /* Altura del contenedor igual a la altura de la ventana */
+            font-family: Arial, sans-serif; 
         }
 
         .titulo {
@@ -78,6 +79,7 @@ $datos = pg_fetch_all($resultado);
             border-collapse: collapse;
             font-size: 12px;
             white-space:nowrap;
+            font-family: Arial, sans-serif; 
         }
 
         .right {
@@ -153,7 +155,7 @@ $datos = pg_fetch_all($resultado);
                         <td class="subrayar"  style="width:8.5%">N° de inscripcion: </td>
                         <td style="width:7.5%;"> <?php echo $cabecera['ins_cod'];?> </td>
                         <td class="subrayar" style="width:10%;" colspan="1"> Fecha de emisión: </td>
-                        <td style="width:25%;"><?php echo $cabecera['alim_fecha'];?> </td>
+                        <td style="width:25%;"><?php echo date('d/m/Y', strtotime($cabecera['alim_fecha']));?> </td>
                     </tr>
                 </table>
                 <br>

@@ -19,7 +19,7 @@ $sql = "select
         p.tiprom_cod,
         p.tiprom_descri
 from tipo_promocion p
-where p.tiprom_descri like '%$tiprom_descri%' 
+where p.tiprom_descri like upper('%$tiprom_descri%')
         and p.tiprom_estado = 'ACTIVO';";
 
 //consultamos a la base de datos y guardamos el resultado

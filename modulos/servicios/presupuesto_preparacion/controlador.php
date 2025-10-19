@@ -51,6 +51,11 @@ if (isset($_POST['operacion_cab'])) {
             "mensaje" => "LA FECHA DE VENCIMIENTO NO PUEDE SER INFERIOR A LA FECHA DE EMISION",
             "tipo" => "error"
         );
+    } else if (strpos($error, "err_cab") !== false) {
+        $response = array(
+            "mensaje" => "EL ESTADO DEL PRESUPUESTO IMPIDE QUE SEA ANULADO, SE ENCUENTRA ASOCIADO A UNA VENTA",
+            "tipo" => "error"
+        );
     } else {
         $response = array(
             "mensaje" => pg_last_notice($conexion),

@@ -46,7 +46,7 @@ if (isset($_POST['operacion_cab'])) {
     pg_query($conexion, $sql);
     $error = pg_last_error($conexion);
     //Si ocurre un error lo capturamos y lo enviamos al front-end
-    if (strpos($error, "1") !== false) {
+    if (strpos($error, "err_cli") !== false) {
         $response = array(
             "mensaje" => "ESTE CLIENTE YA POSEE UN PLAN",
             "tipo" => "error"

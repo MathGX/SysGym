@@ -29,7 +29,12 @@ if (isset($_POST['operacion_cab'])) {
     //Si ocurre un error lo capturamos y lo enviamos al front-end
     if (strpos($error, "err_fecha") !== false) {
         $response = array(
-            "mensaje" => "LA ENTRADA DE  ESTE CLIENTE EN FECHA ".$_POST['asis_fecha']." YA FUE REGISTRADA",
+            "mensaje" => "LA ENTRADA DE  ESTE CLIENTE EN FECHA ".date( 'd/m/y', strtotime($_POST['asis_fecha']))." YA FUE REGISTRADA",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "err_date") !== false) {
+        $response = array(
+            "mensaje" => "LAS ASISTENCIAS SOLO PUEDEN ELIMINARSE EN EL MISMO DÍA",
             "tipo" => "error"
         );
     } else {
