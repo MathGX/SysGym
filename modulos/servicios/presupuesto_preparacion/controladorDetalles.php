@@ -22,6 +22,9 @@ if (isset($_POST['operacion_det'])) {
         $prprdet_precio,
         $prprdet_cantidad,
         {$_POST['prprdet_promdes_cod']},
+        '{$_POST['cupdet_hora_ini']}',
+        '{$_POST['cupdet_hora_fin']}',
+        {$_POST['cup_cod']},
         {$_POST['operacion_det']}
     );";
 
@@ -31,6 +34,11 @@ if (isset($_POST['operacion_det'])) {
     if (strpos($error, "err_rep") !== false) {
         $response = array(
             "mensaje" => "EL SERVICIO SELECCIONADO YA ESTÁ PRESUPUESTADO",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "err_promo") !== false) {
+        $response = array(
+            "mensaje" => "PARA ELIMINAR LA PROMOCIÓN DEBE ELIMINAR EL SERVICIO ASOCIADO",
             "tipo" => "error"
         );
     } else {

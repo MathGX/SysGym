@@ -79,6 +79,19 @@
 <!-- JQuery Steps Plugin Js -->
 <script src="/SysGym/plugins/jquery-steps/jquery.steps.js"></script>
 
+<!-- Ocultar listas al perder el foco -->
+<script>
+    // Función para ocultar todas las listas
+    function ocultarLista() {
+        $("[id^='lista']").hide();
+    }
+
+    // Ocultar con un pequeño retraso al perder el foco
+    $("[id^='lista']").closest(".form-line").find(".form-control").on("blur", function () {
+        setTimeout(() => ocultarLista(), 1500); 
+    });
+</script>
+
 <!-- funcion para mantener activa la opcion seleccionada en el menu -->
 <script>
     let activarMenu = () => {

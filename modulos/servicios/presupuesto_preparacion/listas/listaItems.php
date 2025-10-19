@@ -17,21 +17,7 @@ $ins_hora_ini = $_POST['ins_hora_ini'];
 $ins_hora_fin = $_POST['ins_hora_fin'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
-$sql = "select distinct
-    cc.itm_cod,
-    cc.tipitem_cod,
-    i.tipimp_cod,
-    i.itm_descri,
-    i.itm_precio as prprdet_precio
-from cup_serv_cab cc
-	join items i on i.itm_cod = cc.itm_cod 
-    join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
-    join cup_serv_det cd on cd.cup_cod = cc.cup_cod 
-where i.itm_descri ilike '%%' 
-    and i.itm_estado ilike 'ACTIVO'
-    and cd.cupdet_hora_ini between '$ins_hora_ini' and ('$ins_hora_fin'::time - '01:00:00'::time)
-    and cd.cupdet_cantidad > 0
-order by i.itm_descri;";
+$sql = "select * from obtener_servicios('$itm_descri', '$ins_hora_ini', '$ins_hora_fin');";
         
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);
@@ -41,7 +27,7 @@ $datos = pg_fetch_all($resultado);
 if (empty($datos)) {
         echo json_encode(
                 array(
-                        "fila" => "No se encuentra el dato",
+                        "fila" => "Sin disponibilidad del servicio entre las $ins_hora_ini y $ins_hora_fin",
                         "true" => true
                 )
         );

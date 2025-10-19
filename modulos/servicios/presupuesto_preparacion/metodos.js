@@ -392,7 +392,6 @@ let enviarDoc = () => {
     }
 }
 
-
 /*-------------------------------------------- METODOS DEL DETALLE --------------------------------------------*/
 
 //funcion habilitar inputs
@@ -459,7 +458,10 @@ function grabar2() {
             prpr_cod: $("#prpr_cod").val().trim(),
             prprdet_precio: $("#prprdet_precio").val().trim(),
             prprdet_cantidad: $("#prprdet_cantidad").val().trim(),          
-            prprdet_promdes_cod: $("#prprdet_promdes_cod").val().trim(),          
+            prprdet_promdes_cod: $("#prprdet_promdes_cod").val().trim() || 0,         
+            cupdet_hora_ini: $("#cupdet_hora_ini").val().trim(),         
+            cupdet_hora_fin: $("#cupdet_hora_fin").val().trim(),         
+            cup_cod: $("#cup_cod").val().trim(),         
             operacion_det: $("#operacion_det").val().trim(),
         }
 }) //Establecemos un mensaje segun el contenido de la respuesta
@@ -473,7 +475,7 @@ function grabar2() {
         },
         function () {
             listar2(); //actualizamos la grilla
-            $(".foc").find(".form-control").val(''); //limpiamos los input
+            $(".tbldet").find(".form-control").val(''); //limpiamos los input
             $(".foc").attr("class", "form-line foc"); //se bajan los labels quitando el focused
             $(".disabledno2").attr("disabled", "disabled"); //deshabilitamos los input
             habilitarBotones2(false); //deshabilitamos los botones
@@ -731,7 +733,7 @@ function getItems() {
             fila = "<li class='list-group-item' >"+lista.fila+"</li>"; 
         }else{    
             $.each(lista,function(i, item) {
-                fila += "<li class='list-group-item' onclick='seleccionItems("+JSON.stringify(item)+")'>"+item.itm_descri+"</li>";
+                fila += "<li class='list-group-item' onclick='seleccionItems("+JSON.stringify(item)+")'>"+item.itm_descri2+"</li>";
             });
         }
         //enviamos a los input correspondientes de el conjunto de filas
