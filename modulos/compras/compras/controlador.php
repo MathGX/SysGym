@@ -64,7 +64,12 @@ if (isset($_POST['operacion_cab'])) {
         );
     } else if (strpos($error, "err_cab") !== false) {
         $response = array(
-            "mensaje" => "EL ESTADO DE LA COMPRA IMPIDE QUE SEA ANULADA, SE ENCUENTRA ASOCIADA A UNA NOTA  ",
+            "mensaje" => "EL ESTADO DE LA COMPRA IMPIDE QUE SEA ANULADA, SE ENCUENTRA ASOCIADA A UNA NOTA ",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "err_fectim") !== false) {
+        $response = array(
+            "mensaje" => "LA FECHA DE VENCIMIENTO DEL TIMBRADO NO PUEDE SER MENOR A LA FECHA DE LA COMPRA",
             "tipo" => "error"
         );
     } else {

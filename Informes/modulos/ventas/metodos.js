@@ -71,11 +71,11 @@ let reporte = () => {
     let cuencob_estado = $("#cuencob_estado").val() || '';
 
     if($("#informe").val() == "CAJA Y RECAUDACIONES"){
-        window.location.href = "presupuesto_prov_reporte/reportePresupuesto.php?pedcom_cod="+pedcom_cod+"&itm_cod="+itm_cod+"&tipitem_cod="+tipitem_cod+"&tipimp_cod="+tipimp_cod;
+        window.open("presupuesto_prov_reporte/reportePresupuesto.php?pedcom_cod="+pedcom_cod+"&itm_cod="+itm_cod+"&tipitem_cod="+tipitem_cod+"&tipimp_cod="+tipimp_cod);
     } else if($("#informe").val() == "CUENTAS A COBRAR"){
-        window.location.href = "cuentasCobrar_reporte/reporteCuentasCobrar.php?desde="+desde+"&hasta="+hasta+"&cli_cod="+cli_cod+"&tiprov_cod="+tiprov_cod+"&cuencob_estado="+cuencob_estado;
+        window.open("cuentasCobrar_reporte/reporteCuentasCobrar.php?desde="+desde+"&hasta="+hasta+"&cli_cod="+cli_cod+"&tiprov_cod="+tiprov_cod+"&cuencob_estado="+cuencob_estado);
     } else if($("#informe").val() == "LIBRO DE VENTAS"){
-        window.location.href = "libroVentas_reporte/reporteLibroVentas.php?desde="+desde+"&hasta="+hasta+"&cli_cod="+cli_cod+"&tiprov_cod="+tiprov_cod+"&tipcomp_cod="+tipcomp_cod;
+        window.open("libroVentas_reporte/reporteLibroVentas.php?desde="+desde+"&hasta="+hasta+"&cli_cod="+cli_cod+"&tiprov_cod="+tiprov_cod+"&tipcomp_cod="+tipcomp_cod);
     }
 }
 

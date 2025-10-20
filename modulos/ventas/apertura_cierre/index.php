@@ -79,7 +79,7 @@ $u = $_SESSION['usuarios'];
                                         <i class="material-icons">sync</i>
                                         <span>REABRIR</span>
                                     </button>
-                                    <button type="button" style="width:12.5%;" class="btn bg-pink waves-effect" onclick="cancelar()">
+                                    <button type="button" style="width:12.5%;" class="btn bg-red waves-effect" onclick="cancelar()">
                                         <i class="material-icons">close</i>
                                         <span>CANCELAR</span>
                                     </button>

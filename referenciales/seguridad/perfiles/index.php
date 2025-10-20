@@ -44,6 +44,7 @@ $u = $_SESSION['usuarios'];
                     <!-- formulario de perfiles -->
                     <div class="card">
                         <div class="header bg-indigo">
+                            <i class="material-icons" style="position: absolute; right:10px; top:25px;" onclick="abrirManual(25)">info_outline</i>
                             <h2>
                                 FORMULARIO DE PERFILES<small>Registrar datos de perfiles</small>
                             </h2>

@@ -65,7 +65,7 @@ $datos = pg_fetch_all($resultado);
                                 <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="param_descri" class="form-control disabledno" disabled>
+                                            <input type="text" id="param_descri" class="form-control disabledno soloTxt" disabled>
                                             <label class="form-label">Descripción</label>
                                         </div>
                                     </div>
@@ -76,7 +76,7 @@ $datos = pg_fetch_all($resultado);
                                         <div class="form-line focus">
                                             <input type="hidden" id="uni_cod" value="0">
                                             <input type="hidden" id="uni_simbolo" value="">
-                                            <input type="text" class="form-control disabledno" id="uni_descri" disabled onkeyup="getUniMedida()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="uni_descri" disabled onkeyup="getUniMedida()">
                                             <label class="form-label">Unidad de Medida</label>
                                             <div id="listaUniMedida" style="display: none;">
                                                 <ul class="list-group" id="ulUniMedida"  style="height:60px; overflow:auto;"></ul>

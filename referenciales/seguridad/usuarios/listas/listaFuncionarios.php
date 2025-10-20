@@ -24,7 +24,7 @@ from funcionarios f
         join personas p on p.per_cod = f.per_cod
 where p.per_nrodoc like '%$ci%' 
         and f.fun_estado ilike 'ACTIVO'
-        and not exists (select 1 from usuarios u where u.fun_cod = f.fun_cod and u.usu_estado = 'ACTIVO');";
+        --and not exists (select 1 from usuarios u where u.fun_cod = f.fun_cod and u.usu_estado = 'ACTIVO');";
 
 //consultamos a la base de datos y guardamos el resultado
 $resultado = pg_query($conexion, $sql);

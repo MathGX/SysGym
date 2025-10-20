@@ -12,7 +12,8 @@ require_once "{$_SERVER['DOCUMENT_ROOT']}/SysGym/others/conexion/conexion.php";
 $objConexion = new Conexion();
 $conexion = $objConexion->getConexion();
 
-$empre = $_POST['emp_razonsocial'];
+$emp_cod = $_POST['emp_cod'];
+$suc_descri = $_POST['suc_descri'];
 
 //se realiza la consulta SQL a la base de datos con el filtro
 $sql = "select 
@@ -20,7 +21,7 @@ $sql = "select
         s.suc_descri
         from sucursales s
         join empresa e on e.emp_cod = s.emp_cod
-        where e.emp_razonsocial like '%$empre%' and s.suc_estado ilike 'ACTIVO'
+        where e.emp_cod = $emp_cod and s.suc_descri ilike '%$suc_descri%' and s.suc_estado ilike 'ACTIVO'
         order by suc_descri;";
 
 //consultamos a la base de datos y guardamos el resultado

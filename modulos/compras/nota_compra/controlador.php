@@ -179,6 +179,11 @@ if (isset($_POST['operacion_cab'])) {
             "mensaje" => "PARA COMPRAS AL CONTADO LA CANTIDAD DE CUOTAS DEBE SER 1",
             "tipo" => "error"
         );
+    } else if (strpos($error, "err_fectim") !== false) {
+        $response = array(
+            "mensaje" => "LA FECHA DE VENCIMIENTO DEL TIMBRADO NO PUEDE SER MENOR A LA FECHA DE LA COMPRA",
+            "tipo" => "error"
+        );
     } else{
         $response = array(
             "mensaje" => pg_last_notice($conexion),

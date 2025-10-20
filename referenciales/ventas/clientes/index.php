@@ -68,7 +68,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="per_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getPersonas()">
+                                            <input type="text" class="form-control disabledno soloNum" id="per_nrodoc" disabled onkeyup="getPersonas()">
                                             <label class="form-label">Documento Nro.</label>
                                             <div id="listaPersonas" style="display: none;">
                                                 <ul class="list-group" id="ulPersonas" style="height:60px; overflow:auto;"></ul>
@@ -86,7 +86,7 @@ $u = $_SESSION['usuarios'];
                                     </div>
                                 </div>
 
-                                <div class="col-sm-2">
+                                <!-- <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="tipcli_cod" value="0">
@@ -97,13 +97,13 @@ $u = $_SESSION['usuarios'];
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="ciu_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="ciu_descripcion" disabled onkeyup="getCiudades()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="ciu_descripcion" disabled onkeyup="getCiudades()">
                                             <label class="form-label">Ciudad</label>
                                             <div id="listaCiudades" style="display: none;">
                                                 <ul class="list-group" id="ulCiudades" style="height:60px; overflow:auto;"></ul>

@@ -65,7 +65,7 @@ $datos = pg_fetch_all($resultado);
                                 <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="per_nombres" class="form-control disabledno" disabled>
+                                            <input type="text" id="per_nombres" class="form-control disabledno soloTxt" disabled>
                                             <label class="form-label">Nombres</label>
                                         </div>
                                     </div>
@@ -74,7 +74,7 @@ $datos = pg_fetch_all($resultado);
                                 <div class="col-md-4">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="per_apellidos" class="form-control disabledno" disabled>
+                                            <input type="text" id="per_apellidos" class="form-control disabledno soloTxt" disabled>
                                             <label class="form-label">Apellidos</label>
                                         </div>
                                     </div>
@@ -83,7 +83,7 @@ $datos = pg_fetch_all($resultado);
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="per_nrodoc" class="form-control disabledno" disabled>
+                                            <input type="text" id="per_nrodoc" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Documento Nro.</label>
                                         </div>
                                     </div>
@@ -93,7 +93,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="tipdoc_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="tipdoc_descri" disabled onkeyup="getTipoDoc()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="tipdoc_descri" disabled onkeyup="getTipoDoc()">
                                             <label class="form-label">Tipo de Documento</label>
                                             <div id="listaTipoDoc" style="display: none;">
                                                 <ul class="list-group" id="ulTipoDoc" style="height:60px; overflow:auto;"></ul>
@@ -105,7 +105,7 @@ $datos = pg_fetch_all($resultado);
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="per_telefono" class="form-control disabledno" disabled>
+                                            <input type="text" id="per_telefono" class="form-control disabledno soloNum" disabled>
                                             <label class="form-label">Teléfono</label>
                                         </div>
                                     </div>

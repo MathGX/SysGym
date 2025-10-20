@@ -92,6 +92,14 @@
     });
 </script>
 
+<!-- Manual de usuario -->
+<script>
+    function abrirManual(pag) {
+        const ruta = "/SysGym/Manuales/Manual_Usuario_Sys_Orbus_Gym.pdf#page="+pag;
+        window.open(ruta); // Abre en una nueva pestaña
+    }
+</script>
+
 <!-- funcion para mantener activa la opcion seleccionada en el menu -->
 <script>
     let activarMenu = () => {

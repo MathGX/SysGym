@@ -124,7 +124,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus ">
                                             <input type="hidden" id="tipcomp_cod" value="4">
-                                            <input type="text" id="com_nrofac" class="form-control disabledno soloNum" disabled>
+                                            <input type="text" id="com_nrofac" class="form-control disabledno soloNum" disabled onkeyup="validarLongitud('#com_nrofac',13)">
                                             <label class="form-label">Factura nro.</label>
                                         </div>
                                     </div>
@@ -148,7 +148,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="com_timbrado" class="form-control disabledno soloNum" disabled>
+                                            <input type="text" id="com_timbrado" class="form-control disabledno soloNum" disabled onkeyup="validarLongitud('#com_timbrado',8)">
                                             <label class="form-label">Timbrado</label>
                                         </div>
                                     </div>

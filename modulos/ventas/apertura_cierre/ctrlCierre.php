@@ -62,7 +62,7 @@ if ($_POST['caso'] == 'cierre') {
     
 } else if ($_POST['caso'] == 'arqueo') {
     $sqlArqueo = "
-    do $$;
+    do $$
     begin
         insert into arqueo_control 
             (caj_cod,

@@ -159,7 +159,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-md-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="notacom_timbrado" class="form-control disabledno soloNum" disabled>
+                                            <input type="text" id="notacom_timbrado" class="form-control disabledno soloNum" disabled onkeyup="validarLongitud('#notacom_timbrado',8)">
                                             <label class="form-label">Timbrado</label>
                                         </div>
                                     </div>
@@ -177,7 +177,7 @@ $u = $_SESSION['usuarios'];
                                 <div class="col-sm-2">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="text" id="notacom_nronota" class="form-control disabledno soloNum" disabled>
+                                            <input type="text" id="notacom_nronota" class="form-control disabledno soloNum" disabled onkeyup="validarLongitud('#notacom_nronota',13)">
                                             <label class="form-label">Nota Nro.</label>
                                         </div>
                                     </div>

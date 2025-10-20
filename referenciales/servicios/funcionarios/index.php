@@ -75,7 +75,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="per_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="per_nrodoc" disabled onkeyup="getPersonas()">
+                                            <input type="text" class="form-control disabledno soloNum" id="per_nrodoc" disabled onkeyup="getPersonas()">
                                             <label class="form-label">Documento Nro.</label>
                                             <div id="listaPersonas" style="display: none;">
                                                 <ul class="list-group" id="ulPersonas" style="height:60px; overflow:auto;"></ul>
@@ -97,7 +97,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="ciu_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="ciu_descripcion" disabled onkeyup="getCiudades()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="ciu_descripcion" disabled onkeyup="getCiudades()">
                                             <label class="form-label">Ciudad</label>
                                             <div id="listaCiudades" style="display: none;">
                                                 <ul class="list-group" id="ulCiudades" style="height:60px; overflow:auto;"></ul>
@@ -110,7 +110,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="car_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="car_descri" disabled onkeyup="getCargos()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="car_descri" disabled onkeyup="getCargos()">
                                             <label class="form-label">Cargo</label>
                                             <div id="listaCargos" style="display: none;">
                                                 <ul class="list-group" id="ulCargos" style="height:60px; overflow:auto;"></ul>
@@ -122,12 +122,12 @@ $datos = pg_fetch_all($resultado);
                                 <div class="col-sm-3">
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
-                                            <input type="hidden" id="emp_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="emp_razonsocial" disabled onkeyup="getEmpresaSuc()">
+                                            <input type="hidden" id="emp_cod" value="<?php echo $u['emp_cod']; ?> ">
+                                            <input type="text" id="emp_razonsocial" class="form-control" value="<?php echo $u['emp_razonsocial']; ?> " disabled>
                                             <label class="form-label">Empresa</label>
-                                            <div id="listaEmpresaSuc" style="display: none;">
+                                            <!-- <div id="listaEmpresaSuc" style="display: none;">
                                                 <ul class="list-group" id="ulEmpresaSuc" style="height:60px; overflow:auto;"></ul>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -136,7 +136,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="suc_cod" value="0">
-                                            <input type="text" class="form-control" id="suc_descri" disabled >
+                                            <input type="text" class="form-control disabledno soloTxt" id="suc_descri" disabled onkeyup="getSucursalEmp()">
                                             <label class="form-label">Sucursal</label>
                                             <div id="listaSucursalEmp" style="display: none;">
                                                 <ul class="list-group" id="ulSucursalEmp" style="height:60px; overflow:auto;"></ul>

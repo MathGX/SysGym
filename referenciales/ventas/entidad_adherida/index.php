@@ -66,7 +66,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="martarj_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="martarj_descri" disabled onkeyup="getMarcaTarjeta()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="martarj_descri" disabled onkeyup="getMarcaTarjeta()">
                                             <label class="form-label">Marca de Tarjeta</label>
                                             <div id="listaMarcaTarjeta" style="display: none;">
                                                 <ul class="list-group" id="ulMarcaTarjeta" style="height:60px; overflow:auto;"></ul>
@@ -79,7 +79,7 @@ $datos = pg_fetch_all($resultado);
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="ent_cod" value="0">
-                                            <input type="text" class="form-control disabledno" id="ent_razonsocial" disabled onkeyup="getEntidadEmisora()">
+                                            <input type="text" class="form-control disabledno soloTxt" id="ent_razonsocial" disabled onkeyup="getEntidadEmisora()">
                                             <label class="form-label">Entidad Emisora</label>
                                             <div id="listaEntidadEmisora" style="display: none;">
                                                 <ul class="list-group" id="ulEntidadEmisora" style="height:60px; overflow:auto;"></ul>

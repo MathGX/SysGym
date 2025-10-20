@@ -5,9 +5,14 @@ header("Content-type: application/json; charset=utf-8");
 $tabla = [
                 ['tabla' => "SUCURSALES"],
                 ['tabla' => "ITEMS"],
-                ['tabla' => "PROVEEDORES"]
+                ['tabla' => "PROVEEDORES"],
+                ['tabla' => "CIUDADES"],
+                ['tabla' => "DEPOSITOS"],
+                ['tabla' => "TIPOS DE IMPUESTO"],
+                ['tabla' => "TIPOS DE ITEM"],
+                ['tabla' => "TIPOS DE PROVEEDOR"],
         ];
-
+        
 // Obtener el valor enviado por POST
 $entidad = $_POST['tabla'];
 

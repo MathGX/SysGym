@@ -165,7 +165,7 @@ $datoSuma = pg_fetch_assoc($resultadoSuma);
                 <th style="width: 2%;" rowspan="3">N°</th>
                 <th rowspan="3">FECHA</th>
                 <th rowspan="3">RUC</th>
-                <th style="width: 30%;" rowspan="3">PROVEEDOR</th>
+                <th style="width: 30%;" rowspan="3">CLIENTE</th>
                 <th colspan="2">DOCUMENTO</th>
                 <th rowspan="3">IMPORTE FACTURADO</th>
                 <th colspan="4">TASA DEL IVA</th>

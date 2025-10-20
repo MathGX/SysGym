@@ -240,6 +240,20 @@ let salir = () => {
     window.location = "/SysGym/menu.php";
 };
 
+//funcion para validar la logitud de los campos
+validarLongitud = (idInput, maxLength) => {
+    //se busca el campo segun el id del input recibido
+    let valor = $(idInput).val();
+    //Se obtiene el texto del label asociado al input
+    let campo = $(idInput).closest('.form-line').find('.form-label').text();
+
+    // Si la logitud del valor excede el maximo permitido, se muestra una alerta y se recorta el valor
+    if (valor.length > maxLength) {
+        alertaLabel("El campo <b>" + campo + "</b> no puede exceder los " + maxLength + " caracteres.");
+        $(idInput).val(valor.substring(0, maxLength));
+    }
+};
+
 //funcion grabar
 let grabar = () => {
     $.ajax({

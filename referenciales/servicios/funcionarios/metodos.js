@@ -1,3 +1,14 @@
+
+let datusUsuarios = () => {
+    $.ajax({
+        method: "POST",
+        url: "/SysGym/others/inicio/datosUser.php",
+        }).done(function (datos) {
+            $("#emp_cod").val(datos.emp_cod);
+            $("#emp_razonsocial").val(datos.emp_razonsocial);
+        });
+};
+
 //funcion habilitar inputs
 let habilitarBotones = (operacion) => {
     /* Segun el parametro sea verdadero o falso deshabilitamos o habilitamos los botones */
@@ -26,8 +37,9 @@ let agregar = () => {
     $("#transaccion").val('INSERCION');
     $(".disabledno").removeAttr("disabled");
     $(".focus").attr("class", "form-line focus focused");
-    $("#fun_fechaingreso, #per_cod, #per_nrodoc, #persona, #ciu_cod, #ciu_descripcion, #car_cod, #car_descri, #emp_cod, #emp_razonsocial, #suc_cod, #suc_descri").val("");
+    $(".focus").find(".form-control").val("");
     $("#fun_estado").val('ACTIVO');
+    datusUsuarios();
     $(".tbl").attr("style", "display:none");
     getCod();
     habilitarBotones(true);
@@ -161,40 +173,154 @@ let confirmar = () => {
     );
 };
 
-//funcion control vacio
+//funcion para validar que no haya campos vacios al grabar
 let controlVacio = () => {
-    let condicion = "c";
+    // Obtener todos los ids de los elementos con clase disabledno
+    let campos = $(".disabledno").map(function() {
+        return this.id;
+    }).get();
+    
+    // Array para almacenar los nombres de los campos vacíos
+    let camposVacios = [];
 
-    if ($("#fun_cod").val() == "") {
-        condicion = "i";
-    } else if ($("#fun_fechaingreso").val() == "") {
-        condicion = "i";
-    } else if ($("#per_nrodoc").val() == "") {
-        condicion = "i";
-    } else if ($("#persona").val() == "") {
-        condicion = "i";
-    } else if ($("#ciu_descripcion").val() == "") {
-        condicion = "i";
-    } else if ($("#car_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#emp_razonsocial").val() == "") {
-        condicion = "i";
-    } else if ($("#suc_descri").val() == "") {
-        condicion = "i";
-    } else if ($("#fun_estado").val() == "") {
-        condicion = "i";
-    }
+    // Recorrer los ids y verificar si el valor está vacío
+    campos.forEach(function(id) {
+        let $input = $("#" + id);
+        if ($input.val().trim() === "") {
+            // Busca el label asociado
+            let nombreInput = $input.closest('.form-line').find('.form-label').text() || id;
+            camposVacios.push(nombreInput);
+        }
+    });
 
-    if (condicion === "i") {
-        swal({
-            title: "RESPUESTA!!",
-            text: "Cargue todos los campos en blanco",
-            type: "error",
-        });
+    // Si hay campos vacíos, mostrar alerta; de lo contrario, confirmar
+    if (camposVacios.length > 0) {
+        alertaLabel("Complete los siguientes campos: <b>" + camposVacios.join(", ") + "</b>.");
     } else {
         confirmar();
     }
 };
+
+//funcion para mostrar alertas con label en el mensaje
+let alertaLabel = (msj) => {
+    swal({
+        html: true,
+        title: "ATENCIÓN!!",
+        text: msj,
+        type: "error",
+    });
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+let clickEnLista = false;
+
+// Evento mousedown para todos los elementos cuyo id comience con "lista"
+$("[id^='lista']").on("mousedown", function() {
+    clickEnLista = true;
+});
+
+//funcion para alertar campos vacios de forma individual
+let completarDatos = (nombreInput, idInput) => {
+    mensaje = "";
+    //si el input está vacío mostramos la alerta
+    if ($(idInput).val().trim() === "") {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede quedar vacío.";
+        alertaLabel(mensaje);
+        $(".focus").attr("class", "form-line focus focused");
+    }
+}
+
+// Evento blur para inputs con clase .disabledno
+$(".disabledno").each(function() {
+    $(this).on("blur", function() {
+        let idInput = "#" + $(this).attr("id");
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text();
+
+        if (clickEnLista) {
+            clickEnLista = false; // Reinicia bandera
+            return;
+        }
+        completarDatos(nombreInput, idInput);
+    });
+});
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que solo acepten texto
+let soloTexto = (nombreInput, idInput) => {
+    caracteres = /[-'_¡!°/\@#$%^&*(),.¿?":{}|<>;~`+]/;
+    numeros = /[0-9]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene números o caracteres especiales mostramos la alerta
+    if (valor !== "" && (caracteres.test(valor) || numeros.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar texto.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloTexto al perder el foco de los inputs con clase .soloTxt
+$(".soloTxt").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloTexto(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que solo acepten numeros
+let soloNumeros = (nombreInput, idInput) => {
+    if (idInput === "#per_nrodoc") {
+        caracteres = /['_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    } else {
+        caracteres = /[-'_¡´°/\!@#$%^&*(),.¿?":{}|<>;~`+]/;
+    }
+    letras = /[a-zA-Z]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && (caracteres.test(valor) || letras.test(valor))) {
+        mensaje = "El campo <b>" + nombreInput + "</b> solo puede aceptar valores numéricos";
+        if (idInput === "#pro_ruc") {
+            mensaje += " y guión"; // concatena la cadena extra
+        }
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método soloNumeros al perder el foco de los inputs con clase .soloNum
+$(".soloNum").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        soloNumeros(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
+
+//-----------------------------------------------------------------------------------------------------------------------
+//funcion para alertar campos que no acepten caracteres especiales
+let sinCaracteres = (nombreInput, idInput) => {
+    caracteres = /[-'_¡´°/\!@#$%^&*(),¿?":{}|<>;~`+]/;
+    valor = $(idInput).val().trim();
+    mensaje = "";
+    //si el input no está vacío y contiene letras o caracteres especiales mostramos la alerta
+    if ( valor !== "" && caracteres.test(valor)) {
+        mensaje = "El campo <b>" + nombreInput + "</b> no puede aceptar caracteres especiales, solo puntos.";
+        alertaLabel(mensaje);
+        $(idInput).val("");
+    }
+}
+
+//ejecución del método sinCaracteres al perder el foco de los inputs con clase .sinCarac
+$(".sinCarac").each(function() {
+    $(this).on("keyup", function() {
+        let idInput = "#" + $(this).attr("id"); //capturamos el id del input que perdió el foco
+        let nombreInput = $(this).closest('.form-line').find('.form-label').text(); //capturamos el texto de la etiqueta label asociada al input
+        sinCaracteres(nombreInput, idInput); //llamamos a la función pasarle el nombre del input y su id
+    });
+});
 
 //funcion seleccionar Fila
 let seleccionarFila = (objetoJSON) => {
@@ -430,7 +556,8 @@ function getSucursalEmp() {
         method: "POST",
         url: "/SysGym/referenciales/servicios/funcionarios/listas/listaSucursalEmp.php",
         data: {
-            emp_razonsocial:$("#emp_razonsocial").val()
+            emp_cod:$("#emp_cod").val(),
+            suc_descri:$("#suc_descri").val(),
         }
         //en base al JSON traído desde el listaSucursalEmp arrojamos un resultado
     }).done(function(lista) {

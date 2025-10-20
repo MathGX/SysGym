@@ -42,6 +42,7 @@ $datos = pg_fetch_all($resultado);
                     <!-- formulario de permisos -->
                     <div class="card">
                         <div class="header bg-indigo">
+                            <i class="material-icons" style="position: absolute; right:10px; top:25px;" onclick="abrirManual(32)">info_outline</i>
                             <h2>
                                 FORMULARIO DE PERMISOS<small>Registrar datos de permisos</small>
                             </h2>
