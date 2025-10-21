@@ -26,7 +26,7 @@ $sql = "select
         from items i 
         join tipo_item ti on ti.tipitem_cod = i.tipitem_cod
         join unidad_medida um on um.uni_cod = i.uni_cod 
-        where itm_descri ilike '%$item%' and i.itm_estado ilike 'ACTIVO'
+        where itm_descri ilike '%$item%' and i.itm_estado ilike 'ACTIVO' and i.tipitem_cod != 5
         order by i.itm_descri;";
         
 //consultamos a la base de datos y guardamos el resultado

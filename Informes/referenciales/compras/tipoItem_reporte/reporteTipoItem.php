@@ -30,7 +30,15 @@ $hasta = $_GET['hasta'];
 
 
 $sql = "select * from tipo_item 
-        where tipitem_cod between $desde and $hasta
+        where tipitem_cod between 
+            case
+                when $desde = 0 then 1
+                else $desde
+            end and 
+            case 
+                when $hasta = 0 then (select max(tipitem_cod) from tipo_item)
+                else $hasta
+            end
         order by tipitem_cod;";
 
 $resultado = pg_query($conexion, $sql);

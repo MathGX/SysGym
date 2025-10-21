@@ -38,7 +38,15 @@ $sql = "select
         join ciudad c on c.ciu_cod = d.ciu_cod
         join sucursales s on s.suc_cod = d.suc_cod and s.emp_cod = d.emp_cod 
             join empresa e on e.emp_cod = s.emp_cod 
-        where dep_cod between $desde and $hasta
+        where dep_cod between 
+            case
+                when $desde = 0 then 1
+                else $desde
+            end and 
+            case 
+                when $hasta = 0 then (select max(dep_cod) from depositos)
+                else $hasta
+            end
         order by dep_cod;";
 
 $resultado = pg_query($conexion, $sql);

@@ -30,7 +30,15 @@ $hasta = $_GET['hasta'];
 
 
 $sql = "select * from tipo_impuesto 
-        where tipimp_cod between $desde and $hasta
+        where tipimp_cod between
+            case
+                when $desde = 0 then 1
+                else $desde
+            end and 
+            case 
+                when $hasta = 0 then (select max(tipimp_cod) from tipo_impuesto)
+                else $hasta
+            end
         order by tipimp_cod;";
 
 $resultado = pg_query($conexion, $sql);

@@ -80,9 +80,9 @@ let reporte = () => {
     } else if ($("#tabla").val() == "ITEMS"){
         window.open("items_reporte/reporteItems.php?desde="+desde+"&hasta="+hasta+"&tipitem_cod="+tipitem_cod+"&uni_cod="+uni_cod+"&tipimp_cod="+tipimp_cod);
     } else if ($("#tabla").val() == "TIPOS DE PROVEEDOR"){
-        window.open("tipoProveedor_reporte/reporteTipoProveedor.php");
+        window.open("tipoProveedor_reporte/reporteTipoProveedor.php?desde="+desde+"&hasta="+hasta);
     } else if ($("#tabla").val() == "PROVEEDORES"){
-        window.open("proveedores_reporte/reporteProveedores.php?desde="+desde+"&hasta="+hasta+"&tiprov_cod="+tiprov_cod);
+        window.open("tipoProveedor_reporte/reporteTipoProveedor.php?desde="+desde+"&hasta="+hasta+"&tiprov_cod="+tiprov_cod);
     }
 }
 

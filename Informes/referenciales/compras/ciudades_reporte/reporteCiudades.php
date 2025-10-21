@@ -30,7 +30,15 @@ $hasta = $_GET['hasta'];
 
 
 $sql = "select * from ciudad 
-        where ciu_cod between $desde and $hasta
+        where ciu_cod between 
+            case
+                when $desde = 0 then 1
+                else $desde
+            end and 
+            case 
+                when $hasta = 0 then (select max(ciu_cod) from ciudad)
+                else $hasta
+            end
         order by ciu_cod;";
 
 $resultado = pg_query($conexion, $sql);

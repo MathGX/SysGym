@@ -285,12 +285,7 @@ $dompdf = new Dompdf\Dompdf();
 $dompdf->loadHtml($html);
 
 //Dar el formato horizontal y tamaño de hoja A4 al pdf
-$dompdf->setPaper('A4', 'landscape', 'default', [
-    'margin_top' => 15,
-    'margin_right' => 15,
-    'margin_bottom' => 15,
-    'margin_left' => 15
-]);
+$dompdf->setPaper('A4', 'landscape');
 
 // Renderizar el contenido HTML a PDF
 $dompdf->render();

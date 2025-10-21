@@ -24,7 +24,7 @@ if ($tipcomp_cod == "3") {
                 i.tipitem_cod,
                 i.tipimp_cod,
                 case 
-                        when s.sto_cantidad = 0 and s.tipitem_cod != 1 then 'ACTUALMENTE NO HAY EXISTENCAS DE '||i.itm_descri
+                        when s.sto_cantidad = 0 and s.tipitem_cod not in (1,5) then 'ACTUALMENTE NO HAY EXISTENCAS DE '||i.itm_descri
                         else i.itm_descri
                 end itm_descri,
                 vd.dep_cod,
@@ -47,7 +47,7 @@ if ($tipcomp_cod == "3") {
                 i.tipitem_cod,
                 i.tipimp_cod,
                 case 
-                        when s.sto_cantidad = 0 and s.tipitem_cod != 1 then 'ACTUALMENTE NO HAY EXISTENCAS DE '||i.itm_descri
+                        when s.sto_cantidad = 0 and s.tipitem_cod not in (1,5) then 'ACTUALMENTE NO HAY EXISTENCAS DE '||i.itm_descri
                         else i.itm_descri
                 end itm_descri,
                 s.sto_cantidad notvendet_cantidad,
@@ -62,7 +62,7 @@ if ($tipcomp_cod == "3") {
                 join stock s on s.itm_cod = i.itm_cod and s.tipitem_cod = i.tipitem_cod
         where itm_descri ilike '%$itm_descri%' 
                 and s.dep_cod = $dep_cod
-                and s.itm_cod not in (select itm_cod from items where itm_cod != 3 and tipitem_cod = 1)
+                and s.tipitem_cod not in (1,5)
         order by i.itm_descri;";
 } else if ($tipcomp_cod == "1") {
         $sql = "select 

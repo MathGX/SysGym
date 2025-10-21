@@ -32,7 +32,7 @@ $sql = "select
 	        and s.suc_cod = $sucursal 
 	        and s.emp_cod = $empresa 
 	        and i.itm_descri ilike '%$item%'
-	        and s.tipitem_cod != 1
+	        and s.tipitem_cod not in (1,5)
         order by i.itm_descri";
         
 //consultamos a la base de datos y guardamos el resultado

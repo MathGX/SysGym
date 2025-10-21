@@ -39,6 +39,7 @@ where s.dep_cod = $dep_cod
         and s.suc_cod = $suc_cod 
         and s.emp_cod = $emp_cod 
         and i.itm_descri ilike '%$itm_descri%'
+        and s.tipitem_cod != 5
 order by i.itm_descri;";
         
 //consultamos a la base de datos y guardamos el resultado

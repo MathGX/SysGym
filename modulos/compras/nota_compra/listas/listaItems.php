@@ -55,6 +55,7 @@ if ($tipcomp_cod == "3") {
         where itm_descri ilike '%$itm_descri%' 
                 and s.dep_cod = $dep_cod
                 and i.itm_estado ilike 'ACTIVO'
+                and i.tipitem_cod != 5
         order by i.itm_descri;";
 } else if ($tipcomp_cod == "1") {
         $sql = "select 
