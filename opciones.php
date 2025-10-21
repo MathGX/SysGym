@@ -982,9 +982,9 @@ if(isset($_SESSION['numApcier'])){
                                 <?php } ?>
                             </ul>
                         </li>
-                        <?php } ?>
                     </ul>
                 </li>
+                <?php } ?>
 
                 <li>
                     <a href="javascript:void(0);" class="menu-toggle">
@@ -993,27 +993,18 @@ if(isset($_SESSION['numApcier'])){
                     </a>
                     <ul class="ml-menu">
                         <li>
-                            <a href="javascript:void(0);" class="menu-toggle">
+                            <a href="javascript:void(0);" onclick="window.open('/SysGym/Manuales/Manual_Usuario_Sys_Orbus_Gym.pdf')">
                                 <i class="material-icons">person_pin</i>
                                 <span>De Usuario</span>
                             </a>
-                            <ul class="ml-menu">
-                                <li>
-                                    <a href="/SysGym/Manuales/Manual_Usuario_Sys_Orbus_Gym.pdf"> Abrir </a>
-                                </li>
-                            </ul>
                         </li>
                         <li>
-                            <a href="javascript:void(0);" class="menu-toggle">
+                            <a href="javascript:void(0);" onclick="window.open('/SysGym/Manuales/Manual_Seguridad_Sys_Orbus_Gym.pdf')">
                                 <i class="material-icons">lock_outline</i>
                                 <span>De Seguridad</span>
                             </a>
-                            <ul class="ml-menu">
-                                <li>
-                                    <a href="/SysGym/Manuales/Manual_Seguridad_Sys_Orbus_Gym.pdf"> Abrir </a>
-                                </li>
-                            </ul>
                         </li>
+                    </ul>
                 </li>
 
 
