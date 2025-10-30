@@ -162,6 +162,7 @@ $u = $_SESSION['usuarios'];
                                     <div class="form-group form-float">
                                         <div class="form-line focus">
                                             <input type="hidden" id="per_nrodoc" value="0">
+                                            <input type="hidden" id="per_email" value="0">
                                             <input type="hidden" id="cli_cod" value="0">
                                             <input type="text" class="form-control disabledno sinCarac" id="cliente" disabled onkeyup="getPresupuesto()">
                                             <label class="form-label">Doc. - Cliente</label>
@@ -247,6 +248,10 @@ $u = $_SESSION['usuarios'];
                                 <button type="button" style="width:12.5%;" class="btn bg-blue waves-effect btnOperacion1" onclick="facturaVenta()">
                                     <i class="material-icons">print</i>
                                     <span>IMPRIMIR</span>
+                                </button>
+                                <button type="button" style="width:12.5%;" class="btn bg-blue waves-effect btnOperacion1" onclick="enviarDoc()">
+                                    <i class="material-icons">email</i>
+                                    <span>ENVIAR</span>
                                 </button>
                                 <button type="button" style="display:none;" class="btn bg-pink waves-effect btnOperacion2" onclick="controlVacio()">
                                     <i class="material-icons">save</i>

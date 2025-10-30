@@ -21,7 +21,7 @@ if (isset($_POST['operacion_det'])) {
         {$_POST['ordcom_cod']},
         $ordcomdet_cantidad,
         $ordcomdet_precio,
-        {$_POST['operacion_det']}
+        {$_POST['operacion_det']},
         {$_POST['usu_cod']}
     );";
 

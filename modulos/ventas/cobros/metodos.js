@@ -569,6 +569,7 @@ function grabarTarjeta() {
             entahd_cod: $("#entahd_cod").val(),
             redpag_cod: $("#redpag_cod").val(),
             forcob_cod: $("#forcob_cod").val(),
+            cobrtarj_autorizacion: $("#cobrtarj_autorizacion").val(),
             operacion_det: $("#operacion_det").val()
         }
 })};

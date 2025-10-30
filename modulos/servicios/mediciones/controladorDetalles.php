@@ -47,6 +47,28 @@ if (isset($_POST['operacion_det'])) {
     $codigoEvo = pg_fetch_assoc($codigo);
     echo json_encode($codigoEvo);
 
+} else if (isset($_POST['imc']) == 1) {
+    //Se busca obtener el imc 
+    $sqlImc = "select calcular_imc({$_POST['med_cod']}) imc;";
+
+    $resulImc = pg_query($conexion, $sqlImc);
+    $error = pg_last_error($conexion);
+    //Si ocurre un error lo capturamos y lo enviamos al front-end
+    if (strpos($error, "err_peso") !== false) {
+        $response = array(
+            "mensaje" => "ANTES DEL IMC DEBE REGISTRAR EL PESO CORPORAL",
+            "tipo" => "error"
+        );
+    } else if (strpos($error, "err_altura") !== false) {
+        $response = array(
+            "mensaje" => "ANTES DEL IMC DEBE REGISTRAR LA ESTATURA",
+            "tipo" => "error"
+        );
+    } else {
+        $response = pg_fetch_assoc($resulImc);
+    }
+    echo json_encode($response);
+
 } else if (isset($_POST['med_cod'])){
 
     //Si el post no recibe la operacion realizamos una consulta

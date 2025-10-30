@@ -404,6 +404,26 @@ let facturaVenta = () => {
     }
 }
 
+let enviarDoc = () => {
+    if ($("#ven_cod").val() == '') {
+        alertaLabel("SELECCIONE UN REGISTRO");
+    } else {
+        $.ajax({
+            method: "POST",
+            url: "/SysGym/others/mail/envioFacturaVenta.php",
+            data: { 
+                ven_cod: $("#ven_cod").val(),
+                per_email: $("#per_email").val(),
+            }
+        }).done(function (respuesta) {
+            swal({
+                title: "RESPUESTA!!",
+                text: respuesta.mensaje,
+                type: respuesta.tipo,
+            });
+        })
+    }
+}
 
 /*--------------------------------------------METODOS DEL DETALLE---------------------------------------------------------*/
 

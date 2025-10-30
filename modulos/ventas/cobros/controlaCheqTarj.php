@@ -51,6 +51,7 @@ if ((isset($_POST['operacion_det']))) {
             {$_POST['entahd_cod']},
             {$_POST['redpag_cod']},
             {$_POST['forcob_cod']},
+            '{$_POST['cobrtarj_autorizacion']}',
             {$_POST['operacion_det']}
         );";
     }

@@ -411,6 +411,15 @@ $u = $_SESSION['usuarios'];
                                     <div class="col-sm-4">
                                         <div class="form-group form-float">
                                             <div class="form-line foc">
+                                                <input type="text" id="cobrtarj_autorizacion" class="form-control disabledno2 soloNum" disabled>
+                                                <label class="form-label">Cod. de Autorización</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4">
+                                        <div class="form-group form-float">
+                                            <div class="form-line foc">
                                                 <input type="text" id="cobrtarj_monto" class="form-control disabledno2 soloNum" disabled>
                                                 <label class="form-label">Monto de la Transacción</label>
                                             </div>

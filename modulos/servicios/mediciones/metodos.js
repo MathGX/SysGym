@@ -403,6 +403,40 @@ let eliminar = () => {
     });
 };
 
+obtenerImc = () => {
+    // si se selecciona el parametro de medicion IMC
+    if ($("#param_cod").val() == "4") {
+        $.ajax({
+            method: "POST",
+            url: "controladorDetalles.php",
+            data: {
+                imc: 1,
+                med_cod: $("#med_cod").val(),
+            }
+        })
+        .done(function (respuesta) {
+            $("#meddet_cantidad").val(respuesta.imc);
+        }).fail(function (a, b, c) {
+            let errorTexto = a.responseText;
+            let inicio = errorTexto.indexOf("{"); // Obtenemos el índice del primer "{" y agregamos 1 para saltar el mismo
+            let final = errorTexto.lastIndexOf("}") + 1; // Obtenemos el índice del último "}"
+            let errorJson = errorTexto.substring(inicio, final); // Extraemos la palabra entre los índices obtenidos
+    
+            let errorObjeto = JSON.parse(errorJson);
+            console.log(errorObjeto.tipo);
+    
+            if (errorObjeto.tipo == "error") {
+                swal({
+                    title: "RESPUESTA!!",
+                    text: errorObjeto.mensaje,
+                    type: errorObjeto.tipo,
+                });
+                $(".foc").find(".form-control").val('');
+            }
+        });
+    }
+}
+
 /*enviamos por POST a la base de datos los datos cargados los input para grabar un nuevo detalle de medcripción*/
 function grabar2() {
     $.ajax({
@@ -665,4 +699,5 @@ function seleccionParametro (datos) {
     $("#ulParametro").html();
     $("#listaParametro").attr("style", "display:none;");
     $(".foc").attr("class", "form-line foc focused");
+    obtenerImc();
 }
