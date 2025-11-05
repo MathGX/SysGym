@@ -235,6 +235,7 @@ function oculSeccGUI() {
                         $(".alerta_correo").text(envio.mensaje);
                         $(".alert_mail").attr("class", "alert_mail alert bg-pink alert-dismissible");
                     });
+                    //window.location = "menu.php";
                 }
             }
         }).fail(function (a, b, c) {

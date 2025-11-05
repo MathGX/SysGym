@@ -68,7 +68,7 @@ if ($resultado) {
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'orbus.gym0@gmail.com'; // Tu dirección de correo
-        $mail->Password = 'vrug vzrr syrn njzl'; // La contraseña de aplicación
+        $mail->Password = 'nhrv fdgu fhjb gcio'; // La contraseña de aplicación
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // Habilitar SSL
         $mail->Port = 587; // Puerto para SSL
 
